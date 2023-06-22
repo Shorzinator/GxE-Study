@@ -135,3 +135,90 @@ print("Classification report for AntisocialTrajectory:")
 print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_rf))
 print("Classification report for SubstanceUseTrajectory:")
 print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_rf))
+
+"""
+Using Random Forest -
+
+For AntisocialTrajectory results:
+
+- Class 4 has the highest precision, recall and F1-score, and also the highest number of instances (support). This means that the model performs best when predicting this class.
+- For classes 1, 2 and 3, the precision, recall and F1-score are lower. This could be due to lower representation of these classes in the dataset or the model having difficulty distinguishing these classes based on the given features.
+
+For SubstanceUseTrajectory results:
+
+- Classes 1 and 3 have comparable precision, recall, and F1-score, and both have much higher support than class 2.
+- The model is less accurate and precise for class 2, which could again be due to lower representation of this class in the dataset or the model having difficulty distinguishing this class.
+- Comparing these results to those from the multinomial logistic regression, the random forest model has improved the performance significantly in terms of all the metrics for both AntisocialTrajectory and SubstanceUseTrajectory. This could be due to the fact that random forest is a more complex model and can capture more complex relationships between features and target variables, while also being less prone to overfitting due to its ensemble nature.
+
+In the context of the research, these results might provide more accurate and reliable predictions for both antisocial behavior and substance use trajectories. However, the model seems to struggle with classes that are under-represented in the data. If this is a concern, we could consider using techniques to handle the class imbalance, such as oversampling the minority classes, undersampling the majority class, or using a different algorithm that is more robust to class imbalances.
+"""
+
+-----------------------------------------------------------------------------------------------
+
+# Fine tuning the random forest model
+
+from sklearn.model_selection import GridSearchCV
+
+# Define the parameter grid
+param_grid = {
+    'n_estimators': [100, 200, 500],
+    'max_depth': [None, 10, 20, 30],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+# Create a base model
+rf = RandomForestClassifier(random_state=42)
+
+# Initiate the grid search model
+grid_search = GridSearchCV(estimator = rf, param_grid = param_grid,
+                           cv = 3, n_jobs = -1, verbose = 2)
+
+# Fit the grid search to the data for 'AntisocialTrajectory'
+grid_search.fit(X_train, y_train['AntisocialTrajectory'])
+grid_search.best_params_  # This line will print out the best parameters
+
+# Predict on the test set
+y_pred_asb_rf_grid = grid_search.predict(X_test)
+
+# Calculate and print the metrics
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_rf_grid))
+
+# Repeat the above process for 'SubstanceUseTrajectory'
+grid_search.fit(X_train, y_train['SubstanceUseTrajectory'])
+grid_search.best_params_  # This line will print out the best parameters
+
+# Predict on the test set
+y_pred_sub_rf_grid = grid_search.predict(X_test)
+
+# Calculate and print the metrics
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_rf_grid))
+
+"""
+The results of our model after performing hyperparameter tuning seem to be slightly better, but not dramatically so. Let's break down what these metrics mean:
+
+For AntisocialTrajectory:
+
+- The accuracy is still approximately 0.79, which is similar to the previous model.
+- The weighted average precision is 0.70. High precision relates to the low false positive rate.
+- The weighted average recall is 0.79. Recall (Sensitivity) is the ratio of correctly predicted positive observations to all observations in actual class. High recall relates to the low false negative rate.
+- The weighted average f1-score is 0.71. The F1 Score is the weighted average of Precision and Recall. Therefore, this score takes both false positives and false negatives into account.
+
+For SubstanceUseTrajectory:
+
+- The accuracy is approximately 0.55, a slight improvement over the previous model.
+- The weighted average precision is 0.55. A precision score closer to 1 indicates that the model has less false positives.
+- The weighted average recall is also 0.55. A recall score closer to 1 indicates that the model has fewer false negatives.
+- The weighted average f1-score is 0.51. The F1 Score takes both false positives and false negatives into account. The closer it is to 1, the better the model.
+
+Overall, it seems that the Random Forest Classifier model has better performance than the previous model (Multinomial Logistic Regression). However, the model's performance on the SubstanceUseTrajectory target variable has much room for improvement.
+
+It seems that the model has a difficult time predicting certain classes. This could potentially be due to class imbalance. If certain classes have far fewer samples than others, the model may have a hard time learning to predict these classes. We might have to consider techniques for handling class imbalance, such as oversampling the minority class, undersampling the majority class, or using a combination of both (SMOTE).
+
+We can also consider using other algorithms, ensemble methods, or diving deeper into feature engineering. For instance, gradient boosting algorithms like XGBoost, LightGBM or CatBoost are known to provide better solutions in many cases.
+"""
+
+-----------------------------------------------------------------------------------------------
+

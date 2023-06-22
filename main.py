@@ -302,3 +302,117 @@ In summary, the results indicate that the SMOTE technique has made the models mo
 
 -----------------------------------------------------------------------------------------------
 
+from xgboost import XGBClassifier
+from sklearn.preprocessing import LabelEncoder
+
+# Define a manual label encoder function
+def manual_encoder(y):
+    classes = sorted(y.unique())  # Get unique classes
+    class_dict = {c: i for i, c in enumerate(classes)}  # Assign each class a value from 0 to n-1
+    return y.map(class_dict)  # Return the transformed labels
+
+# Manual encoding for 'AntisocialTrajectory' and 'SubstanceUseTrajectory'
+y_train_asb_smote = manual_encoder(pd.Series(y_train_asb_smote))
+y_train_sub_smote = manual_encoder(pd.Series(y_train_sub_smote))
+y_test_asb = manual_encoder(y_test['AntisocialTrajectory'])
+y_test_sub = manual_encoder(y_test['SubstanceUseTrajectory'])
+
+# Initialize XGBClassifier
+xgb_asb = XGBClassifier(random_state=42, scale_pos_weight=1, use_label_encoder=False, eval_metric='mlogloss')
+xgb_sub = XGBClassifier(random_state=42, scale_pos_weight=1, use_label_encoder=False, eval_metric='mlogloss')
+
+# Fit the model
+xgb_asb.fit(X_train_asb_smote, y_train_asb_smote)
+xgb_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Make predictions
+y_pred_asb_xgb = xgb_asb.predict(X_test_scaled)
+y_pred_sub_xgb = xgb_sub.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test_asb, y_pred_asb_xgb))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test_sub, y_pred_sub_xgb))
+
+"""
+AntisocialTrajectory: The XGBClassifier model has an accuracy of 73%. Precision, recall, and F1-score for the class 3 are high, around 84-88%. However, for the other classes (0, 1, 2), these metrics are much lower, between 11-22%. This suggests that the model is doing well in predicting the most frequent class (class 3) but struggling with the minority classes.
+
+SubstanceUseTrajectory: The model has an accuracy of 51%. Precision, recall, and F1-score for classes 0 and 2 are around 50-61%, but these scores are lower for class 1, around 32%. This again suggests that the model is doing fairly well for some classes but struggling with others (class 1 in this case).
+
+This might be due to the imbalanced data. One strategy to address this could be to optimize the `scale_pos_weight` parameter or use different oversampling techniques or other methods to address class imbalance.
+
+1. Process of arriving at the final code:
+   - I started with a Random Forest Classifier to handle the multi-class classification problem.
+   - As the data was imbalanced, SMOTE (Synthetic Minority Over-sampling Technique) was applied to balance the classes.
+   - I then trained two separate models for 'AntisocialTrajectory' and 'SubstanceUseTrajectory' using the balanced data.
+   - However, the performance of the models was not satisfactory. Thus, I switched to the XGBoost Classifier.
+   - To handle the labels in 'AntisocialTrajectory' and 'SubstanceUseTrajectory', I had to manually encode these labels from 0 to n-1, because XGBoost was throwing errors for unseen labels.
+   - I used a custom encoding function that ensures that all labels are seen during training and testing.
+
+2. Explanation of the final code:
+   - The code first defines a custom function `manual_encoder()`, which manually encodes the class labels of 'AntisocialTrajectory' and 'SubstanceUseTrajectory' so that they start from 0 (which is required by XGBoost).
+   - This function is applied to the target variables of the training and testing datasets.
+   - Then two XGBoost Classifier models are initialized, one for each target variable.
+   - The models are then trained using the SMOTE-resampled training data.
+   - Predictions are made using the test data, and classification reports are generated to evaluate the model's performance.
+"""
+
+-----------------------------------------------------------------------------------------------
+
+from lightgbm import LGBMClassifier
+
+# Initialize LGBMClassifier
+lgbm_asb = LGBMClassifier(random_state=42)
+lgbm_sub = LGBMClassifier(random_state=42)
+
+# Fit the model
+lgbm_asb.fit(X_train_asb_smote, y_train_asb_smote)
+lgbm_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Make predictions
+y_pred_asb_lgbm = lgbm_asb.predict(X_test_scaled)
+y_pred_sub_lgbm = lgbm_sub.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test_asb, y_pred_asb_lgbm))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test_sub, y_pred_sub_lgbm))
+
+-----------------------------------------------------------------------------------------------
+
+from sklearn.model_selection import GridSearchCV
+
+# Define the parameter grid
+param_grid = {
+    'num_leaves': [31, 127],
+    'reg_alpha': [0.1, 0.5],
+    'min_data_in_leaf': [30, 50, 100, 300, 400],
+    'lambda_l1': [0, 1, 1.5],
+    'lambda_l2': [0, 1]
+    }
+
+# Initialize LGBMClassifier
+lgbm_asb = LGBMClassifier(random_state=42)
+
+# Initialize GridSearchCV
+grid = GridSearchCV(lgbm_asb, param_grid, verbose=1, cv=5, n_jobs=-1)
+
+# Fit the model
+grid.fit(X_train_asb_smote, y_train_asb_smote)
+
+# Print the best parameters
+print("Best parameters found: ", grid.best_params_)
+
+# Make predictions using the model with the best parameters
+y_pred_asb_lgbm = grid.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test_asb, y_pred_asb_lgbm))
+
+-----------------------------------------------------------------------------------------------
+

@@ -61,3 +61,54 @@ result_sub = model_sub.fit()
 # Print the model statistics
 print(result_asb.summary())
 print(result_sub.summary())
+
+-----------------------------------------------------------------------------------------------
+# troubleshooting
+
+# Add constant to the test data
+X_test = sm.add_constant(X_test)
+
+# Make predictions on the test set
+y_pred_asb = result_asb.predict(X_test)
+y_pred_sub = result_sub.predict(X_test)
+
+# Convert probabilities into class labels
+y_pred_asb = y_pred_asb.idxmax(axis=1)
+y_pred_sub = y_pred_sub.idxmax(axis=1)
+
+-----------------------------------------------------------------------------------------------
+
+# correlation
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Generate correlation matrix
+corr_matrix = df.corr()
+
+# Plot correlation matrix
+sns.heatmap(corr_matrix, annot=True, cmap='coolwarm')
+plt.show()
+
+-----------------------------------------------------------------------------------------------
+
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# Calculate metrics for 'AntisocialTrajectory'
+accuracy_asb = accuracy_score(y_test['AntisocialTrajectory'], y_pred_asb)
+precision_asb = precision_score(y_test['AntisocialTrajectory'], y_pred_asb, average='weighted')
+recall_asb = recall_score(y_test['AntisocialTrajectory'], y_pred_asb, average='weighted')
+f1_asb = f1_score(y_test['AntisocialTrajectory'], y_pred_asb, average='weighted')
+
+# Calculate metrics for 'SubstanceUseTrajectory'
+accuracy_sub = accuracy_score(y_test['SubstanceUseTrajectory'], y_pred_sub)
+precision_sub = precision_score(y_test['SubstanceUseTrajectory'], y_pred_sub, average='weighted')
+recall_sub = recall_score(y_test['SubstanceUseTrajectory'], y_pred_sub, average='weighted')
+f1_sub = f1_score(y_test['SubstanceUseTrajectory'], y_pred_sub, average='weighted')
+
+# Print the metrics
+print("AntisocialTrajectory - Accuracy: ", accuracy_asb, " Precision: ", precision_asb, " Recall: ", recall_asb, " F1 Score: ", f1_asb)
+print("SubstanceUseTrajectory - Accuracy: ", accuracy_sub, " Precision: ", precision_sub, " Recall: ", recall_sub, " F1 Score: ", f1_sub)
+
+
+

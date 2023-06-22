@@ -416,3 +416,45 @@ print(classification_report(y_test_asb, y_pred_asb_lgbm))
 
 -----------------------------------------------------------------------------------------------
 
+import matplotlib.pyplot as plt
+
+# Feature importance for the XGBoost model trained on 'AntisocialTrajectory'
+feature_importances_asb = pd.Series(xgb_asb.feature_importances_, index=X_train.columns)
+plt.figure(figsize=(10,6))
+feature_importances_asb.sort_values(ascending=True).plot(kind='barh', color='skyblue')
+plt.title("Feature Importance for AntisocialTrajectory")
+plt.show()
+
+# Feature importance for the XGBoost model trained on 'SubstanceUseTrajectory'
+feature_importances_sub = pd.Series(xgb_sub.feature_importances_, index=X_train.columns)
+plt.figure(figsize=(10,6))
+feature_importances_sub.sort_values(ascending=True).plot(kind='barh', color='skyblue')
+plt.title("Feature Importance for SubstanceUseTrajectory")
+plt.show()
+
+-----------------------------------------------------------------------------------------------
+
+# CATBoost
+
+from catboost import CatBoostClassifier
+
+# Initialize CatBoostClassifier
+catb_asb = CatBoostClassifier(verbose=0, random_state=42)
+catb_sub = CatBoostClassifier(verbose=0, random_state=42)
+
+# Fit the model
+catb_asb.fit(X_train_asb_smote, y_train_asb_smote)
+catb_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Make predictions
+y_pred_asb_catb = catb_asb.predict(X_test_scaled)
+y_pred_sub_catb = catb_sub.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test_asb, y_pred_asb_catb))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test_sub, y_pred_sub_catb))
+
+-----------------------------------------------------------------------------------------------

@@ -222,3 +222,83 @@ We can also consider using other algorithms, ensemble methods, or diving deeper 
 
 -----------------------------------------------------------------------------------------------
 
+# SMOTE
+
+from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
+
+# Standardize the features to have mean=0 and variance=1
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# Apply SMOTE
+smote = SMOTE(random_state=42)
+X_train_asb_smote, y_train_asb_smote = smote.fit_resample(X_train_scaled, y_train['AntisocialTrajectory'])
+X_train_sub_smote, y_train_sub_smote = smote.fit_resample(X_train_scaled, y_train['SubstanceUseTrajectory'])
+
+# Train the model using the resampled data
+clf_asb_smote = RandomForestClassifier(random_state=42)
+clf_sub_smote = RandomForestClassifier(random_state=42)
+
+clf_asb_smote.fit(X_train_asb_smote, y_train_asb_smote)
+clf_sub_smote.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Predict on the test data
+y_pred_asb_rf_smote = clf_asb_smote.predict(X_test_scaled)
+y_pred_sub_rf_smote = clf_sub_smote.predict(X_test_scaled)
+
+# Calculate and print the metrics
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_rf_smote))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_rf_smote))
+
+-----------------------------------------------------------------------------------------------
+
+from imblearn.combine import SMOTEENN
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
+
+# Initialize and apply SMOTEENN
+smote_enn = SMOTEENN(random_state=42)
+X_train_asb_smoteenn, y_train_asb_smoteenn = smote_enn.fit_resample(X_train_scaled, y_train['AntisocialTrajectory'])
+X_train_sub_smoteenn, y_train_sub_smoteenn = smote_enn.fit_resample(X_train_scaled, y_train['SubstanceUseTrajectory'])
+
+# Initialize RandomForestClassifier
+rf_asb_smoteenn = RandomForestClassifier(random_state=42)
+rf_sub_smoteenn = RandomForestClassifier(random_state=42)
+
+# Fit the model
+rf_asb_smoteenn.fit(X_train_asb_smoteenn, y_train_asb_smoteenn)
+rf_sub_smoteenn.fit(X_train_sub_smoteenn, y_train_sub_smoteenn)
+
+# Make predictions
+y_pred_asb_rf_smoteenn = rf_asb_smoteenn.predict(X_test_scaled)
+y_pred_sub_rf_smoteenn = rf_sub_smoteenn.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_rf_smoteenn))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_rf_smoteenn))
+
+"""
+Starting with AntisocialTrajectory, the accuracy of the model has reduced slightly to 71%, as compared to the initial non-resampled model that had an accuracy of about 79%. However, the precision, recall and f1-score for the minority classes (1, 2, 3) have all improved. In other words, the model is now better at correctly identifying instances of these classes, at the cost of slightly reduced performance on the majority class (4).
+
+In the context of the research, this can mean that the model is now more sensitive to the different trajectories of antisocial behavior, even if overall accuracy has decreased. 
+
+Is this a good trade-off?
+For instance, if it is particularly important to accurately identify participants on trajectories 1, 2, and 3, then a slightly reduced accuracy for trajectory 4 might be acceptable.
+
+For SubstanceUseTrajectory, the accuracy of the model remains around 51%, roughly similar to the initial model without SMOTE. The metrics for the minority class (2) have improved, suggesting better detection for this class. The metrics for the other classes (1 and 3) are also comparable to the previous model.
+
+If it's important to correctly identify the substance use trajectory for all participants, regardless of whether their trajectory is common (like 1 and 3) or less common (like 2), then the SMOTE-enhanced model might be preferable despite its lower overall accuracy.
+
+In summary, the results indicate that the SMOTE technique has made the models more sensitive to the less common trajectories at the cost of slightly lower overall accuracy. This is a typical trade-off when dealing with imbalanced classes: aiming for high accuracy often means the model performs poorly for the minority class, while techniques to improve minority class performance can decrease overall accuracy.
+"""
+
+-----------------------------------------------------------------------------------------------
+

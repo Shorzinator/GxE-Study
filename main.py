@@ -110,5 +110,28 @@ f1_sub = f1_score(y_test['SubstanceUseTrajectory'], y_pred_sub, average='weighte
 print("AntisocialTrajectory - Accuracy: ", accuracy_asb, " Precision: ", precision_asb, " Recall: ", recall_asb, " F1 Score: ", f1_asb)
 print("SubstanceUseTrajectory - Accuracy: ", accuracy_sub, " Precision: ", precision_sub, " Recall: ", recall_sub, " F1 Score: ", f1_sub)
 
+-----------------------------------------------------------------------------------------------
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report
 
+# Drop the 'const' column from the test set
+X_test = X_test.drop('const', axis=1)
+
+# Define the Random Forest classifier
+clf_asb = RandomForestClassifier(random_state=42)
+clf_sub = RandomForestClassifier(random_state=42)
+
+# Fit the model to the training data
+clf_asb.fit(X_train, y_train['AntisocialTrajectory'])
+clf_sub.fit(X_train, y_train['SubstanceUseTrajectory'])
+
+# Predict on the test data
+y_pred_asb_rf = clf_asb.predict(X_test)
+y_pred_sub_rf = clf_sub.predict(X_test)
+
+# Calculate and print the metrics
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_rf))
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_rf))

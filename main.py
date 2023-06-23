@@ -525,3 +525,59 @@ for y_pred_sub in y_preds_sub:
     print("AUC-ROC (weighted): ", multiclass_roc_auc_score(y_test_sub, y_pred_sub, average="weighted"))
 
 -----------------------------------------------------------------------------------------------
+
+from sklearn.model_selection import GridSearchCV
+
+# Define the hyperparameters and their possible values
+param_grid = {
+    'num_leaves': [31, 50, 70],
+    'learning_rate': [0.01, 0.05, 0.1],
+    'n_estimators': [100, 200, 300],
+    'max_depth': [-1, 5, 10]
+}
+
+# Initialize the LightGBM model
+lgbm = LGBMClassifier(random_state=42)
+
+# Initialize GridSearchCV
+grid_search_asb = GridSearchCV(estimator=lgbm, param_grid=param_grid, cv=3, scoring='roc_auc_ovr_weighted', n_jobs=-1)
+grid_search_sub = GridSearchCV(estimator=lgbm, param_grid=param_grid, cv=3, scoring='roc_auc_ovr_weighted', n_jobs=-1)
+
+# Fit GridSearchCV for AntisocialTrajectory
+grid_search_asb.fit(X_train_asb_smote, y_train_asb_smote)
+
+# Fit GridSearchCV for SubstanceUseTrajectory
+grid_search_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Get the best parameters
+best_params_asb = grid_search_asb.best_params_
+best_params_sub = grid_search_sub.best_params_
+
+# Train the LightGBM model with the best parameters
+lgbm_best_asb = LGBMClassifier(**best_params_asb, random_state=42)
+lgbm_best_sub = LGBMClassifier(**best_params_sub, random_state=42)
+
+lgbm_best_asb.fit(X_train_asb_smote, y_train_asb_smote)
+lgbm_best_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Make predictions with the tuned model
+y_pred_asb_tuned = lgbm_best_asb.predict(X_test_scaled)
+y_pred_sub_tuned = lgbm_best_sub.predict(X_test_scaled)
+
+# Print classification report for the tuned model
+print("Classification report for AntisocialTrajectory (Tuned LightGBM):")
+print(classification_report(y_test_asb, y_pred_asb_tuned))
+
+print("Classification report for SubstanceUseTrajectory (Tuned LightGBM):")
+print(classification_report(y_test_sub, y_pred_sub_tuned))
+
+# Print the AUC-ROC for the tuned model
+print("AUC-ROC for AntisocialTrajectory (Tuned LightGBM):")
+print("Macro-average: ", multiclass_roc_auc_score(y_test_asb, y_pred_asb_tuned, average="macro"))
+print("Weighted: ", multiclass_roc_auc_score(y_test_asb, y_pred_asb_tuned, average="weighted"))
+
+print("AUC-ROC for SubstanceUseTrajectory (Tuned LightGBM):")
+print("Macro-average: ", multiclass_roc_auc_score(y_test_sub, y_pred_sub_tuned, average="macro"))
+print("Weighted: ", multiclass_roc_auc_score(y_test_sub, y_pred_sub_tuned, average="weighted"))
+
+

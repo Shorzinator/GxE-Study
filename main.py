@@ -458,3 +458,34 @@ print("Classification report for SubstanceUseTrajectory:")
 print(classification_report(y_test_sub, y_pred_sub_catb))
 
 -----------------------------------------------------------------------------------------------
+
+from sklearn.ensemble import VotingClassifier
+
+# Initialize the individual models
+rf_asb = RandomForestClassifier(n_estimators=500, random_state=42)
+xgb_asb = XGBClassifier(use_label_encoder=False, eval_metric='mlogloss', random_state=42)
+
+rf_sub = RandomForestClassifier(n_estimators=500, random_state=42)
+xgb_sub = XGBClassifier(use_label_encoder=False, eval_metric='mlogloss', random_state=42)
+
+# Create the ensemble model
+ensemble_asb = VotingClassifier(estimators=[('rf', rf_asb), ('xgb', xgb_asb)], voting='soft')
+ensemble_sub = VotingClassifier(estimators=[('rf', rf_sub), ('xgb', xgb_sub)], voting='soft')
+
+# Fit the ensemble model
+ensemble_asb.fit(X_train_asb_smote, y_train_asb_smote)
+ensemble_sub.fit(X_train_sub_smote, y_train_sub_smote)
+
+# Make predictions
+y_pred_asb_ensemble = ensemble_asb.predict(X_test_scaled)
+y_pred_sub_ensemble = ensemble_sub.predict(X_test_scaled)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory:")
+print(classification_report(y_test_asb, y_pred_asb_ensemble))
+
+print("Classification report for SubstanceUseTrajectory:")
+print(classification_report(y_test_sub, y_pred_sub_ensemble))
+
+-----------------------------------------------------------------------------------------------
+

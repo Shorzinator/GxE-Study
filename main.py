@@ -487,5 +487,41 @@ print(classification_report(y_test_asb, y_pred_asb_ensemble))
 print("Classification report for SubstanceUseTrajectory:")
 print(classification_report(y_test_sub, y_pred_sub_ensemble))
 
+"""
+For the AntisocialTrajectory, the model has performed best on the major class '3' with a Precision of 0.85 and Recall of 0.89. This is expected as this class has more instances, and models tend to perform well on the majority class. The performance on other classes (0, 1, 2) is lower, as these are the minority classes and harder for the model to learn.
+
+The situation is similar for the SubstanceUseTrajectory. Here, the model performance is more evenly distributed across classes, but still, the F1-scores suggest that the model is not doing as well on class '1', likely because it is the minority class here.
+
+Comparatively, this ensemble model seems to have slightly improved performance on AntisocialTrajectory in terms of overall accuracy (0.74 vs. 0.72-0.73 in earlier models) but similar or marginally lower for SubstanceUseTrajectory (0.53 vs. 0.53-0.54 in earlier models).
+
+The improvement might seem minimal, but in a challenging multi-class, imbalanced problem like this, even small improvements can be meaningful. You should also consider looking at metrics like AUC-ROC for multi-class problems, which can provide another perspective on model performance.
+"""
 -----------------------------------------------------------------------------------------------
 
+# Define a function for calculating multi-class ROC AUC Score
+def multiclass_roc_auc_score(y_test, y_pred, average="macro"):
+    lb = LabelBinarizer()
+    lb.fit(y_test)
+    y_test = lb.transform(y_test)
+    y_pred = lb.transform(y_pred)
+    return roc_auc_score(y_test, y_pred, average=average)
+
+# List of predictions for AntisocialTrajectory
+y_preds_asb = [y_pred_asb_xgb, y_pred_asb_lgbm, y_pred_asb_catb]
+
+# List of predictions for SubstanceUseTrajectory
+y_preds_sub = [y_pred_sub_xgb, y_pred_sub_lgbm, y_pred_sub_catb]
+
+# Calculate and print AUC-ROC for AntisocialTrajectory
+print("For AntisocialTrajectory:")
+for y_pred_asb in y_preds_asb:
+    print("AUC-ROC (macro-average): ", multiclass_roc_auc_score(y_test_asb, y_pred_asb, average="macro"))
+    print("AUC-ROC (weighted): ", multiclass_roc_auc_score(y_test_asb, y_pred_asb, average="weighted"))
+
+# Calculate and print AUC-ROC for SubstanceUseTrajectory
+print("\nFor SubstanceUseTrajectory:")
+for y_pred_sub in y_preds_sub:
+    print("AUC-ROC (macro-average): ", multiclass_roc_auc_score(y_test_sub, y_pred_sub, average="macro"))
+    print("AUC-ROC (weighted): ", multiclass_roc_auc_score(y_test_sub, y_pred_sub, average="weighted"))
+
+-----------------------------------------------------------------------------------------------

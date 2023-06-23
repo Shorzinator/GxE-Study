@@ -580,4 +580,51 @@ print("AUC-ROC for SubstanceUseTrajectory (Tuned LightGBM):")
 print("Macro-average: ", multiclass_roc_auc_score(y_test_sub, y_pred_sub_tuned, average="macro"))
 print("Weighted: ", multiclass_roc_auc_score(y_test_sub, y_pred_sub_tuned, average="weighted"))
 
+-----------------------------------------------------------------------------------------------
 
+"""
+Given the challenges with the dataset, especially the class imbalance and the difficulty in modeling the minority classes effectively, let's try another approach to address class imbalance. We will use ADASYN (Adaptive Synthetic Sampling) which is an advanced form of SMOTE. ADASYN adapts the number of synthetic samples generated for each class based on how difficult it is to learn.
+"""
+
+from imblearn.over_sampling import ADASYN
+
+# Separate the training labels
+y_train_asb = y_train['AntisocialTrajectory']
+y_train_sub = y_train['SubstanceUseTrajectory']
+
+# Using ADASYN to oversample the training data
+adasyn = ADASYN(sampling_strategy='minority', random_state=42)
+X_train_asb_adasyn, y_train_asb_adasyn = adasyn.fit_resample(X_train, y_train_asb)
+X_train_sub_adasyn, y_train_sub_adasyn = adasyn.fit_resample(X_train, y_train_sub)
+
+# Get the best parameters from previous grid search
+best_params_asb = grid_search_asb.best_params_
+best_params_sub = grid_search_sub.best_params_
+
+# Initialize the model with the best parameters
+lgbm_best_asb_adasyn = LGBMClassifier(**best_params_asb, random_state=42)
+lgbm_best_sub_adasyn = LGBMClassifier(**best_params_sub, random_state=42)
+
+# Train the model
+lgbm_best_asb_adasyn.fit(X_train_asb_adasyn, y_train_asb_adasyn)
+lgbm_best_sub_adasyn.fit(X_train_sub_adasyn, y_train_sub_adasyn)
+
+# Make predictions
+y_pred_asb_adasyn = lgbm_best_asb_adasyn.predict(X_test)
+y_pred_sub_adasyn = lgbm_best_sub_adasyn.predict(X_test)
+
+# Print classification report
+print("Classification report for AntisocialTrajectory (ADASYN):")
+print(classification_report(y_test['AntisocialTrajectory'], y_pred_asb_adasyn))
+
+print("Classification report for SubstanceUseTrajectory (ADASYN):")
+print(classification_report(y_test['SubstanceUseTrajectory'], y_pred_sub_adasyn))
+
+# Print the AUC-ROC
+print("AUC-ROC for AntisocialTrajectory (ADASYN):")
+print("Macro-average: ", multiclass_roc_auc_score(y_test['AntisocialTrajectory'], y_pred_asb_adasyn, average="macro"))
+print("Weighted: ", multiclass_roc_auc_score(y_test['AntisocialTrajectory'], y_pred_asb_adasyn, average="weighted"))
+
+print("AUC-ROC for SubstanceUseTrajectory (ADASYN):")
+print("Macro-average: ", multiclass_roc_auc_score(y_test['SubstanceUseTrajectory'], y_pred_sub_adasyn, average="macro"))
+print("Weighted: ", multiclass_roc_auc_score(y_test['SubstanceUseTrajectory'], y_pred_sub_adasyn, average="weighted"))

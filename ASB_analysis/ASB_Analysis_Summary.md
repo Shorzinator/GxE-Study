@@ -20,3 +20,26 @@
 	- **MemoryError during model evaluation:**
 		- Cause: The MemoryError was caused by the creation of a large number of interaction terms for each feature combination, resulting in an extensive memory requirement for storing the feature matrix. This was compounded by the fact that all combinations of interaction terms and models were being evaluated at once.
 		- Resolution: Instead of storing the entire feature matrix with all interaction terms in memory, the code was modified to create interaction terms one-by-one for each model and interaction term pair. This reduces the memory requirement by not keeping all
+
+4. **Feature Scaling:** 
+    - The 'PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect', 'ParentalWarmth' columns were standardized by removing the mean and scaling to unit variance using the StandardScaler.
+
+5. **Handling Class Imbalance**:
+   	- ADASYN (Adaptive Synthetic Sampling) was used to handle class imbalance in the dataset by generating synthetic samples for the minority class.
+
+6. **Modeling**:
+   	- A list of classification models were defined to be evaluated. These models were Random Forest, Gradient Boosting, Logistic Regression, SVC, KNN, Decision Tree, AdaBoost, Extra Trees, XGBoost, and LightGBM.
+
+7. **Creating Interaction Terms**:
+   	- All possible pairs of interaction terms from the feature set were created using itertools.combinations.
+
+8. **Model Evaluation**:
+    - A DataFrame to store the results of model evaluation was created. Following this, each model was trained and evaluated with each interaction term, and the results were stored in the results DataFrame.
+
+9. **Final Model Evaluation**:
+    - In the final version of the code, each model was trained and evaluated with each interaction term one-by-one, and the results were stored in the DataFrame. This was done to avoid storing large amounts of data in memory at once.
+
+10. **Results Storage**:
+    - The results were saved into a CSV file for further analysis.
+
+Throughout this process, different models were evaluated with different interaction terms. Each model's performance was checked, and the best interaction term for each model was identified. Moreover, for each type of interaction term, the model that performed the best was found out. The model that stood out was XGBoost, which generally performed well with various interaction terms.

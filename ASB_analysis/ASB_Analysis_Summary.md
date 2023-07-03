@@ -42,4 +42,11 @@
 10. **Results Storage**:
     - The results were saved into a CSV file for further analysis.
 
+### **Note:**
+The most current stable version of imbalanced-learn and scikit-learn are not compatible which is why they needed to be downgraded to the following version before the code could be run - 
+```
+pip install imbalanced-learn==0.7.0
+pip install scikit-learn==0.23.2
+```
+
 Throughout this process, different models were evaluated with different interaction terms. Each model's performance was checked, and the best interaction term for each model was identified. Moreover, for each type of interaction term, the model that performed the best was found out. The model that stood out was XGBoost, which generally performed well with various interaction terms.

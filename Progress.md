@@ -32,3 +32,26 @@ Variables Involved: The chosen variables (Depression symptoms, cognitive system,
 
 2. Points of Attention:
           <p>You should pay close attention to the characteristics and composition of each identified class and the role of RDoC measures and the p-factor PGS in determining class membership. Recognizing these factors can help in understanding the factors associated with distinct depressive symptom trajectories, as well as the potential influence of genetics and different psychological constructs. This could aid in identifying the nature of the 5th trajectory you are seeking to identify.</p>
+
+### Characterization of each class:
+
+In this study, the researchers identified four distinct classes of depression trajectories based on latent growth curve (LGC) modeling. Here is a detailed characterization of each class:
+
+1. **Low Depression Class:** This class represented the largest proportion of the sample (78.9%) and was characterized by consistently low levels of depression symptoms over time.
+
+2. **Low Increasing Depression Class:** This class comprised 7.3% of the sample. Individuals in this class had similarly low levels of depression at baseline (age 13) as the low depression class, but they exhibited a steady increase in depression beginning in their early 20s.
+
+3. **High Declining Depression Class:** This class accounted for 8.2% of the sample. Members of this class had a high initial status of depression in early adolescence but exhibited a steep decline in depression during the teenage years, reaching levels of depression by their mid-20s that were virtually indistinguishable from those in the low depression class.
+
+4. **Early Adult Peak Depression Class:** This class represented 5.7% of the sample and was characterized by low levels of depression at baseline that steadily increased up until approximately age 23, followed by a steady decline in depression to low depression levels after age 23.
+
+<p>The association of each Research Domain Criteria (RDoC) measure and the p-factor polygenic score (PGS) with class membership was investigated using multinomial logistic regression:</p>
+
+1. **Low Increasing Depression Class:** Higher negative emotionality, novelty seeking, and the p-factor PGS, but not picture vocabulary, increased one’s relative risk of belonging to this class relative to the low depression class.
+
+2. **Early Adult Peak Depression Class:** Higher negative emotionality and novelty seeking, lower picture vocabulary scores, but not the p-factor PGS, were associated with membership in this class relative to the low depression class.
+
+3. **High Declining Depression Class:** Only higher negative emotionality and lower picture vocabulary were associated with membership in this class relative to the low depression class. Neither novelty seeking nor the p-factor PGS were associated with high declining depression class membership.
+
+<p>Finally, in the multiple mediation analysis, indirect effects of the p-factor PGS on each depression class through the RDoC constructs were evaluated. For the low increasing depression class, higher p-factor PGS increased the risk of class membership by 5.3% (total effect), which reduced slightly to 4.7% after accounting for RDoC mediators (direct effect), but no significant total indirect effect of p-factor PGS emerged via RDoC mediators. However, there were specific indirect effects of the p-factor PGS on early adult peak and high declining depression classes via negative emotionality.</p>
+

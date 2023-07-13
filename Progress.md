@@ -89,3 +89,48 @@ In this phase, the focus is on creating a combined model using both the ABCD and
         c. Step 3: Feature Removal from Combined Dataset
         Similar to what was done in Analysis 1, we will now remove sets of features from the combined dataset and assess the impact on the           predictive performance of the model trained on this dataset. This will help determine which sets of features are most critical for           accurate predictions in the combined dataset setting.
 </p>
+
+---
+
+### Experimenting with the data - 
+
+**PHASE 1 -**
+The experimentation process started with an objective of understanding the influence of genetic and environmental factors on the antisocial and substance use trajectory of individuals. We used a dataset from a study that was investigating Gene x Environment interactions (GxE) on externalizing trajectories, and our primary aim was to find meaningful interactions between these variables to better understand their collective impact on antisocial behavior and substance use behavior.
+
+In order to analyze the data and get useful insights, we adopted the following steps:
+
+Absolutely, let's break down the process in greater detail:
+
+1. **Exploratory Data Analysis (EDA)**: We started off with a high-level analysis of the dataset structure, content, and the variable distributions. The data contained information related to the individual's family background, gender, age, Polygenic Score (a measure of genetic influence), and two key outcomes: antisocial behavior trajectory and substance use trajectory. 
+
+    Identifying outliers, missing values, distributions of the variables, and their interrelationships were the primary tasks in this stage. This enabled us to get an initial understanding of the dataset, the variables, their types, and their possible relationships with the outcomes of interest.
+
+2. **Data Cleaning**: The EDA stage revealed that the dataset contained missing values. To handle these, we used the K-Nearest Neighbors (KNN) imputation method, where the missing value of an attribute is determined by the values of that attribute in 'k' nearest neighbors. The 'k' is usually a small positive integer; in our case, we chose k=4.
+
+3. **Data Preprocessing**: Following the cleaning stage, we carried out preprocessing tasks to make the data suitable for modeling. This included scaling certain numerical features using the StandardScaler, which standardizes features by removing the mean and scaling to unit variance. The features scaled included 'PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect', 'ParentalWarmth'. 
+
+    For the 'Sex' variable, which was categorical (Male or Female), we converted it into binary values (1 for Male, 0 for Female). This conversion is necessary because machine learning models require numerical input.
+
+4. **Initial Model - Multinomial Logistic Regression (mnlogit)**: The initial modeling started with Multinomial Logistic Regression because our target variable, 'AntisocialTrajectory', was multiclass, and mnlogit is often a good starting point for such problems. However, we faced a crucial challenge: mnlogit does not natively support interaction terms, and the primary aim of this study was to investigate the effect of these interaction terms on the outcome.
+
+5. **Transition to Tree-based Models**: To overcome the limitation of mnlogit, we transitioned to tree-based machine learning models. Tree-based models are powerful because they can naturally capture interaction effects between variables without the need for explicit specification, and they are robust to outliers and can handle non-linear data, which is a common characteristic of real-world datasets.
+
+    We chose a variety of tree-based models to ensure robustness and generalizability of our results, including RandomForest, GradientBoosting, ExtraTrees, XGBoost, and LightGBM. Each of these models has its strengths, so this ensemble approach allowed us to capture different aspects of the data.
+
+6. **Handling Imbalanced Data**: After transitioning to tree-based models, we identified another issue - our dataset was imbalanced with respect to the target variable, 'AntisocialTrajectory' and 'SubstanceUseTrajectory'. This can lead to biased results, as models tend to favor the majority class. We used the ADASYN (Adaptive Synthetic) technique to rectify this issue. ADASYN generates synthetic examples in the feature space of the minority class to increase its population.
+
+7. **Creating Interaction Terms**: Given the goal of the study, we needed to generate interaction terms between the variables. An interaction term is a variable that represents a combination of two or more other variables. This could provide us valuable information about how different variables together influence the outcome.
+
+    We generated all possible pairs of interaction terms among the variables in the dataset. These were then added one by one to the model to evaluate their impact.
+
+8. **Evaluating Model Performance**: For each combination of model and interaction term, we evaluated the model's performance using 5-fold cross-validation, a robust technique to assess model performance and stability across different subsets of the data.
+
+    We used several metrics for evaluation: Precision, Recall, F1 Score, ROC AUC Score, Accuracy, Log Loss, and a custom score. This comprehensive list of metrics ensured we could assess the model from different perspectives, understanding its ability to correctly classify each class, its trade-off between precision and recall, and its overall accuracy.
+
+9. **Facing and Overcoming Errors**: During this extensive evaluation, we encountered several errors due to certain interaction terms causing issues in model training. To handle this, we added a 'try-except' block in our code. If an error occurred, it was logged into the output file, and the loop moved on to the next interaction term. This ensured that the entire process did not stop due to an error with a particular interaction term.
+
+10. **Custom Scoring Metric**: In addition to the standard scoring metrics, we also created a custom scoring metric. This metric was a weighted sum of Precision, Recall, F1 Score, and ROC AUC Score, allowing us to consider all important aspects of the model's performance in a single score. Weights were set to 0.3 for Precision and F1, and 0.2 for Recall and ROC AUC, reflecting the relative importance we placed on these metrics.
+
+Throughout this process, our main goal was to understand the complex interactions of genetic and environmental factors on antisocial behavior. By moving from logistic regression to tree-based models, we managed to overcome the limitations of traditional regression models. Implementing multiple evaluation metrics gave us a more complete view of the performance of different interaction terms and models, and the custom score provided a single comparable number that considered all important performance aspects.
+
+As of now, the process of model evaluation with interaction terms is ongoing, and this comprehensive approach will likely provide robust and valuable insights into the role and interplay of genetics and environment in antisocial behavior.

@@ -1,4 +1,4 @@
-## Literature Review
+# Literature Review
 
 1. “RDoC Mechanisms of Transdiagnostic Polygenic Risk for Trajectories of Depression: From Early Adolescence to Adulthood”
 
@@ -55,3 +55,37 @@ In this study, the researchers identified four distinct classes of depression tr
 
 <p>Finally, in the multiple mediation analysis, indirect effects of the p-factor PGS on each depression class through the RDoC constructs were evaluated. For the low increasing depression class, higher p-factor PGS increased the risk of class membership by 5.3% (total effect), which reduced slightly to 4.7% after accounting for RDoC mediators (direct effect), but no significant total indirect effect of p-factor PGS emerged via RDoC mediators. However, there were specific indirect effects of the p-factor PGS on early adult peak and high declining depression classes via negative emotionality.</p>
 
+### Discussion: 
+1. Summary:
+          <p> In the discussion section, the authors explicate the relevance of their results, comparing them to previous studies, and highlighting some unexpected outcomes. They identified four distinctive trajectories of depression from adolescence to adulthood, of which the low-increasing trajectory was particularly notable as it was uniquely associated with the p-factor PGS. This contradicts the earlier research that suggested a stronger link between early-onset depression and higher genetic liability. The authors hypothesize that this low-increasing trajectory might be linked to greater overall genetic liability that interacts with other psychopathologies that may become prominent in adulthood.
+
+   Further, the discussion delves into the role of Research Domain Criteria (RDoC) measures in these trajectories. It notes that these measures are differentially associated with the depression trajectories, reflecting unique cognitive, behavioral, and emotional processes. Specifically, the indirect effect of the p-factor PGS on the "early adult peak" and "high declining" depression was partially mediated by negative emotionality, but not by picture vocabulary or novelty seeking.
+
+   The authors also mention certain limitations of the study, such as the reliance on self-reporting for depression and RDoC measures and the temporal issue with novelty seeking being assessed at Wave III only. They also acknowledge the Eurocentric bias in discovery GWASs that affects the polygenic prediction signal for non-Eurocentric target populations. </p>
+
+2. Points of Attention:
+
+   <p> An important focus should be on the identification of the four trajectories and the unique link of the p-factor PGS with the low-increasing depression trajectory. Understanding the differential associations of RDoC measures with these trajectories and their role in mediating the impact of p-factor PGS is crucial. The limitations mentioned by the authors should also be taken into account, as they can affect the interpretation of the findings and their generalizability. </p>
+
+---
+
+### Project Outline:
+
+**Analysis 1: Single-Study Analysis**
+In this phase, we will work with either the ABCD or the Add Health dataset individually. The goal here is to ascertain the impact of different sets of features on the predictive performance of a model trained on that dataset. We will do this by training a model on the full set of features and then removing certain sets of features, retraining the model each time, and noting the impact on the model's predictive accuracy.
+
+**Analysis 2: Combined Study Analysis**
+In this phase, the focus is on creating a combined model using both the ABCD and Add Health datasets. This analysis involves three steps:
+
+<p>
+        a. Step 1: Matrix Completion/Collaborative Filtering**
+        In this step, we will apply matrix completion techniques or collaborative filtering to impute missing features across both                   datasets. This is necessary because the two datasets may not have the same set of features, and you want to create a unified dataset         that includes all features from both.
+</p>
+<p>
+        b. Step 2: Model Training and Comparison
+        Once the datasets are unified and missing values are imputed, we will train a model using this combined dataset and compare its              predictive accuracy to the models trained on the individual datasets (from Analysis 1). The expectation is that the model trained on         the combined dataset will have superior predictive accuracy because it has access to more data.
+</p>  
+<p>
+        c. Step 3: Feature Removal from Combined Dataset
+        Similar to what was done in Analysis 1, we will now remove sets of features from the combined dataset and assess the impact on the           predictive performance of the model trained on this dataset. This will help determine which sets of features are most critical for           accurate predictions in the combined dataset setting.
+</p>

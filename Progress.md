@@ -94,7 +94,7 @@ In this phase, the focus is on creating a combined model using both the ABCD and
 
 ### Experimenting with the data - 
 
-**PHASE 1 -**
+### PHASE 1 -
 The experimentation process started with an objective of understanding the influence of genetic and environmental factors on the antisocial and substance use trajectory of individuals. We used a dataset from a study that was investigating Gene x Environment interactions (GxE) on externalizing trajectories, and our primary aim was to find meaningful interactions between these variables to better understand their collective impact on antisocial behavior and substance use behavior.
 
 In order to analyze the data and get useful insights, we adopted the following steps:
@@ -134,3 +134,27 @@ Absolutely, let's break down the process in greater detail:
 Throughout this process, our main goal was to understand the complex interactions of genetic and environmental factors on antisocial behavior. By moving from logistic regression to tree-based models, we managed to overcome the limitations of traditional regression models. Implementing multiple evaluation metrics gave us a more complete view of the performance of different interaction terms and models, and the custom score provided a single comparable number that considered all important performance aspects.
 
 As of now, the process of model evaluation with interaction terms is ongoing, and this comprehensive approach will likely provide robust and valuable insights into the role and interplay of genetics and environment in antisocial behavior.
+
+---
+
+### PHASE 2 - 
+
+1. **Models and Interaction Terms**: In Phase 1, we only considered the model's performance with all interaction terms added at once. We found that data imbalance caused issues with certain models, such as Naive Bayes. To improve this, in Phase 2, we decided to focus on a selection of models that are known to handle imbalanced data well. The chosen models were RandomForest, GradientBoosting, ExtraTrees, XGBoost, and LightGBM. The model list was flexible and could be changed to suit different needs.
+
+   Another major change was the approach to interaction terms. Instead of adding all interaction terms at once, we generated pairs of interaction terms using itertools.combinations. We then tested each interaction term individually with each model. This allowed us to see which specific interaction terms improved model performance. 
+
+2. **Custom Scoring**: The initial Phase 1 code used common metrics (like precision, recall, etc.) to evaluate model performance. In Phase 2, we introduced a custom scoring system to better encapsulate the performance based on specific needs. The `custom_score` function was introduced, which combined the weighted sum of precision, recall, f1-score, and ROC_AUC. This method allowed more control over the scoring system to reflect what mattered most in our specific context.
+
+3. **Model Evaluation**: Model evaluation underwent several changes from Phase 1 to Phase 2. Initially, we used 'cross_val_score' to evaluate models, but this approach was not compatible with our custom scoring function which required additional parameters (predicted probabilities). To resolve this, we used the 'make_scorer' function from sklearn to create a custom scorer compatible with 'cross_val_score'. 
+
+   Later, we shifted to a train-test split approach to facilitate more control over the evaluation process, including the calculation of metrics post-prediction. This change also made it easier to use predicted probabilities in the custom scoring function, which was not possible with the 'cross_val_score' method.
+
+4. **Error Handling**: During the testing of interaction terms, we encountered errors where certain interaction terms caused models to fail during training. This was a significant shift from Phase 1, where we didn't consider individual interaction terms' potential to cause errors. 
+
+   In Phase 2, we introduced a try-except block around the model fitting and evaluation loop. This meant that if an error occurred with one specific interaction term or model, the code would continue to the next term or model rather than stop execution. This allowed us to robustly test a large number of interaction terms without manual intervention.
+
+5. **Performance Logging and Comparative Analysis**: Phase 2 introduced a system for logging the performance of each model and interaction term combination. This logging was achieved by writing the results to a CSV file. This file served as a comprehensive record of the evaluation process and enabled further analysis outside of the Python environment.
+
+   The final part of Phase 2 was to compare the models and interaction terms based on the metrics logged in the CSV file. A comparative analysis was performed, which included normalization and ranking of each metric, and then calculating an 'Average Rank' across all metrics for each model and interaction term combination. The output provided valuable insights about which models and interaction terms performed the best overall.
+
+The journey from Phase 1 to Phase 2 was characterized by iterative refinement and expansion of the code, with a significant focus on flexibility and resilience. The changes allowed the testing of a larger set of models and interaction terms, offered a more comprehensive evaluation system, and enabled us to identify the most promising interaction terms and models for the dataset at hand.

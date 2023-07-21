@@ -156,3 +156,8 @@ As of now, the process of model evaluation with interaction terms is ongoing, an
 8. **Visualization**: Data visualization was an important component in Phase 2. We generated line plots and box plots for raw and normalized scores, aiding in the understanding of the model performances and their variances. We also produced learning curves to analyze the effect of the number of training examples on model performance. This enabled us to understand if more data would benefit the model performance.
 
 Overall, Phase 2 was characterized by iterative refinement and expansion of our machine learning workflow. Through methodical model selection, a structured approach to interaction terms, custom scoring systems, sophisticated error handling, performance logging, comparative analysis, and informative visualizations, we were able to conduct an in-depth exploration of model and interaction term performance, ultimately identifying the most promising combinations for our dataset.
+
+---
+
+### PHASE 3 - 
+

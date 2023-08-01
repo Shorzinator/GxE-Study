@@ -159,5 +159,26 @@ Overall, Phase 2 was characterized by iterative refinement and expansion of our 
 
 ---
 
-### PHASE 3 - 
+### PHASE 3 -
 
+1. **Model Selection:** Building upon Phase 2, we continued using RandomForest, GradientBoosting, ExtraTrees, and LightGBM for model training and prediction, as these models have previously demonstrated good performance with our imbalanced dataset. 
+
+2. **Feature Standardization:** We standardized certain continuous features using sklearn's StandardScaler to make them more suitable for use in our models. The features standardized were 'PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect', and 'ParentalWarmth'. 
+
+3. **Handling Missing Values:** In this phase, we employed a K-Nearest Neighbors (KNN) Imputer to handle missing values, filling them in with the mean value of the 6 nearest neighbors. This approach provided a more informed estimate than simply filling missing values with the mean or median of the column.
+
+4. **Handling Imbalanced Data:** We utilized Synthetic Minority Over-sampling Technique (SMOTE) to over-sample the minority class in our imbalanced dataset. By generating synthetic samples from the minority class, we improved the balance of our target variable and enhanced our model's ability to detect the less represented class.
+
+5. **Interaction Terms:** Building upon Phase 2, we continued generating interaction terms in a pairwise fashion using itertools.combinations. These interaction terms were created and assessed with each model, providing us with a nuanced understanding of how specific combinations of features influenced our model's performance.
+
+6. **Model Evaluation and Metric Calculation:** We introduced Recursive Feature Elimination with Cross-Validation (RFECV) as a feature selection method in our pipeline, improving the feature selection process by selecting an optimal number of most relevant features. Model fitting was done on the resampled training data, and predictions were made on the testing data. We continued to utilize our custom scoring function from Phase 2, which provided a weighted sum of precision, recall, f1-score, ROC_AUC, accuracy, and log_loss, aligning with our project objectives.
+
+7. **Error Handling:** Similar to Phase 2, we handled errors during model training and evaluation by wrapping our model fitting and prediction code in a try-except block. If a specific interaction term or model raised an error, the code would skip to the next model instead of terminating, allowing for a more robust evaluation of all models and interaction terms.
+
+8. **Performance Logging:** Like Phase 2, we logged the performance of each model and interaction term, writing the results to a CSV file. This logging mechanism provided a comprehensive record of the evaluation process, enabling additional post-hoc analysis.
+
+Overall, Phase 3 was characterized by further refinement and expansion of our machine learning pipeline. We introduced techniques for handling missing values and imbalance in our dataset, continued the use of interaction terms, and employed a sophisticated feature selection method. Through advanced error handling and comprehensive performance logging, we maintained a robust workflow and compiled a detailed performance record of our models. This ultimately allowed us to understand the effectiveness of various models and feature combinations on our specific dataset.
+
+--
+
+## PHASE 4 -

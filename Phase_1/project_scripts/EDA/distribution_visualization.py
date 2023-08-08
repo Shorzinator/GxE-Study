@@ -2,8 +2,8 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-from Phase_5.project_scripts.utility.data_loader import load_data
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 # Setting up directories
 output_dir_plots = get_path_from_root("results", "figures", "eda_plots", "distribution_visualization")

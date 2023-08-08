@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from Phase_5.project_scripts.utility.data_loader import load_data
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 import os
 
 # Load data

@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.metrics import classification_report, accuracy_score, f1_score, precision_score
 from sklearn.model_selection import GridSearchCV, cross_val_score
 import joblib
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 
 def save_results(model_name, target, comparison_class, results):

@@ -1,7 +1,7 @@
 import pandas as pd
 import os
-from Phase_5.project_scripts.utility.data_loader import load_data
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 # Setting up directories
 output_dir_csv = get_path_from_root("results", "eda_results")

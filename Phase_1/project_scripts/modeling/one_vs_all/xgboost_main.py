@@ -4,11 +4,11 @@ import joblib
 import xgboost as xgb
 import pandas as pd
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from Phase_5.project_scripts.utility.data_loader import load_data
-from Phase_5.project_scripts.preprocessing.preprocessing import preprocess_data, split_data, imputation_pipeline, \
+from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.preprocessing.preprocessing import preprocess_data, split_data, imputation_pipeline, \
     balance_data
-from Phase_5.project_scripts.utility.model_utils import calculate_metrics
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.model_utils import calculate_metrics
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     model_name = "xgboost"
 
     # Use the path utility to get the path for xgboost_results
-    results_dir = get_path_from_root("Phase_5", "results", "one_vs_all", f"{model_name}_results")
+    results_dir = get_path_from_root("Phase_1", "results", "one_vs_all", f"{model_name}_results")
 
     # Ensure the xgboost_results directory exists
     if not os.path.exists(results_dir):

@@ -1,6 +1,6 @@
-from Phase_5.project_scripts.utility.data_loader import load_data
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
-from Phase_5.project_scripts.preprocessing.preprocessing import preprocess_data, imputation_pipeline, split_data
+from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.preprocessing.preprocessing import preprocess_data, imputation_pipeline, split_data
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import os

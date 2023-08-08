@@ -1,6 +1,6 @@
 import os
 
-# Navigate two directories up to get the directory containing 'Phase_5'
+# Navigate two directories up to get the directory containing 'Phase_1'
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 

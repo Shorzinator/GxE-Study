@@ -4,7 +4,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import StratifiedShuffleSplit
 from imblearn.combine import SMOTEENN
-from Phase_5.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 
 def preprocess_data(df, target):

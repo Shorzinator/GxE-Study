@@ -1,9 +1,11 @@
 import os
+
+import joblib
 import numpy as np
 import pandas as pd
-from sklearn.metrics import classification_report, accuracy_score, f1_score, precision_score
+from sklearn.metrics import accuracy_score, classification_report, precision_score
 from sklearn.model_selection import GridSearchCV, cross_val_score
-import joblib
+
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 
@@ -61,6 +63,8 @@ def calculate_metrics(y_actual, y_pred, model_name, target, comparison_class):
 
     # Save the results
     save_results(model_name, target, comparison_class, results)
+
+    return results
 
 
 def train_model(model, X_train, y_train, save_model=False, model_name=None):

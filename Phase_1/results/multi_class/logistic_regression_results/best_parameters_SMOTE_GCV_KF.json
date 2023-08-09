@@ -1,0 +1,8 @@
+{
+    "run_1": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    }
+}

@@ -16,7 +16,6 @@ from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, save_results
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
-warnings.filterwarnings("ignore", "l1_ratio parameter is only used when penalty is 'elasticnet'. Got (penalty=l1)")
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 logging.basicConfig(level=logging.INFO)

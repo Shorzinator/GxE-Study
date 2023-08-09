@@ -63,7 +63,7 @@ def scaling_pipeline(df):
 
 def balance_data(X_train, y_train):
     """Data Balancing Pipeline."""
-    smote = SMOTE(random_state=0)
+    smote = SMOTE(random_state=0, n_neighbors=10, sampling_strategy="all")
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
     return X_resampled, y_resampled

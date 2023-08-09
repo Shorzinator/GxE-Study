@@ -26,7 +26,7 @@ def imputation_pipeline(df):
     numeric_features = [col for col in df.columns if col not in categorical_features + ['AntisocialTrajectory', 'Sex']]
 
     numeric_transformer = Pipeline(steps=[
-        ('impute', KNNImputer(n_neighbors=5))
+        ('impute', KNNImputer(n_neighbors=10))
     ])
 
     categorical_transformer = Pipeline(steps=[
@@ -63,7 +63,7 @@ def scaling_pipeline(df):
 
 def balance_data(X_train, y_train):
     """Data Balancing Pipeline."""
-    smote = SMOTE(random_state=0, n_neighbors=10, sampling_strategy="all")
+    smote = SMOTE(random_state=0, k_neighbors=10, m_neighbors=10, sampling_strategy="all", n_jobs=-1)
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
     return X_resampled, y_resampled

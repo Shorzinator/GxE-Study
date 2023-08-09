@@ -4,7 +4,6 @@ import os
 import joblib
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import GridSearchCV
 
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import balance_data, imputation_pipeline, preprocess_multinomial, \
@@ -34,7 +33,7 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     logger.info("Training the multinomial logistic regression model...\n")
 
     # Define the model
-    mlr_model = LogisticRegression(multi_class='multinomial', max_iter=1000, solver='saga', n_jobs=-1)
+    mlr_model = LogisticRegression(multi_class='ovr', max_iter=1000, solver='saga', n_jobs=-1)
 
     # Define the parameter grid
     param_grid = {
@@ -46,17 +45,17 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     logger.info("Fitting the model...\n")
 
     # Create the GridSearchCV object
-    grid_search = GridSearchCV(estimator=mlr_model, param_grid=param_grid,
-                               scoring='accuracy', cv=5)
+    # grid_search = GridSearchCV(estimator=mlr_model, param_grid=param_grid,
+    #                           scoring='accuracy', cv=5)
 
     # Fit the GridSearchCV object to the data
-    grid_search.fit(X_train, y_train)
+    # grid_search.fit(X_train, y_train)
 
     # Train the model
     mlr_model.fit(X_train, y_train)
 
     # Saving the model
-    joblib.dump(mlr_model, os.path.join(model_dir, "multinomial_logistic_regression_model.pkl"))
+    joblib.dump(mlr_model, os.path.join(model_dir, "multinomial_logistic_regression_model_ovr.pkl"))
 
     # Make predictions
     y_pred_train = mlr_model.predict(X_train)
@@ -68,6 +67,14 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     train_metrics = calculate_metrics(y_train, y_pred_train, "logistic_regression", "Multinomial", "train")
     test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "Multinomial", "test")
 
+    """
+    best_parameters = grid_search.best_params_
+    with open(os.path.join(results_dir, "best_parameters.json"), 'w') as f:
+        json.dump(best_parameters, f)
+
+    best_estimator = grid_search.best_estimator_
+    joblib.dump(best_estimator, os.path.join(model_dir, "best_estimator.pkl"))
+    """
     return train_metrics, test_metrics
 
 
@@ -99,7 +106,7 @@ if __name__ == "__main__":
 
     # Establish the model-specific directories
     model_name = "logistic_regression"
-    results_dir = get_path_from_root("results", "multi_class", f"{model_name}_results")
+    results_dir = get_path_from_root("results", "one_vs_all", f"{model_name}_results")
 
     # Ensure the results directory exists
     if not os.path.exists(results_dir):

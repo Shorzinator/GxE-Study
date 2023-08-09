@@ -1,0 +1,9 @@
+1. Distribution of raw data
+
+    AntisocialTrajectory
+    4.0    0.788702
+    2.0    0.123090
+    3.0    0.069641
+    1.0    0.018567
+
+2.

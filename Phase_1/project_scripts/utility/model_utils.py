@@ -21,6 +21,7 @@ def save_results(model_name, target, comparison_class, results):
     :param comparison_class: The class being compared against (e.g., "1_vs_4")
     :param results: The results data (a dictionary)
     """
+    logger.info("Saving results ...\n")
 
     # Flatten the results dictionary
     flat_results = {}
@@ -122,6 +123,9 @@ def perform_grid_search(model, X, y, param_grid, cv=None):
     Returns:
     - The best estimator from the grid search.
     """
+
+    logger.info("Starting Grid Search ...\n")
+
     if cv is None:
         cv = KFold(n_splits=5)  # Default cross-validator
 

@@ -17,8 +17,6 @@ def load_data():
     logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.")
 
     # Enhanced Validity Checks
-    logger.info(f"Data types:\n{df.dtypes}")  # Check data types
     logger.info(f"Missing values count:\n{df.isnull().sum()}")  # Check for missing values
-    logger.info(f"First 5 rows of data:\n{df.head()}\n")  # Display first few rows
 
     return df

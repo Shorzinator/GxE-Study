@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 def split_data(df, outcome_series):
+    logger.info("Splitting data ...\n")
+
     sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
     for train_idx, test_idx in sss.split(df, outcome_series):
         X_train = df.iloc[train_idx].reset_index(drop=True)
@@ -22,6 +24,8 @@ def split_data(df, outcome_series):
 
 def imputation_pipeline(df):
     """Imputation Pipeline."""
+    logger.info("Applying Imputation ...\n")
+
     categorical_features = ['Race']
     numeric_features = [col for col in df.columns if col not in categorical_features + ['AntisocialTrajectory', 'Sex']]
 
@@ -44,6 +48,8 @@ def imputation_pipeline(df):
 
 def scaling_pipeline(df):
     """Scaling Pipeline."""
+    logger.info("Applying scaling ...\n")
+
     numeric_features = [col for col in df.columns if col not in ['Race', 'AntisocialTrajectory', 'Sex', 'Is_Male']]  # Added 'Is_Male' to exclude it from scaling
     categorical_features = ['Race']
 
@@ -63,26 +69,34 @@ def scaling_pipeline(df):
 
 def balance_data(X_train, y_train):
     """Data Balancing Pipeline."""
-    smote = SMOTE(random_state=0, k_neighbors=10, m_neighbors=10, sampling_strategy="all", n_jobs=-1)
+    logger.info("Balancing data ...\n")
+
+    initial_size = len(X_train)
+    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="all", n_jobs=-1)
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+    logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.")
 
     return X_resampled, y_resampled
 
 
 def preprocess_multinomial(df, target):
-    logger.info("Starting data preprocessing for multinomial logistic regression ...")
+    logger.info("Starting data preprocessing for multinomial logistic regression ...\n")
 
     # Convert Sex to Is_Male binary column
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
     # Handle outliers for PolygenicScoreEXT using IQR
+    initial_size = len(df)
     Q1 = df['PolygenicScoreEXT'].quantile(0.25)
     Q3 = df['PolygenicScoreEXT'].quantile(0.75)
     IQR = Q3 - Q1
     df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) | (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.")
 
     # Drop rows where the target variable is missing
+    initial_size = len(df)
     df = df.dropna(subset=[target])
+    logger.info(f"Rows before dropping missing values in target: {initial_size}. Rows after: {len(df)}.")
 
     # Separate the target variable
     outcome = df[target]

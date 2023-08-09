@@ -1,11 +1,13 @@
 import json
 import logging
 import os
+import warnings
 
 import joblib
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
+from tqdm import tqdm
 
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import balance_data, imputation_pipeline, preprocess_multinomial, \
@@ -14,8 +16,20 @@ from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, save_results
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
+warnings.filterwarnings("ignore")
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+class TqdmCallback:
+    def __init__(self, total):
+        self._pbar = tqdm(total=total)
+
+    def __call__(self, index):
+        self._pbar.n = index + 1
+        self._pbar.last_print_n = index + 1
+        self._pbar.update()
 
 
 def train_model(X_train, X_test, y_train, y_test, model_dir):
@@ -31,6 +45,12 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     Returns:
     - train_metrics, test_metrics: Metrics for train and test predictions
     """
+    # User-entered variable names for naming
+    cross_validator = "KF"
+    grid_searcher = "GCV"
+    balancer = "SMOTE"
+
+    combined = f"{balancer}_{grid_searcher}_{cross_validator}"
 
     logger.info("Training the multinomial logistic regression model...\n")
 
@@ -51,18 +71,20 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
 
     logger.info("Fitting the model...\n")
 
-    # Create the GridSearchCV object
+    # Now, when you create your GridSearchCV object, you add the following:
     grid_search = GridSearchCV(estimator=mlr_model, param_grid=param_grid,
-                               scoring='accuracy', cv=5)
+                               scoring='accuracy', cv=5,
+                               verbose=0, n_jobs=-1)
 
-    # Fit the GridSearchCV object to the data
-    grid_search.fit(X_train, y_train)
+    joblib.register_parallel_backend('loky', TqdmCallback(len(X_train) * len(param_grid)))
+    with joblib.parallel_backend('loky', n_jobs=-1):
+        grid_search.fit(X_train, y_train)
 
     # Train the model
     # mlr_model.fit(X_train, y_train)
 
     # Saving the model
-    joblib.dump(grid_search, os.path.join(model_dir, "multinomial_logistic_regression_model_SMOTE_GCV.pkl"))
+    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_model_{combined}.pkl"))
 
     # Make predictions
     y_pred_train = grid_search.predict(X_train)
@@ -75,11 +97,11 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "Multinomial", "test")
 
     best_parameters = grid_search.best_params_
-    with open(os.path.join(results_dir, "best_parameters_SMOTE_GCV.json"), 'w') as f:
+    with open(os.path.join(results_dir, f"best_parameters_{combined}.json"), 'w') as f:
         json.dump(best_parameters, f)
 
     best_estimator = grid_search.best_estimator_
-    joblib.dump(best_estimator, os.path.join(model_dir, "best_estimator_SMOTE_GCV.pkl"))
+    joblib.dump(best_estimator, os.path.join(model_dir, f"best_estimator_{combined}.pkl"))
 
     return train_metrics, test_metrics
 
@@ -128,12 +150,15 @@ if __name__ == "__main__":
     if not os.path.exists(metrics_dir):
         os.makedirs(metrics_dir)
 
-    print("Distribution before balancing:")
+    print("Distribution before balancing:\n")
     print(y_train.value_counts(normalize=True))
 
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
 
-    print("\nDistribution after balancing:")
+    print("Distribution after balancing:")
+    print(y_train_resampled.value_counts(normalize=True))
+
+    print("Distribution after balancing:")
     print(y_train_resampled.value_counts(normalize=True))
 
     # Train the model and get metrics

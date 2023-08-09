@@ -70,7 +70,7 @@ def calculate_metrics(y_true, y_pred, model_name, target, comparison):
     }
 
     # Extract only the relevant class metrics based on comparison
-    relevant_classes = comparison.split('_vs_') # This will give ['1', '4'] for '1_vs_4' for example
+    relevant_classes = comparison.split('_vs_')  # This will give ['1', '4'] for '1_vs_4' for example
 
     for cls in relevant_classes:
         metrics[f"{cls}_Precision"] = report[cls]['precision']
@@ -78,7 +78,6 @@ def calculate_metrics(y_true, y_pred, model_name, target, comparison):
         metrics[f"{cls}_Accuracy"] = report[cls]['accuracy']
 
     return metrics
-
 
 
 def train_model(model, X_train, y_train, save_model=False, model_name=None):
@@ -93,7 +92,6 @@ def train_model(model, X_train, y_train, save_model=False, model_name=None):
         joblib.dump(model, model_path)
 
     return model
-
 
 
 def perform_grid_search(model, X, y, param_grid):

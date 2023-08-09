@@ -24,7 +24,11 @@ def preprocess_data(df, target):
 
         # Separate the target variable
         outcome = df[target]
-        df = df.drop(columns=[target])
+        feature_cols = ["Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
+                        "ParentalWarmth", "Is_Male"]
+        df = df[feature_cols]
+
+        print(df.columns)
 
         # Create datasets for each binary classification task
         df_1_vs_4 = df[outcome.isin([1, 4])].copy()
@@ -48,14 +52,14 @@ def preprocess_data(df, target):
         return None
 
 
-def split_data(df, outcome):
-    """Data Splitting Pipeline."""
+def split_data(df, outcome_series):
     sss = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-    for train_idx, test_idx in sss.split(df, df[outcome]):
-        X_train, X_test = df.iloc[train_idx], df.iloc[test_idx]
-        y_train, y_test = df[outcome].iloc[train_idx], df[outcome].iloc[test_idx]
-
+    for train_idx, test_idx in sss.split(df, outcome_series):
+        X_train = df.iloc[train_idx].reset_index(drop=True)
+        X_test = df.iloc[test_idx].reset_index(drop=True)
+        y_train, y_test = outcome_series.iloc[train_idx], outcome_series.iloc[test_idx]
     return X_train, X_test, y_train, y_test
+
 
 
 def imputation_pipeline(df):

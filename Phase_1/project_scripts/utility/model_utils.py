@@ -1,12 +1,16 @@
+import logging
 import os
 
 import joblib
 import numpy as np
 import pandas as pd
-from sklearn.metrics import accuracy_score, classification_report, precision_score
+from sklearn.metrics import accuracy_score, classification_report, precision_score, recall_score
 from sklearn.model_selection import GridSearchCV, cross_val_score
 
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def save_results(model_name, target, comparison_class, results):
@@ -31,40 +35,50 @@ def save_results(model_name, target, comparison_class, results):
     results_df.to_csv(results_file, index=False)
 
 
-def calculate_metrics(y_actual, y_pred, model_name, target, comparison_class):
+def calculate_metrics(y_true, y_pred, model_name, target, comparison):
     """
-    Evaluate the given model on the test set and save the results.
-    :param y_actual: True values for both train and test (provided one after other)
-    :param y_pred: Predicted values for both train and test (provided one after other)
-    :param model_name: Name of the model (e.g., "xgboost")
-    :param target: Target variable (either "AST" or "SUT")
-    :param comparison_class: The class being compared against (e.g., "1_vs_4")
-    :return: None
+    Calculate metrics for the model predictions.
+    :param y_true: True labels
+    :param y_pred: Predicted labels
+    :param model_name: Name of the model
+    :param target: Target column name
+    :param comparison: The type of comparison (e.g., '1_vs_4')
+    :return: A dictionary containing the calculated metrics
     """
 
-    # Calculate metrics
-    accuracy = accuracy_score(y_actual, y_pred)
-    class_report = classification_report(y_actual, y_pred, output_dict=True)
-    precision = precision_score(y_actual, y_pred, average="weighted")
+    # Log unique classes for validation
+    logger.info(f"Unique classes in true labels: {set(y_true)}")
+    logger.info(f"Unique classes in predicted labels: {set(y_pred)}")
 
-    # Store results
-    results = {
+    # Check if predictions are all of one class
+    if len(set(y_pred)) == 1:
+        logger.warning(f"All predictions are of class {y_pred[0]}.")
+
+    # Get classification report
+    report = classification_report(y_true, y_pred, output_dict=True)
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred)
+    recall = recall_score(y_true, y_pred)
+
+    metrics = {
         "Model": model_name,
         "Target": target,
-        "Comparison": comparison_class,
+        "Comparison": comparison,
         "Accuracy": accuracy,
         "Precision": precision,
+        "Recall": recall
     }
 
-    for label, metrics in class_report.items():
-        if isinstance(metrics, dict):
-            for metric_name, metric_value in metrics.items():
-                results[f"{label}_{metric_name}"] = metric_value
+    # Extract only the relevant class metrics based on comparison
+    relevant_classes = comparison.split('_vs_') # This will give ['1', '4'] for '1_vs_4' for example
 
-    # Save the results
-    save_results(model_name, target, comparison_class, results)
+    for cls in relevant_classes:
+        metrics[f"{cls}_Precision"] = report[cls]['precision']
+        metrics[f"{cls}_Recall"] = report[cls]['recall']
+        metrics[f"{cls}_Accuracy"] = report[cls]['accuracy']
 
-    return results
+    return metrics
+
 
 
 def train_model(model, X_train, y_train, save_model=False, model_name=None):

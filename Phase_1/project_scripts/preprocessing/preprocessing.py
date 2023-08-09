@@ -1,29 +1,51 @@
+import logging
+
+from imblearn.combine import SMOTEENN
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import StratifiedShuffleSplit
-from imblearn.combine import SMOTEENN
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def preprocess_data(df, target):
 
-    # Extract the correct outcome column based on the target
-    outcome = "AntisocialTrajectory" if target == "AST" else "SubstanceUseTrajectory"
+    try:
+        logger.info("Starting data preprocessing ...")
 
-    # Convert Sex to Is_Male binary column
-    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
-    df = df.dropna(subset=[outcome])
+        # Convert Sex to Is_Male binary column
+        df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
-    processed_data_path = get_path_from_root("data", "processed", f"{target}_preprocessed.csv")
-    df.to_csv(processed_data_path, index=False)
+        # Drop rows where the target variable is missing
+        df = df.dropna(subset=[target])
 
-    # Create target comparison columns
-    for i in [1, 2, 3]:
-        df[f"{target}_{i}_vs_4"] = (df[outcome] == i).astype(int)
+        # Separate the target variable
+        outcome = df[target]
+        df = df.drop(columns=[target])
 
-    return df, outcome
+        # Create datasets for each binary classification task
+        df_1_vs_4 = df[outcome.isin([1, 4])].copy()
+        outcome_1_vs_4 = outcome[outcome.isin([1, 4])].copy()
+
+        df_2_vs_4 = df[outcome.isin([2, 4])].copy()
+        outcome_2_vs_4 = outcome[outcome.isin([2, 4])].copy()
+
+        df_3_vs_4 = df[outcome.isin([3, 4])].copy()
+        outcome_3_vs_4 = outcome[outcome.isin([3, 4])].copy()
+
+        logger.info("Data preprocessing completed successfully.")
+
+        return {
+            "1_vs_4": (df_1_vs_4, outcome_1_vs_4),
+            "2_vs_4": (df_2_vs_4, outcome_2_vs_4),
+            "3_vs_4": (df_3_vs_4, outcome_3_vs_4)
+        }
+    except Exception as e:
+        logger.error(f"Error occurred during data preprocessing: {str(e)}")
+        return None
 
 
 def split_data(df, outcome):
@@ -49,6 +71,8 @@ def imputation_pipeline(df):
     categorical_transformer = Pipeline(steps=[
         ('onehot', OneHotEncoder(handle_unknown='ignore'))
     ])
+    logger.info(f"Dataframe shape after one-hot encoding: {df.shape}")
+    print()
 
     preprocessor = ColumnTransformer(
         transformers=[

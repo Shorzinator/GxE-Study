@@ -7,8 +7,8 @@ import pandas as pd
 import xgboost as xgb
 from sklearn.preprocessing import LabelEncoder
 
-from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_pipeline, preprocess_data, \
-    split_data
+from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_pipeline, preprocess_ovr, \
+    scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
     target = "AntisocialTrajectory"
 
-    datasets = preprocess_data(df, target)  # preprocessing
+    datasets = preprocess_ovr(df, target)  # preprocessing
     logger.info(f"Data shape after preprocessing: {df.shape}")
     logger.info(f"Original distribution of 'AST':\n{df['AntisocialTrajectory'].value_counts()}\n")
     print()
@@ -124,10 +124,15 @@ if __name__ == "__main__":
         logger.info(f"Training outcome value counts for {target_val}: \n{y_train.value_counts()}")
         logger.info(f"Test outcome value counts for {target_val}: \n{y_test.value_counts()}")
 
-        # Apply imputation and scaling pipeline
-        preprocessor = imputation_pipeline(X_train)  # imputation and scaling
-        X_train = preprocessor.fit_transform(X_train)
-        X_test = preprocessor.transform(X_test)
+        # Applying imputation
+        impute = imputation_pipeline(X_train)
+        X_train = impute.fit_transform(X_train)
+        X_test = impute.transform(X_test)
+
+        # Applying scaling
+        scaler = scaling_pipeline(X_train)
+        X_train = scaler.fit_transform(X_train)
+        X_test = scaler.transform(X_test)
 
         X_train = pd.DataFrame(X_train)
         X_test = pd.DataFrame(X_test)

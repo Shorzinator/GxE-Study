@@ -1,6 +1,6 @@
 import logging
 
-from imblearn.combine import SMOTEENN
+from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import KNNImputer
 from sklearn.model_selection import StratifiedShuffleSplit
@@ -63,8 +63,8 @@ def scaling_pipeline(df):
 
 def balance_data(X_train, y_train):
     """Data Balancing Pipeline."""
-    smote_enn = SMOTEENN(random_state=0)
-    X_resampled, y_resampled = smote_enn.fit_resample(X_train, y_train)
+    smote = SMOTE(random_state=0)
+    X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
     return X_resampled, y_resampled
 

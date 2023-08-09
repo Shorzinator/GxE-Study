@@ -22,6 +22,15 @@ def save_results(model_name, target, comparison_class, results):
     :param results: The results data (a dictionary)
     """
 
+    # Flatten the results dictionary
+    flat_results = {}
+    for split, metrics in results.items():
+        for metric, value in metrics.items():
+            flat_results[f"{split}_{metric}"] = value
+
+    # Convert the flattened dictionary to a dataframe
+    results_df = pd.DataFrame([flat_results])
+
     # Determine the model type based on the current directory
     cwd = os.getcwd()
     if "multi_class" in cwd:
@@ -37,17 +46,17 @@ def save_results(model_name, target, comparison_class, results):
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
 
-        # Convert results dictionary to dataframe and save as CSV
-    results_df = pd.DataFrame([results])
+    # Define the path for saving
     if model_type == "multi_class":
         results_file = os.path.join(dir_path, f"{target}_results.csv")
     else:  # For one_vs_all, keep the original naming convention
         results_file = os.path.join(dir_path, f"{target}_{comparison_class}_results.csv")
 
+    # Save to CSV
     results_df.to_csv(results_file, index=False)
 
 
-def calculate_metrics(y_true, y_pred, model_name, target):
+def calculate_metrics(y_true, y_pred, model_name, target, type):
     """
     Calculate metrics for the multinomial model predictions.
     :param y_true: True labels
@@ -58,8 +67,8 @@ def calculate_metrics(y_true, y_pred, model_name, target):
     """
 
     # Log unique classes for validation
-    logger.info(f"Unique classes in true labels: {set(y_true)}")
-    logger.info(f"Unique classes in predicted labels: {set(y_pred)}")
+    logger.info(f"Unique classes in true labels for {type}: {set(y_true)}")
+    logger.info(f"Unique classes in predicted labels for {type}: {set(y_pred)}")
 
     # Check if predictions are all one class
     if len(set(y_pred)) == 1:

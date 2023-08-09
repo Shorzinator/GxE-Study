@@ -1,10 +1,19 @@
 1. Distribution of raw data
-
+    Before balancing -
+    Rows before balancing: 16427
     AntisocialTrajectory
     4.0    0.788702
     2.0    0.123090
     3.0    0.069641
     1.0    0.018567
+
+    After balancing -
+    Rows after balancing: 51824
+    AntisocialTrajectory
+    4.0    0.25
+    2.0    0.25
+    3.0    0.25
+    1.0    0.25
 
 2. Missing values count:
     ID                            0
@@ -80,8 +89,8 @@
     Again, the macro and weighted averages for precision, recall, and F1-score are provided.
 
     Analysis:
-    1. For the **training set**, the model seems to be doing the best in predicting class "4" and worst in predicting class "3".
-    2. In the **testing set**, the precision for class "1" is surprisingly low at 8.83%, while it has a high recall of 61.84%. This indicates that the model is identifying a lot of instances as class "1", but a large portion of them are false positives.
+    1. For the training set, the model seems to be doing the best in predicting class "4" and worst in predicting class "3".
+    2. In the testing set, the precision for class "1" is surprisingly low at 8.83%, while it has a high recall of 61.84%. This indicates that the model is identifying a lot of instances as class "1", but a large portion of them are false positives.
     3. For class "4" in the testing set, the precision is very high (90.09%), indicating that when the model predicts class "4", it's often correct.
     4. The overall accuracy for training and testing is 45.39% and 53.30%, respectively. While these aren't extremely high values, they do suggest the model has learned some patterns in the data.
 

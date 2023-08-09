@@ -8,6 +8,7 @@ import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 
+from Phase_1.config import COMBINED
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import balance_data, imputation_pipeline, preprocess_multinomial, \
     scaling_pipeline, split_data
@@ -35,27 +36,19 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     Returns:
     - train_metrics, test_metrics: Metrics for train and test predictions
     """
-    # User-entered variable names for naming
-    cross_validator = "KF"
-    grid_searcher = "GCV"
-    balancer = "SMOTE"
-
-    combined = f"{balancer}_{grid_searcher}_{cross_validator}"
 
     logger.info("Training the multinomial logistic regression model...\n")
 
     # Define the model
-    mlr_model = LogisticRegression(multi_class='multinomial', max_iter=5000, solver='saga', n_jobs=-1, tol=1e-4,
+    mlr_model = LogisticRegression(multi_class='multinomial', max_iter=10000, solver='saga', n_jobs=-1, tol=1e-5,
                                    class_weight="balanced")
 
     # Define the parameter grid
     param_grid = {
-        'solver': ['saga'],
         'penalty': ['elasticnet'],
-        'C': [0.001, 0.01, 0.1, 1, 10, 100],
+        'C': [0.5, 1, 2],
         'fit_intercept': [True, False],
-        'l1_ratio': [0.25, 0.5, 0.75],
-        'class_weight': [None, 'balanced']
+        'l1_ratio': [0.4, 0.5, 0.6, 0.55, 0.45],
     }
 
     logger.info("Fitting the model...\n")
@@ -94,7 +87,7 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     # mlr_model.fit(X_train, y_train)
 
     # Saving the model
-    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_model_{combined}.pkl"))
+    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_model_{COMBINED}.pkl"))
 
     # Make predictions
     y_pred_train = grid_search.predict(X_train)
@@ -107,11 +100,25 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "Multinomial", "test")
 
     best_parameters = grid_search.best_params_
-    with open(os.path.join(results_dir, f"best_parameters_{combined}.json"), 'w') as f:
-        json.dump(best_parameters, f)
+    results_path = os.path.join(results_dir, f"best_parameters_{COMBINED}.json")
+
+    # Check if the file exists
+    if os.path.exists(results_path):
+        # Read the current content of the JSON file
+        with open(results_path, 'r') as f:
+            data = json.load(f)
+    else:
+        data = {}
+
+    # Append new results to the data
+    data['run_{}'.format(len(data) + 1)] = best_parameters
+
+    # Write the updated data back to the JSON file
+    with open(results_path, 'w') as f:
+        json.dump(data, f, indent=4)
 
     best_estimator = grid_search.best_estimator_
-    joblib.dump(best_estimator, os.path.join(model_dir, f"best_estimator_{combined}.pkl"))
+    joblib.dump(best_estimator, os.path.join(model_dir, f"best_estimator_{COMBINED}.pkl"))
 
     return train_metrics, test_metrics
 

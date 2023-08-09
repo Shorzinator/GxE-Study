@@ -33,13 +33,12 @@ def train_model(outcome_val, baseline_val, X_train, X_test, y_train, y_test, pre
     # Balancing the dataset
     X_resampled, y_resampled = balance_data(X_train, y_train)
     logger.info(f"Data shape after balancing: {X_resampled.shape}")
+    logger.info(f"Balanced training data shape for {outcome_val}: {X_resampled.shape}")
+    logger.info(f"Balanced outcome value counts for {outcome_val}: \n{pd.Series(y_resampled).value_counts()}")
 
     # Use LabelEncoder to transform y_resampled to have values starting from 0
     le = LabelEncoder()
     y_resampled = le.fit_transform(y_resampled)
-
-    balanced_data_path = get_path_from_root("data", "processed", f"balanced_data_{outcome_val}.csv")
-    pd.DataFrame(X_resampled).to_csv(balanced_data_path, index=False)
 
     # XGBoost model
     xgb_model = xgb.XGBClassifier(n_jobs=NUM_CORES, use_label_encoder=False, eval_metric='mlogloss', max_depth=10,
@@ -68,6 +67,9 @@ def train_model(outcome_val, baseline_val, X_train, X_test, y_train, y_test, pre
 
     y_pred_train = xgb_model.predict(X_train)
     y_pred_test = xgb_model.predict(X_test)
+    logger.info(
+        f"Predicted training outcome value counts for {outcome_val}: \n{pd.Series(y_pred_train).value_counts()}")
+    logger.info(f"Predicted test outcome value counts for {outcome_val}: \n{pd.Series(y_pred_test).value_counts()}")
 
     # Correct the calls to the calculate_metrics function
     train_metrics = calculate_metrics(y_train, y_pred_train, "xgboost", "AST", f"{outcome_val}_vs_{baseline_val}")
@@ -78,14 +80,14 @@ def train_model(outcome_val, baseline_val, X_train, X_test, y_train, y_test, pre
 
 if __name__ == "__main__":
     df = load_data()
-    logger.info(f"Original distribution of 'AST':\n{df['AST'].value_counts()}")
+    logger.info(f"Original distribution of 'AST':\n{df['AntisocialTrajectory'].value_counts()}\n")
     print()
 
     target = "AntisocialTrajectory"
 
     datasets = preprocess_data(df, target)  # preprocessing
     logger.info(f"Data shape after preprocessing: {df.shape}")
-    logger.info(f"Original distribution of 'AST':\n{df['AST'].value_counts()}")
+    logger.info(f"Original distribution of 'AST':\n{df['AntisocialTrajectory'].value_counts()}\n")
     print()
 
     # Establish the model-specific directories
@@ -112,14 +114,26 @@ if __name__ == "__main__":
     baseline_val = 4
 
     for target_val, (data, outcome) in datasets.items():
+        logger.info(f"Data shape after preprocessing for {target_val}: {data.shape}")
+        logger.info(f"Outcome value counts for {target_val}: \n{outcome.value_counts()}")
+
         # Split data
         X_train, X_test, y_train, y_test = split_data(data, outcome)
-        logger.info(f"Training data shape: {X_train.shape}, Test data shape: {X_test.shape}")
+        logger.info(f"Training data shape for {target_val}: {X_train.shape}")
+        logger.info(f"Test data shape for {target_val}: {X_test.shape}")
+        logger.info(f"Training outcome value counts for {target_val}: \n{y_train.value_counts()}")
+        logger.info(f"Test outcome value counts for {target_val}: \n{y_test.value_counts()}")
 
         # Apply imputation and scaling pipeline
         preprocessor = imputation_pipeline(X_train)  # imputation and scaling
         X_train = preprocessor.fit_transform(X_train)
         X_test = preprocessor.transform(X_test)
+
+        X_train = pd.DataFrame(X_train)
+        X_test = pd.DataFrame(X_test)
+
+        logger.info(f"Training data shape after imputation and scaling for {target_val}: {X_train.shape}")
+        logger.info(f"Test data shape after imputation and scaling for {target_val}: {X_test.shape}")
 
         train_metrics, test_metrics = train_model(target_val,
                                                   baseline_val,

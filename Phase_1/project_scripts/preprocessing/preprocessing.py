@@ -74,7 +74,7 @@ def balance_data(X_train, y_train):
     initial_size = len(X_train)
     smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="all", n_jobs=-1)
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
-    logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.")
+    logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
     return X_resampled, y_resampled
 
@@ -91,12 +91,12 @@ def preprocess_multinomial(df, target):
     Q3 = df['PolygenicScoreEXT'].quantile(0.75)
     IQR = Q3 - Q1
     df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) | (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
-    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.")
+    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
 
     # Drop rows where the target variable is missing
     initial_size = len(df)
     df = df.dropna(subset=[target])
-    logger.info(f"Rows before dropping missing values in target: {initial_size}. Rows after: {len(df)}.")
+    logger.info(f"Rows before dropping missing values in target: {initial_size}. Rows after: {len(df)}.\n")
 
     # Separate the target variable
     outcome = df[target]

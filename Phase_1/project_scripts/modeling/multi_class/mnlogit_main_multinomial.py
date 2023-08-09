@@ -39,7 +39,7 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
 
     # Define the parameter grid
     param_grid = {
-        'penalty': ['l1', 'l2', 'elasticnet', 'none'],
+        'penalty': ['elasticnet', 'none'],
         'C': [0.001, 0.01, 0.1, 1, 10, 100],
         'fit_intercept': [True, False],
         'solver': ['newton-cg', 'sag', 'saga', 'lbfgs'],
@@ -75,11 +75,11 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "Multinomial", "test")
 
     best_parameters = grid_search.best_params_
-    with open(os.path.join(results_dir, "best_parameters.json"), 'w') as f:
+    with open(os.path.join(results_dir, "best_parameters_SMOTE_GCV.json"), 'w') as f:
         json.dump(best_parameters, f)
 
     best_estimator = grid_search.best_estimator_
-    joblib.dump(best_estimator, os.path.join(model_dir, "best_estimator.pkl"))
+    joblib.dump(best_estimator, os.path.join(model_dir, "best_estimator_SMOTE_GCV.pkl"))
 
     return train_metrics, test_metrics
 

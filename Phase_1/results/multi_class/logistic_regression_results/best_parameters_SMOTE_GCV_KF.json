@@ -1,0 +1,1 @@
+{"C": 1, "class_weight": null, "fit_intercept": true, "l1_ratio": 0.5, "penalty": "elasticnet", "solver": "saga"}

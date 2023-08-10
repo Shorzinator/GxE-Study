@@ -6,11 +6,48 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
+from sklearn.preprocessing import PolynomialFeatures
 
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def add_interaction_terms(df, feature_pairs):
+    """
+    Generate interaction terms for specified feature pairs iteratively.
+
+    Args:
+    - df (pd.DataFrame): Original dataset.
+    - feature_pairs (list of tuples): List of tuples where each tuple contains feature columns
+                                     for which interaction terms are to be generated.
+
+    Returns:
+    - df (pd.DataFrame): Dataset with added interaction terms.
+    """
+    for pair in feature_pairs:
+        logger.info(f"Generating interaction term for features: {pair}")
+
+        # Initialize polynomial features object for pairwise interactions
+        poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
+
+        # Fit and transform to generate interaction term
+        interaction = poly.fit_transform(df[list(pair)])
+
+        # Extract interaction feature name
+        interaction_feature_name = poly.get_feature_names_out(input_features=pair)[1]  # Index 1 corresponds to the interaction term
+
+        # Convert interaction to DataFrame
+        df_interaction = pd.DataFrame(interaction[:, 1], columns=[interaction_feature_name])  # Index 1 corresponds to the interaction term
+
+        # Merge with the original dataframe
+        df = pd.concat([df, df_interaction], axis=1)
+
+        logger.info(f"Updated dataset size after adding interaction term: {df.shape}")
+
+    return df
+
 
 
 def save_results(model_name, target, comparison_class, results):

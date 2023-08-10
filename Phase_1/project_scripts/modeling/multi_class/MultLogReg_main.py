@@ -1,3 +1,4 @@
+import itertools
 import json
 import logging
 import os
@@ -22,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def train_model(X_train, X_test, y_train, y_test, model_dir):
+def train_model(X_train, X_test, y_train, y_test, metric_dir, model_dir):
     """
     Train the multinomial logistic regression model and return metrics.
 
@@ -51,29 +52,6 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
     }
 
     logger.info("Fitting the model...\n")
-
-    """
-    # Expand the parameter grid into a list of parameter combinations
-    from itertools import product
-    keys, values = zip(*param_grid.items())
-    param_combinations = [dict(zip(keys, v)) for v in product(*values)]
-
-    best_score = -float('inf')
-    best_params = None
-    best_model = None
-
-    for params in tqdm(param_combinations):
-        mlr_model.set_params(**params)
-        mlr_model.fit(X_train, y_train)
-        score = mlr_model.score(X_test, y_test)
-        if score > best_score:
-            best_score = score
-            best_params = params
-            best_model = mlr_model
-
-    logger.info(f"Best score: {best_score}")
-    logger.info(f"Best parameters: {best_params}")
-    """
 
     # Now, when you create your GridSearchCV object, you add the following:
     grid_search = GridSearchCV(estimator=mlr_model, param_grid=param_grid,
@@ -123,38 +101,6 @@ def train_model(X_train, X_test, y_train, y_test, model_dir):
 
 
 if __name__ == "__main__":
-    # Load data
-    df = load_data()
-
-    # Preprocess data
-    data, outcome = preprocess_multinomial(df, "AntisocialTrajectory")
-
-    # Split data
-    X_train, X_test, y_train, y_test = split_data(data, outcome)
-
-    # Applying imputation
-    impute = imputation_pipeline(X_train)
-    initial_size_train = len(X_train)
-    initial_size_test = len(X_test)
-    X_train_imputed = impute.fit_transform(X_train)
-    X_test_imputed = impute.transform(X_test)
-    logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
-    logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
-
-    X_train_imputed = pd.DataFrame(X_train_imputed)
-    X_test_imputed = pd.DataFrame(X_test_imputed)
-
-    # Applying scaling
-    scaler = scaling_pipeline(X_train_imputed)
-    initial_size_train = len(X_train_imputed)
-    initial_size_test = len(X_test_imputed)
-    X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
-    X_test_imputed_scaled = scaler.transform(X_test_imputed)
-    logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed_scaled)}.")
-    logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed_scaled)}.\n")
-
-    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
-    X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
 
     # Establish the model-specific directories
     model_name = "logistic_regression"
@@ -174,17 +120,66 @@ if __name__ == "__main__":
     if not os.path.exists(metrics_dir):
         os.makedirs(metrics_dir)
 
-    print("Distribution before balancing:")
-    print(y_train.value_counts(normalize=True), "\n")
+    # Load data
+    df = load_data()
 
-    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
+    # Preprocess data
+    df, outcome, features_to_consider = preprocess_multinomial(df, "AntisocialTrajectory")
 
-    print("Distribution after balancing:")
-    print(y_train_resampled.value_counts(normalize=True), "\n")
+    # List of features to consider for interactions
+    feature_pairs = list(itertools.combinations(features_to_consider, 2))
 
-    # Train the model and get metrics
-    train_metrics, test_metrics = train_model(X_train_resampled, X_test_imputed_scaled, y_train_resampled, y_test,
-                                              model_dir)
+    results = []  # To store results of each iteration
+
+    for feature_pair in feature_pairs:
+        df_temp = df.copy()
+        df_temp, _ = preprocess_multinomial(df_temp, "AntisocialTrajectory", feature_pair=feature_pair)
+
+        # Split, train using df_temp, and get metrics
+        X_train, X_test, y_train, y_test = split_data(df_temp, outcome)
+
+        # Applying imputation
+        impute = imputation_pipeline(X_train)
+        initial_size_train = len(X_train)
+        initial_size_test = len(X_test)
+        X_train_imputed = impute.fit_transform(X_train)
+        X_test_imputed = impute.transform(X_test)
+        logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
+        logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
+
+        X_train_imputed = pd.DataFrame(X_train_imputed)
+        X_test_imputed = pd.DataFrame(X_test_imputed)
+
+        # Applying scaling
+        scaler = scaling_pipeline(X_train_imputed)
+        initial_size_train = len(X_train_imputed)
+        initial_size_test = len(X_test_imputed)
+        X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
+        X_test_imputed_scaled = scaler.transform(X_test_imputed)
+        logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed_scaled)}.")
+        logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed_scaled)}.\n")
+
+        X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
+        X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
+
+        logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
+
+        X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
+
+        logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
+
+        train_metrics, test_metrics = train_model(X_train_resampled, X_test_imputed_scaled, y_train_resampled, y_test, metrics_dir, model_dir)
+
+        # Append the results
+        results.append({
+            "interaction": f"{feature_pair[0]}_x_{feature_pair[1]}",
+            "train_metrics": train_metrics,
+            "test_metrics": test_metrics
+        })
+
+    # Convert results to a DataFrame and save to CSV
+    results_df = pd.DataFrame(results)
+    results_df.to_csv("interaction_results.csv", index=False)
 
     # Save results
     save_results(model_name, "AST", "Multinomial", {"train": train_metrics, "test": test_metrics})

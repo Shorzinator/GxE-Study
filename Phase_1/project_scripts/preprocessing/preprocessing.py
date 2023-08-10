@@ -106,7 +106,7 @@ def preprocess_multinomial(df, target):
 
     logger.info("Data preprocessing for multinomial logistic regression completed successfully.")
 
-    return df, outcome
+    return df, outcome, feature_cols
 
 
 def preprocess_ovr(df, target):

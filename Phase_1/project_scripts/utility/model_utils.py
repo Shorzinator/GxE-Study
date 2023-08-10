@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
 from sklearn.preprocessing import PolynomialFeatures
 
+from Phase_1.config import COMBINED
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
@@ -36,26 +37,31 @@ def add_interaction_terms(df, feature_pairs):
         interaction = poly.fit_transform(df[list(pair)])
 
         # Extract interaction feature name
-        interaction_feature_name = poly.get_feature_names_out(input_features=pair)[1]  # Index 1 corresponds to the interaction term
+        interaction_feature_name = poly.get_feature_names_out(input_features=pair)[1]  # Index 1 corresponds to the
+        # interaction term
 
         # Convert interaction to DataFrame
-        df_interaction = pd.DataFrame(interaction[:, 1], columns=[interaction_feature_name])  # Index 1 corresponds to the interaction term
+        df_interaction = pd.DataFrame(interaction[:, 1], columns=[interaction_feature_name])  # Index 1 corresponds
+        # to the interaction term
 
         # Merge with the original dataframe
         df = pd.concat([df, df_interaction], axis=1)
+
+        missing_mask = df[feature_pairs[0]].isnull() | df[feature_pairs[1]].isnull()
+        df.loc[missing_mask, interaction_feature_name] = np.nan
 
         logger.info(f"Updated dataset size after adding interaction term: {df.shape}")
 
     return df
 
 
-
-def save_results(model_name, target, comparison_class, results):
+def save_results(model_name, target, type_of_classification, model_type, results, dir):
     """
     Save the results in a structured directory and file.
+    :param model_type: multi_class or one_vs_rest
+    :param type_of_classification: multinomial, binary, etc.
     :param model_name: Name of the model (e.g., "xgboost")
     :param target: Target variable (either "AST" or "SUT")
-    :param comparison_class: The class being compared against (e.g., "1_vs_4")
     :param results: The results data (a dictionary)
     """
     logger.info("Saving results ...\n")
@@ -69,16 +75,7 @@ def save_results(model_name, target, comparison_class, results):
     # Convert the flattened dictionary to a dataframe
     results_df = pd.DataFrame([flat_results])
 
-    # Determine the model type based on the current directory
-    cwd = os.getcwd()
-    if "multi_class" in cwd:
-        model_type = "multi_class"
-    elif "one_vs_all" in cwd:
-        model_type = "one_vs_all"
-    else:
-        raise ValueError("Unable to determine model type based on current directory.")
-
-    dir_path = get_path_from_root("results", model_type, f"{model_name}_results")
+    dir_path = dir
 
     # Check and create the directory if it doesn't exist
     if not os.path.exists(dir_path):
@@ -86,9 +83,9 @@ def save_results(model_name, target, comparison_class, results):
 
     # Define the path for saving
     if model_type == "multi_class":
-        results_file = os.path.join(dir_path, f"{target}_results.csv")
+        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}.csv")
     else:  # For one_vs_all, keep the original naming convention
-        results_file = os.path.join(dir_path, f"{target}_{comparison_class}_results.csv")
+        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}.csv")
 
     # Save to CSV
     results_df.to_csv(results_file, index=False)

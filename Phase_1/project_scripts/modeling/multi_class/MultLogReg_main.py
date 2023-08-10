@@ -14,7 +14,7 @@ from Phase_1.config import COMBINED
 from Phase_1.project_scripts.preprocessing import balance_data, imputation_pipeline, preprocess_multinomial, \
     scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data
-from Phase_1.project_scripts.utility.model_utils import calculate_metrics, save_results
+from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, save_results
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
@@ -64,7 +64,7 @@ def train_model(X_train, X_test, y_train, y_test, metric_dir, model_dir):
     # mlr_model.fit(X_train, y_train)
 
     # Saving the model
-    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_model_{COMBINED}.pkl"))
+    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
 
     # Make predictions
     y_pred_train = grid_search.predict(X_train)
@@ -97,7 +97,7 @@ def train_model(X_train, X_test, y_train, y_test, metric_dir, model_dir):
     best_estimator = grid_search.best_estimator_
     joblib.dump(best_estimator, os.path.join(model_dir, f"best_estimator_{COMBINED}.pkl"))
 
-    return train_metrics, test_metrics
+    return train_metrics, test_metrics,
 
 
 if __name__ == "__main__":
@@ -130,10 +130,11 @@ if __name__ == "__main__":
     feature_pairs = list(itertools.combinations(features_to_consider, 2))
 
     results = []  # To store results of each iteration
+    train_metrics, test_metrics = {}, {}
 
     for feature_pair in feature_pairs:
         df_temp = df.copy()
-        df_temp, _ = preprocess_multinomial(df_temp, "AntisocialTrajectory", feature_pair=feature_pair)
+        df_temp = add_interaction_terms(df_temp, feature_pair)
 
         # Split, train using df_temp, and get metrics
         X_train, X_test, y_train, y_test = split_data(df_temp, outcome)
@@ -177,11 +178,8 @@ if __name__ == "__main__":
             "test_metrics": test_metrics
         })
 
-    # Convert results to a DataFrame and save to CSV
-    results_df = pd.DataFrame(results)
-    results_df.to_csv("interaction_results.csv", index=False)
-
     # Save results
-    save_results(model_name, "AST", "Multinomial", {"train": train_metrics, "test": test_metrics})
+    save_results(model_name, "AST", "Multinomial", "multi-class", {"train": train_metrics, "test": test_metrics},
+                 metrics_dir)
 
     logger.info("Multinomial Logistic Regression Completed.")

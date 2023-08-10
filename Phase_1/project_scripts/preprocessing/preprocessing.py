@@ -23,24 +23,24 @@ def split_data(df, outcome_series):
     return X_train, X_test, y_train, y_test
 
 
-def imputation_pipeline(df):
+def imputation_pipeline():
     """Imputation Pipeline."""
     logger.info("Applying Imputation ...\n")
-
-    categorical_features = ['Race']
-    numeric_features = [col for col in df.columns if col not in categorical_features + ['AntisocialTrajectory', 'Sex']]
+    numerical_features = ["PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
+                          "ParentalWarmth", "Is_Male"]
+    categorical_features = ["Race"]
 
     numeric_transformer = Pipeline(steps=[
         ('impute', KNNImputer(n_neighbors=10))
     ])
 
     categorical_transformer = Pipeline(steps=[
-        ('onehot', OneHotEncoder(handle_unknown='ignore'))     # One-hot encoding
+        ('onehot', OneHotEncoder(handle_unknown='ignore'))
     ])
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', numeric_transformer, numeric_features),
+            ('num', numeric_transformer, numerical_features),
             ('cat', categorical_transformer, categorical_features)
         ])
 
@@ -54,21 +54,23 @@ def imputation_applier(impute, X_train, X_test):
     X_train_imputed = impute.fit_transform(X_train)
     X_test_imputed = impute.transform(X_test)
 
+    """
     logger.info(f"Rows before imputing X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
     logger.info(f"Rows before imputing X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
+    """
+    feature_names = (impute.named_transformers_['num'].named_steps['impute'].get_feature_names_out().tolist() +
+                     impute.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out().tolist())
 
-    X_train_imputed = pd.DataFrame(X_train_imputed)
-    X_test_imputed = pd.DataFrame(X_test_imputed)
+    X_train_imputed = pd.DataFrame(X_train_imputed, columns=feature_names)
+    X_test_imputed = pd.DataFrame(X_test_imputed, columns=feature_names)
 
+    # print(feature_names)
     return X_train_imputed, X_test_imputed
 
 
-def scaling_pipeline(df):
+def scaling_pipeline(transformed_features):
     """Scaling Pipeline."""
     logger.info("Applying scaling ...\n")
-
-    numeric_features = [col for col in df.columns if col not in ['Race', 'AntisocialTrajectory', 'Sex', 'Is_Male']]  # Added 'Is_Male' to exclude it from scaling
-    categorical_features = ['Race']
 
     scaler = Pipeline(steps=[
         ('scaler', StandardScaler())
@@ -76,7 +78,7 @@ def scaling_pipeline(df):
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', scaler, numeric_features)
+            ('num', scaler, transformed_features),
         ],
         remainder='passthrough'  # Non-scaled features are passed through without any transformation
     )
@@ -92,8 +94,10 @@ def scaling_applier(scaler, X_train_imputed, X_test_imputed):
     X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
     X_test_imputed_scaled = scaler.transform(X_test_imputed)
 
+    """
     logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed_scaled)}.")
     logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed_scaled)}.\n")
+    """
 
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
     X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
@@ -136,10 +140,9 @@ def preprocess_multinomial(df, target):
     outcome = df[target]
     feature_cols = ["Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
                     "NeighborConnect", "ParentalWarmth", "Is_Male"]
+
     df = df[feature_cols]
-
-    logger.info("Data preprocessing for multinomial logistic regression completed successfully.")
-
+    logger.info("Data preprocessing for multinomial logistic regression completed successfully.\n")
     return df, outcome, feature_cols
 
 

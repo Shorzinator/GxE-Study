@@ -14,9 +14,9 @@ def load_data():
     df = pd.read_csv(DATA_PATH)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")
-    logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.")
+    logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")
 
     # Enhanced Validity Checks
-    logger.info(f"Missing values count:\n{df.isnull().sum()}")  # Check for missing values
+    # logger.info(f"Missing values count:\n{df.isnull().sum()}")  # Check for missing values
 
     return df

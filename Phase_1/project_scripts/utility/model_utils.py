@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
-from sklearn.preprocessing import PolynomialFeatures
 
 from Phase_1.config import COMBINED, IT
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
@@ -25,32 +24,14 @@ def add_interaction_terms(df, feature_pairs):
                           for which interaction terms are to be generated.
     :return: df (pd.DataFrame): Dataset with added interaction terms.
     """
-    for pair in feature_pairs:
-        logger.info(f"Generating interaction term for features: {pair}\n")
 
-        # Initialize polynomial features object for pairwise interactions
-        poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
+    logger.info(f"Generating interaction term for features: {feature_pairs}\n")
 
-        # Fit and transform to generate interaction term
-        interaction = poly.fit_transform(df[list(pair)])
+    # Create the interaction term
+    interaction_column_name = f"{feature_pairs[0]}_x_{feature_pairs[1]}"
+    df[interaction_column_name] = df[feature_pairs[0]] * df[feature_pairs[1]]
 
-        # Extract interaction feature name
-        interaction_feature_name = poly.get_feature_names_out(input_features=pair)[1]  # Index 1 corresponds to the
-        # interaction term
-
-        # Convert interaction to DataFrame
-        df_interaction = pd.DataFrame(interaction[:, 1], columns=[interaction_feature_name])  # Index 1 corresponds
-        # to the interaction term
-
-        # Merge with the original dataframe
-        df = pd.concat([df, df_interaction], axis=1)
-        logger.info(f"Updated columns are: {df.columns}\n")
-
-        # Ensuring that a missing value x a non-missing value = missing value
-        missing_mask = df[feature_pairs[0]].isnull() | df[feature_pairs[1]].isnull()
-        df.loc[missing_mask, interaction_feature_name] = np.nan
-
-        logger.info(f"Updated dataset size after adding interaction term: {df.shape}\n")
+    # logger.info(f"Updated columns are: {df.columns}\n")
 
     return df
 
@@ -104,8 +85,8 @@ def calculate_metrics(y_true, y_pred, model_name, target, type):
     """
 
     # Log unique classes for validation
-    logger.info(f"Unique classes in true labels for {type}: {set(y_true)}")
-    logger.info(f"Unique classes in predicted labels for {type}: {set(y_pred)}")
+    # logger.info(f"Unique classes in true labels for {type}: {set(y_true)}")
+    # logger.info(f"Unique classes in predicted labels for {type}: {set(y_pred)}")
 
     # Check if predictions are all one class
     if len(set(y_pred)) == 1:

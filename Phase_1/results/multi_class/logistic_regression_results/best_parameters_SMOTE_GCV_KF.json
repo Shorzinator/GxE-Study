@@ -1,0 +1,188 @@
+{
+    "run_1": {
+        "C": 1,
+        "fit_intercept": true,
+        "l1_ratio": 0.6,
+        "penalty": "elasticnet"
+    },
+    "run_2": {
+        "C": 2,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_3": {
+        "C": 2,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_4": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_5": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_6": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_7": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_8": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_9": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_10": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_11": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_12": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_13": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_14": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_15": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_16": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_17": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_18": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_19": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_20": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_21": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_22": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_23": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_24": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_25": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_26": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_27": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_28": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_29": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_30": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    },
+    "run_31": {
+        "C": 0.5,
+        "fit_intercept": true,
+        "l1_ratio": 0.4,
+        "penalty": "elasticnet"
+    }
+}

@@ -5,14 +5,12 @@ import os
 import warnings
 
 import joblib
-import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 
 from Phase_1.config import COMBINED
 # Using your utility functions and other functions you've already created
-from Phase_1.project_scripts.preprocessing import balance_data, imputation_pipeline, preprocess_multinomial, \
-    scaling_pipeline, split_data
+from Phase_1.project_scripts.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, save_results
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
@@ -64,7 +62,7 @@ def train_model(X_train, X_test, y_train, y_test, metric_dir, model_dir):
     # mlr_model.fit(X_train, y_train)
 
     # Saving the model
-    joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
+    # joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
 
     # Make predictions
     y_pred_train = grid_search.predict(X_train)
@@ -73,8 +71,8 @@ def train_model(X_train, X_test, y_train, y_test, metric_dir, model_dir):
     logger.info("Calculating Metrics...\n")
 
     # Calculate metrics
-    train_metrics = calculate_metrics(y_train, y_pred_train, "logistic_regression", "Multinomial", "train")
-    test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "Multinomial", "test")
+    train_metrics = calculate_metrics(y_train, y_pred_train, "logistic_regression", "AST", "train")
+    test_metrics = calculate_metrics(y_test, y_pred_test, "logistic_regression", "AST", "test")
 
     best_parameters = grid_search.best_params_
     results_path = os.path.join(results_dir, f"best_parameters_{COMBINED}.json")
@@ -134,6 +132,8 @@ if __name__ == "__main__":
 
     for feature_pair in feature_pairs:
         df_temp = df.copy()
+
+        logging.info(f"Adding interaction term using the pair: {feature_pair}")
         df_temp = add_interaction_terms(df_temp, feature_pair)
 
         # Split, train using df_temp, and get metrics
@@ -141,34 +141,18 @@ if __name__ == "__main__":
 
         # Applying imputation
         impute = imputation_pipeline(X_train)
-        initial_size_train = len(X_train)
-        initial_size_test = len(X_test)
-        X_train_imputed = impute.fit_transform(X_train)
-        X_test_imputed = impute.transform(X_test)
-        logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
-        logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
-
-        X_train_imputed = pd.DataFrame(X_train_imputed)
-        X_test_imputed = pd.DataFrame(X_test_imputed)
+        X_train_imputed, X_test_imputed = imputation_applier(impute, X_train, X_test)
 
         # Applying scaling
         scaler = scaling_pipeline(X_train_imputed)
-        initial_size_train = len(X_train_imputed)
-        initial_size_test = len(X_test_imputed)
-        X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
-        X_test_imputed_scaled = scaler.transform(X_test_imputed)
-        logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed_scaled)}.")
-        logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed_scaled)}.\n")
+        X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_test_imputed, X_test_imputed)
 
-        X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
-        X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
-
+        # Balancing data
         logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
-
         X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
-
         logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
 
+        # Training model and calculating performance
         train_metrics, test_metrics = train_model(X_train_resampled, X_test_imputed_scaled, y_train_resampled, y_test, metrics_dir, model_dir)
 
         # Append the results

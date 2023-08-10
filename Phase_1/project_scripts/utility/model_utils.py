@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
 from sklearn.preprocessing import PolynomialFeatures
 
-from Phase_1.config import COMBINED
+from Phase_1.config import COMBINED, IT
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
@@ -20,15 +20,13 @@ def add_interaction_terms(df, feature_pairs):
     Generate interaction terms for specified feature pairs iteratively.
 
     Args:
-    - df (pd.DataFrame): Original dataset.
-    - feature_pairs (list of tuples): List of tuples where each tuple contains feature columns
-                                     for which interaction terms are to be generated.
-
-    Returns:
-    - df (pd.DataFrame): Dataset with added interaction terms.
+    :param df: (pd.DataFrame) Original dataset.
+    :param feature_pairs: (list of tuples) List of tuples where each tuple contains feature columns
+                          for which interaction terms are to be generated.
+    :return: df (pd.DataFrame): Dataset with added interaction terms.
     """
     for pair in feature_pairs:
-        logger.info(f"Generating interaction term for features: {pair}")
+        logger.info(f"Generating interaction term for features: {pair}\n")
 
         # Initialize polynomial features object for pairwise interactions
         poly = PolynomialFeatures(degree=2, interaction_only=True, include_bias=False)
@@ -46,11 +44,13 @@ def add_interaction_terms(df, feature_pairs):
 
         # Merge with the original dataframe
         df = pd.concat([df, df_interaction], axis=1)
+        logger.info(f"Updated columns are: {df.columns}\n")
 
+        # Ensuring that a missing value x a non-missing value = missing value
         missing_mask = df[feature_pairs[0]].isnull() | df[feature_pairs[1]].isnull()
         df.loc[missing_mask, interaction_feature_name] = np.nan
 
-        logger.info(f"Updated dataset size after adding interaction term: {df.shape}")
+        logger.info(f"Updated dataset size after adding interaction term: {df.shape}\n")
 
     return df
 
@@ -58,6 +58,7 @@ def add_interaction_terms(df, feature_pairs):
 def save_results(model_name, target, type_of_classification, model_type, results, dir):
     """
     Save the results in a structured directory and file.
+    :param dir: model_dir or metrics_dir
     :param model_type: multi_class or one_vs_rest
     :param type_of_classification: multinomial, binary, etc.
     :param model_name: Name of the model (e.g., "xgboost")
@@ -83,9 +84,9 @@ def save_results(model_name, target, type_of_classification, model_type, results
 
     # Define the path for saving
     if model_type == "multi_class":
-        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}.csv")
+        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}_{IT}.csv")
     else:  # For one_vs_all, keep the original naming convention
-        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}.csv")
+        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}_{IT}.csv")
 
     # Save to CSV
     results_df.to_csv(results_file, index=False)
@@ -94,6 +95,7 @@ def save_results(model_name, target, type_of_classification, model_type, results
 def calculate_metrics(y_true, y_pred, model_name, target, type):
     """
     Calculate metrics for the multinomial model predictions.
+    :param type: test or train
     :param y_true: True labels
     :param y_pred: Predicted labels
     :param model_name: Name of the model

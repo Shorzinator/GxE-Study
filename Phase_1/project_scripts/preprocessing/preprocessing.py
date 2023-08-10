@@ -1,5 +1,6 @@
 import logging
 
+import pandas as pd
 from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import KNNImputer
@@ -46,6 +47,22 @@ def imputation_pipeline(df):
     return preprocessor
 
 
+def imputation_applier(impute, X_train, X_test):
+    initial_size_train = len(X_train)
+    initial_size_test = len(X_test)
+
+    X_train_imputed = impute.fit_transform(X_train)
+    X_test_imputed = impute.transform(X_test)
+
+    logger.info(f"Rows before imputing X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
+    logger.info(f"Rows before imputing X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
+
+    X_train_imputed = pd.DataFrame(X_train_imputed)
+    X_test_imputed = pd.DataFrame(X_test_imputed)
+
+    return X_train_imputed, X_test_imputed
+
+
 def scaling_pipeline(df):
     """Scaling Pipeline."""
     logger.info("Applying scaling ...\n")
@@ -65,6 +82,23 @@ def scaling_pipeline(df):
     )
 
     return preprocessor
+
+
+def scaling_applier(scaler, X_train_imputed, X_test_imputed):
+
+    initial_size_train = len(X_train_imputed)
+    initial_size_test = len(X_test_imputed)
+
+    X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
+    X_test_imputed_scaled = scaler.transform(X_test_imputed)
+
+    logger.info(f"Rows before scaling X_train: {initial_size_train}. Rows after: {len(X_train_imputed_scaled)}.")
+    logger.info(f"Rows before scaling X_test: {initial_size_test}. Rows after: {len(X_test_imputed_scaled)}.\n")
+
+    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
+    X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
+
+    return X_train_imputed_scaled, X_test_imputed_scaled
 
 
 def balance_data(X_train, y_train):

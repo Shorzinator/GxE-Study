@@ -4,6 +4,7 @@ import logging
 import os
 import warnings
 
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import COMBINED, FEATURES as allFeatures, TARGET_1
@@ -14,7 +15,9 @@ from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, \
     calculate_metrics, ensure_directory_exists, save_results, train_model
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
-warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -26,7 +29,7 @@ TYPE_OF_CLASSIFICATION = "multinomial"
 
 
 def main():
-    logging.info(f"Starting the program ...")
+    logging.info(f"Starting multinomial logistic regression ...")
 
     ensure_directory_exists(RESULTS_DIR)
 
@@ -41,7 +44,7 @@ def main():
     df = load_data()
 
     # Preprocess data
-    df, outcome = preprocess_multinomial(df, "AntisocialTrajectory")
+    df, outcome = preprocess_multinomial(df, TARGET_1)
 
     # List of features to consider for interactions
     feature_pairs = list(itertools.combinations(allFeatures, 2))
@@ -69,6 +72,7 @@ def main():
 
         # Generate interaction terms using the transformed column names for testing data
         X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
+        X_test_final = pd.DataFrame(X_test_final)
 
         # Applying scaling
         scaler = scaling_pipeline(transformed_columns)
@@ -78,6 +82,8 @@ def main():
         # logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
         X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
         # logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
+
+        X_train_resampled = pd.DataFrame(X_train_resampled)
 
         # Defining parameter grid for grid search. TO initiate grid search, comment out the second definition
         """
@@ -96,23 +102,20 @@ def main():
                                    fit_intercept=True, warm_start=True)
 
         # Training model and calculating performance
-        best_model = train_model(X_train_resampled, X_test_imputed_scaled, model, param_grid,
-                                 "False", "multinomial", metrics_dir, model_dir)
+        best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
+                                 "False", MODEL_NAME, model_dir)
 
         logger.info("Fitting the model...\n")
 
-        # Train the model
-        best_model.fit(X_train, y_train)
-
-        # Make predictions
-        y_pred_train = best_model.predict(X_train)
-        y_pred_test = best_model.predict(X_test)
+        # Predictions
+        y_train_pred = best_model.predict(X_train_resampled)
+        y_test_pred = best_model.predict(X_test_final)
 
         logger.info("Calculating Metrics...\n")
 
         # Calculate metrics
-        train_metrics = calculate_metrics(y_train, y_pred_train, MODEL_NAME, TARGET_1, "train")
-        test_metrics = calculate_metrics(y_test, y_pred_test, MODEL_NAME, TARGET_1, "test")
+        train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
+        test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
 
         # Saving the model
         # joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
@@ -149,6 +152,7 @@ def main():
             "test_metrics": test_metrics
         })
 
+    logging.info(f"Saving results ...")
     save_results(TARGET_1, TYPE_OF_CLASSIFICATION, results, metrics_dir)
 
 

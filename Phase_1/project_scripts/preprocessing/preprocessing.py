@@ -60,8 +60,8 @@ def imputation_applier(impute, X):
                      impute.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out().tolist())
 
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
-    print(X_train_imputed.columns)
-    # print(feature_names)
+    # print(X_train_imputed.columns)
+
     return X_train_imputed
 
 
@@ -145,39 +145,40 @@ def preprocess_multinomial(df, target):
 
 def preprocess_ovr(df, target):
     try:
-        logger.info("Starting data preprocessing ...")
+        logger.info("Starting data preprocessing for one-vs-all logistic regression...")
 
         # Convert Sex to Is_Male binary column
         df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+
+        # Handle outliers for PolygenicScoreEXT using IQR
+        Q1 = df['PolygenicScoreEXT'].quantile(0.25)
+        Q3 = df['PolygenicScoreEXT'].quantile(0.75)
+        IQR = Q3 - Q1
+        df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
+                  (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
 
         # Drop rows where the target variable is missing
         df = df.dropna(subset=[target])
 
         # Separate the target variable
         outcome = df[target]
-        feature_cols = ["Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
-                        "ParentalWarmth", "Is_Male"]
+        feature_cols = [
+            "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+            "NeighborConnect", "ParentalWarmth", "Is_Male"
+        ]
         df = df[feature_cols]
 
-        print(df.columns)
-
         # Create datasets for each binary classification task
-        df_1_vs_4 = df[outcome.isin([1, 4])].copy()
-        outcome_1_vs_4 = outcome[outcome.isin([1, 4])].copy()
-
-        df_2_vs_4 = df[outcome.isin([2, 4])].copy()
-        outcome_2_vs_4 = outcome[outcome.isin([2, 4])].copy()
-
-        df_3_vs_4 = df[outcome.isin([3, 4])].copy()
-        outcome_3_vs_4 = outcome[outcome.isin([3, 4])].copy()
-
-        logger.info("Data preprocessing completed successfully.")
-
-        return {
-            "1_vs_4": (df_1_vs_4, outcome_1_vs_4),
-            "2_vs_4": (df_2_vs_4, outcome_2_vs_4),
-            "3_vs_4": (df_3_vs_4, outcome_3_vs_4)
+        datasets = {
+            "1_vs_4": (df[outcome.isin([1, 4])].copy(), outcome[outcome.isin([1, 4])].copy()),
+            "2_vs_4": (df[outcome.isin([2, 4])].copy(), outcome[outcome.isin([2, 4])].copy()),
+            "3_vs_4": (df[outcome.isin([3, 4])].copy(), outcome[outcome.isin([3, 4])].copy())
         }
+        print("printing dataset ...\n", datasets["1_vs_4"])
+        logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.")
+        return datasets
+
     except Exception as e:
-        logger.error(f"Error occurred during data preprocessing: {str(e)}")
+        logger.error(f"Error occurred during data preprocessing for one-vs-all: {str(e)}")
         return None
+

@@ -41,31 +41,33 @@ def save_results(target, type_of_classification, results, directory):
     :param target: Target variable (either "AST" or "SUT")
     :param results: The results data (a dictionary)
     """
-    logger.info("Saving results ...\n")
+    try:
+        # Check if the results need to be flattened
+        if "train_metrics" in results[0] or "test_metrics" in results[0]:
+            flattened_data = []
+            for res in results:
+                for key, metrics in res.items():
+                    if key in ["train_metrics", "test_metrics"]:
+                        flattened_data.append({"type": key, **metrics})
+            results_df = pd.DataFrame(flattened_data)
+        else:
+            results_df = pd.DataFrame(results)
 
-    # Check if the results need to be flattened
-    if any(isinstance(val, dict) for val in results.values()):
-        flattened_data = [
-            {"type": key, **metrics}
-            for key, metrics in results.items() if key in ["train_metrics", "test_metrics"]
-        ]
-        results_df = pd.DataFrame(flattened_data)
-    else:
-        results_df = pd.DataFrame(results)
+        dir_path = directory
 
-    dir_path = directory
+        # Check and create the directory if it doesn't exist
+        ensure_directory_exists(dir_path)
 
-    # Check and create the directory if it doesn't exist
-    ensure_directory_exists(dir_path)
+        results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_{COMBINED}_{IT}.csv")
 
-    results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_{COMBINED}_{IT}.csv")
+        # Save to CSV
+        results_df.to_csv(results_file, index=False)
 
-    # Save to CSV
-    results_df.to_csv(results_file, index=False)
+    except Exception as e:
+        logger.error(f"Error in save_results: {str(e)}")
 
 
-def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, model_name=None,
-                metric_dir=None, model_dir=None):
+def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, model_name=None, model_dir=None):
     """
     Train the model, optionally perform grid search, and save it.
 

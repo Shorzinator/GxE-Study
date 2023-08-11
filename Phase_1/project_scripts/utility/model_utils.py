@@ -21,7 +21,6 @@ def add_interaction_terms(df, feature_pairs):
                           for which interaction terms are to be generated.
     :return: df (pd.DataFrame): Dataset with added interaction terms.
     """
-
     logger.info(f"Generating interaction term for features: {feature_pairs}\n")
 
     # Create the interaction term

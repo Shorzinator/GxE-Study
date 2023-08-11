@@ -44,7 +44,7 @@ def main():
     df = load_data()
 
     # Preprocess data
-    df, outcome = preprocess_multinomial(df, TARGET_1)
+    df, outcome = preprocess_multinomial(df, "AntisocialTrajectory")
 
     # List of features to consider for interactions
     feature_pairs = list(itertools.combinations(allFeatures, 2))
@@ -85,7 +85,7 @@ def main():
 
         X_train_resampled = pd.DataFrame(X_train_resampled)
 
-        # Defining parameter grid for grid search. TO initiate grid search, comment out the second definition
+        # Defining parameter grid for grid search. To initiate grid search, comment out the second definition
         """
         param_grid = {
             'penalty': ['elasticnet'],

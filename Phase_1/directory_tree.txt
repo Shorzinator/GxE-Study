@@ -22,6 +22,7 @@ project_scripts\preprocessing\preprocessing.py
 project_scripts\modelling
 project_scripts\modelling\__init__.py
 project_scripts\modelling\one_vs_all
+project_scripts\modelling\one_vs_all\BinLogReg_main.py
 project_scripts\modelling\one_vs_all\xgboost_main.py
 project_scripts\modelling\multi_class
 project_scripts\modelling\multi_class\MultLogReg_main.py

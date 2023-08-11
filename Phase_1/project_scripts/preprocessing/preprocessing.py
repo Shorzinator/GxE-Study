@@ -107,7 +107,7 @@ def balance_data(X_train, y_train):
     logger.info("Balancing data ...\n")
 
     initial_size = len(X_train)
-    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="all", n_jobs=-1)
+    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="all")
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
@@ -144,41 +144,37 @@ def preprocess_multinomial(df, target):
 
 
 def preprocess_ovr(df, target):
-    try:
-        logger.info("Starting data preprocessing for one-vs-all logistic regression...")
 
-        # Convert Sex to Is_Male binary column
-        df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+    logger.info("Starting data preprocessing for one-vs-all logistic regression...\n")
 
-        # Handle outliers for PolygenicScoreEXT using IQR
-        Q1 = df['PolygenicScoreEXT'].quantile(0.25)
-        Q3 = df['PolygenicScoreEXT'].quantile(0.75)
-        IQR = Q3 - Q1
-        df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
-                  (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    # Convert Sex to Is_Male binary column
+    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
-        # Drop rows where the target variable is missing
-        df = df.dropna(subset=[target])
+    # Handle outliers for PolygenicScoreEXT using IQR
+    Q1 = df['PolygenicScoreEXT'].quantile(0.25)
+    Q3 = df['PolygenicScoreEXT'].quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
+              (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
 
-        # Separate the target variable
-        outcome = df[target]
-        feature_cols = [
-            "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-            "NeighborConnect", "ParentalWarmth", "Is_Male"
-        ]
-        df = df[feature_cols]
+    # Drop rows where the target variable is missing
+    df = df.dropna(subset=[target])
 
-        # Create datasets for each binary classification task
-        datasets = {
-            "1_vs_4": (df[outcome.isin([1, 4])].copy(), outcome[outcome.isin([1, 4])].copy()),
-            "2_vs_4": (df[outcome.isin([2, 4])].copy(), outcome[outcome.isin([2, 4])].copy()),
-            "3_vs_4": (df[outcome.isin([3, 4])].copy(), outcome[outcome.isin([3, 4])].copy())
-        }
-        print("printing dataset ...\n", datasets["1_vs_4"])
-        logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.")
-        return datasets
+    # Separate the target variable
+    outcome = df[target]
+    feature_cols = [
+        "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+        "NeighborConnect", "ParentalWarmth", "Is_Male"
+    ]
+    df = df[feature_cols]
 
-    except Exception as e:
-        logger.error(f"Error occurred during data preprocessing for one-vs-all: {str(e)}")
-        return None
+    # Create datasets for each binary classification task
+    datasets = {
+        "1_vs_4": (df[outcome.isin([1, 4])].copy(), outcome[outcome.isin([1, 4])].copy()),
+        "2_vs_4": (df[outcome.isin([2, 4])].copy(), outcome[outcome.isin([2, 4])].copy()),
+        "3_vs_4": (df[outcome.isin([3, 4])].copy(), outcome[outcome.isin([3, 4])].copy())
+    }
+
+    logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
+    return datasets
 

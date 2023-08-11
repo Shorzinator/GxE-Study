@@ -47,12 +47,10 @@ def imputation_pipeline():
     return preprocessor
 
 
-def imputation_applier(impute, X_train, X_test):
-    initial_size_train = len(X_train)
-    initial_size_test = len(X_test)
+def imputation_applier(impute, X):
+    initial_size_train = len(X)
 
-    X_train_imputed = impute.fit_transform(X_train)
-    X_test_imputed = impute.transform(X_test)
+    input_imputed = impute.fit_transform(X)
 
     """
     logger.info(f"Rows before imputing X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
@@ -61,11 +59,10 @@ def imputation_applier(impute, X_train, X_test):
     feature_names = (impute.named_transformers_['num'].named_steps['impute'].get_feature_names_out().tolist() +
                      impute.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out().tolist())
 
-    X_train_imputed = pd.DataFrame(X_train_imputed, columns=feature_names)
-    X_test_imputed = pd.DataFrame(X_test_imputed, columns=feature_names)
-
+    X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
+    print(X_train_imputed.columns)
     # print(feature_names)
-    return X_train_imputed, X_test_imputed
+    return X_train_imputed
 
 
 def scaling_pipeline(transformed_features):
@@ -137,13 +134,13 @@ def preprocess_multinomial(df, target):
     logger.info(f"Rows before dropping missing values in target: {initial_size}. Rows after: {len(df)}.\n")
 
     # Separate the target variable
-    outcome = df[target]
+    dependent = df[target]
     feature_cols = ["Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
                     "NeighborConnect", "ParentalWarmth", "Is_Male"]
 
-    df = df[feature_cols]
+    independent = df[feature_cols]
     logger.info("Data preprocessing for multinomial logistic regression completed successfully.\n")
-    return df, outcome, feature_cols
+    return independent, dependent
 
 
 def preprocess_ovr(df, target):

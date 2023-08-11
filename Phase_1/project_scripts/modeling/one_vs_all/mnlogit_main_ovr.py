@@ -135,6 +135,6 @@ if __name__ == "__main__":
                                               model_dir)
 
     # Save results
-    save_results(model_name, "AST", "Multinomial", {"train": train_metrics, "test": test_metrics})
+    save_results("AST", "Multinomial", {"train": train_metrics, "test": test_metrics}, metrics_dir)
 
     logger.info("Multinomial Logistic Regression Completed.")

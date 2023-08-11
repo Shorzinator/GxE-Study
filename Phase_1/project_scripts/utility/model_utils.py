@@ -1,14 +1,11 @@
-import logging
 import os
 
 import joblib
-import numpy as np
-import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report
-from sklearn.model_selection import GridSearchCV, KFold, cross_val_score
+from sklearn.model_selection import GridSearchCV, KFold
 
-from Phase_1.config import COMBINED, IT
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.config import *
+from Phase_1.project_scripts.preprocessing.preprocessing import *
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -36,41 +33,81 @@ def add_interaction_terms(df, feature_pairs):
     return df
 
 
-def save_results(model_name, target, type_of_classification, model_type, results, dir):
+def save_results(target, type_of_classification, results, directory):
     """
     Save the results in a structured directory and file.
-    :param dir: model_dir or metrics_dir
-    :param model_type: multi_class or one_vs_rest
+    :param directory: model_dir or metrics_dir
     :param type_of_classification: multinomial, binary, etc.
-    :param model_name: Name of the model (e.g., "xgboost")
     :param target: Target variable (either "AST" or "SUT")
     :param results: The results data (a dictionary)
     """
     logger.info("Saving results ...\n")
 
-    # Flatten the results dictionary
-    flat_results = {}
-    for split, metrics in results.items():
-        for metric, value in metrics.items():
-            flat_results[f"{split}_{metric}"] = value
+    # Check if the results need to be flattened
+    if any(isinstance(val, dict) for val in results.values()):
+        flattened_data = [
+            {"type": key, **metrics}
+            for key, metrics in results.items() if key in ["train_metrics", "test_metrics"]
+        ]
+        results_df = pd.DataFrame(flattened_data)
+    else:
+        results_df = pd.DataFrame(results)
 
-    # Convert the flattened dictionary to a dataframe
-    results_df = pd.DataFrame([flat_results])
-
-    dir_path = dir
+    dir_path = directory
 
     # Check and create the directory if it doesn't exist
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+    ensure_directory_exists(dir_path)
 
-    # Define the path for saving
-    if model_type == "multi_class":
-        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}_{IT}.csv")
-    else:  # For one_vs_all, keep the original naming convention
-        results_file = os.path.join(dir_path, f"{target}_results_{type_of_classification}_{COMBINED}_{IT}.csv")
+    results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_{COMBINED}_{IT}.csv")
 
     # Save to CSV
     results_df.to_csv(results_file, index=False)
+
+
+def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, model_name=None,
+                metric_dir=None, model_dir=None):
+    """
+    Train the model, optionally perform grid search, and save it.
+
+    Args:
+    :param X_train: Training data.
+    :param y_train: Training labels.
+    :param estimator: The model/estimator to be trained.
+    :param param_grid: Hyperparameters for grid search. If None, no grid search will be performed.
+    :param save_model: Boolean flag to decide whether to save the model or not.
+    :param model_name: Name of the model, required if save_model is True.
+    :param metric_dir: Directory to save metrics, required if target is provided.
+    :param model_dir: Directory to save model, required if save_model is True.
+    :param target: Target column name, required if metric_dir is provided.
+
+    Returns:
+    :return: Trained model.
+    """
+
+    logger.info("Training the multinomial logistic regression model...\n")
+
+    if param_grid:
+        # If param_grid is provided, perform GridSearchCV
+        cv_method = get_cv_method()
+        grid_search = perform_gcv(estimator, param_grid, 'f1_weighted', cv_method)
+        grid_search.fit(X_train, y_train)
+        best_model = grid_search.best_estimator_
+    else:
+        best_model = estimator
+        best_model.fit(X_train, y_train)
+
+    if save_model and model_name:
+        # Save the model using joblib
+        model_path = os.path.join(model_dir, f"{TARGET_1}_{model_name}_{COMBINED}.pkl")
+        joblib.dump(best_model, model_path)
+
+    return best_model
+
+
+def ensure_directory_exists(directory):
+    """Ensure a directory exists, create if not."""
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 
 def calculate_metrics(y_true, y_pred, model_name, target, type):
@@ -112,62 +149,37 @@ def calculate_metrics(y_true, y_pred, model_name, target, type):
     return metrics
 
 
-def train_model(model, X_train, y_train, save_model=False, model_name=None):
+def get_cv_method(method='KFold', n_splits=5):
     """
-    Train the model and optionally save it.
-    """
-    model.fit(X_train, y_train)
-
-    if save_model and model_name:
-        # Save the model using joblib
-        model_path = get_path_from_root("results", "one_vs_all", model_name, "models", f"{model_name}.pkl")
-        joblib.dump(model, model_path)
-
-    return model
-
-
-def perform_grid_search(model, X, y, param_grid, cv=None):
-    """
-    Perform grid search with cross-validation and return the best estimator.
+    Return a cross-validation method based on user's choice.
 
     Args:
-    - model: The estimator.
-    - X: Feature data.
-    - y: Target data.
-    - param_grid: Grid of hyperparameters for search.
-    - cv: Cross-validator. If None, default KFold with 5 splits is used.
+    :param method: The desired cross-validation method. Default is 'KFold'.
+    :param n_splits: Number of splits. Relevant for KFold. Default is 5.
 
     Returns:
-    - The best estimator from the grid search.
+    :return: An instance of the chosen cross-validation method.
     """
-
-    logger.info("Starting Grid Search ...\n")
-
-    if cv is None:
-        cv = KFold(n_splits=5)  # Default cross-validator
-
-    grid_search = GridSearchCV(estimator=model, param_grid=param_grid, cv=cv, scoring='f1_weighted', n_jobs=-1)
-    grid_search.fit(X, y)
-
-    return grid_search.best_estimator_
+    if method == 'KFold':
+        return KFold(n_splits=n_splits)
+    # Add other CV methods as needed
+    else:
+        raise ValueError(f"Unknown CV method: {method}")
 
 
-def cross_validate_model(model, X, y, cv=None):
+def perform_gcv(estimator, params, scoring, cv_method):
     """
-    Perform cross-validation and return the mean score.
+    Performs GridSearchCV with the provided estimator, parameters and scoring.
 
     Args:
-    - model: The estimator.
-    - X: Feature data.
-    - y: Target data.
-    - cv: Cross-validator. If None, default KFold with 5 splits is used.
+    :param estimator: The model/estimator for which the grid search is performed.
+    :param params: Hyperparameters for grid search.
+    :param scoring: The scoring metric used.
+    :param cv_method: The cross-validation method.
 
     Returns:
-    - Mean cross-validation score.
+    :return: An instance of GridSearchCV.
     """
-    if cv is None:
-        cv = KFold(n_splits=5)  # Default cross-validator
+    return GridSearchCV(estimator=estimator, param_grid=params, scoring=scoring, cv=cv_method, n_jobs=-1)
 
-    scores = cross_val_score(model, X, y, cv=cv, scoring='f1_weighted')
 
-    return np.mean(scores)

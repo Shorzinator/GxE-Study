@@ -3,10 +3,8 @@ config.yaml
 data
 data\raw
 data\raw\additional_datasets
-data\EDA
-data\EDA\basic_statistics_and_missing_values.csv
-data\processed
 data\raw\Data_GxE_on_EXT_trajectories_new.csv
+data\processed
 
 project_scripts
 project_scripts\EDA
@@ -24,11 +22,12 @@ project_scripts\preprocessing\preprocessing.py
 project_scripts\modelling
 project_scripts\modelling\__init__.py
 project_scripts\modelling\one_vs_all
-project_scripts\modelling\one_vs_all\__init__.py
 project_scripts\modelling\one_vs_all\xgboost_main.py
 project_scripts\modelling\multi_class
+project_scripts\modelling\multi_class\MultLogReg_main.py
 project_scripts\evaluation
 project_scripts\evaluation\__init__.py
+project_scripts\evaluation\feature_importance_evaluation.py
 project_scripts\utility
 project_scripts\utility\__init__.py
 project_scripts\utility\model_utils.py
@@ -46,6 +45,9 @@ results\one_vs_all\xgboost_results
 results\one_vs_all\xgboost_results\metrics
 results\one_vs_all\xgboost_results\models
 results\multi_class
+results\multi_class\logisti_regression_results
+results\multi_class\logisti_regression_results\metrics
+results\multi_class\logisti_regression_results\metrics\AST_multinomial_SMOTE_GCV_KF_IT.csv
 results\figures
 results\figures\eda_plots
 results\figures\eda_plots\boxplot_visualiation
@@ -58,3 +60,7 @@ results\gxe_interaction_plots
 results\model_comparison_plots
 
 documentation
+
+config.py
+directory_tree.txt
+__init__.py

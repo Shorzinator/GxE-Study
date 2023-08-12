@@ -25,7 +25,6 @@ def split_data(df, outcome_series):
 
 def imputation_pipeline():
     """Imputation Pipeline."""
-    logger.info("Applying Imputation ...\n")
     numerical_features = ["PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
                           "ParentalWarmth", "Is_Male"]
     categorical_features = ["Race"]
@@ -49,6 +48,7 @@ def imputation_pipeline():
 
 def imputation_applier(impute, X):
     initial_size_train = len(X)
+    logger.info("Applying Imputation ...\n")
 
     input_imputed = impute.fit_transform(X)
 
@@ -67,7 +67,6 @@ def imputation_applier(impute, X):
 
 def scaling_pipeline(transformed_features):
     """Scaling Pipeline."""
-    logger.info("Applying scaling ...\n")
 
     scaler = Pipeline(steps=[
         ('scaler', StandardScaler())
@@ -87,6 +86,8 @@ def scaling_applier(scaler, X_train_imputed, X_test_imputed):
 
     initial_size_train = len(X_train_imputed)
     initial_size_test = len(X_test_imputed)
+
+    logger.info("Applying scaling ...\n")
 
     X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
     X_test_imputed_scaled = scaler.transform(X_test_imputed)

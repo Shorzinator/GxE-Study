@@ -61,11 +61,11 @@ def main():
         impute = imputation_pipeline()
         X_train_imputed = imputation_applier(impute, X_train)
 
-        # Capture transformed column names after preprocessing the training data
-        transformed_columns = X_train_imputed.columns.tolist()
-
         # Generate interaction terms using the transformed column names for training data
         X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
+
+        # Capture transformed column names after preprocessing the training data
+        transformed_columns = X_train_final.columns.tolist()
 
         # Applying imputation and one-hot encoding on testing data
         X_test_imputed = imputation_applier(impute, X_test)

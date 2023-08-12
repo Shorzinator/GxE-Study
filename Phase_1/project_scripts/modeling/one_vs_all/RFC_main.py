@@ -2,12 +2,10 @@ import itertools
 import json
 import warnings
 
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
 from Phase_1.config import FEATURES as allFeatures
 from Phase_1.project_scripts import get_path_from_root
-# Importing preprocessing functions
-# Importing utility functions
 from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import *
 
@@ -16,13 +14,13 @@ logger = logging.getLogger(__name__)
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
-MODEL_NAME = "logistic_regression"
+MODEL_NAME = "random_forest"
 RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results")
 TYPE_OF_CLASSIFICATION = "binary"
 
 
 def main():
-    logger.info("Starting one-vs-all logistic regression...")
+    logger.info("Starting one-vs-all random forest classifier...")
 
     ensure_directory_exists(RESULTS_DIR)
 
@@ -36,6 +34,7 @@ def main():
     df = load_data()
 
     # Preprocess the data specific for OvR
+    logger.info("Starting data preprocessing for random forest classification ...\n")
     datasets = preprocess_ovr(df, "AntisocialTrajectory")
 
     # List of features to consider for interactions
@@ -81,17 +80,17 @@ def main():
             # Defining parameter grid for grid search. To initiate grid search, comment out the second definition
             """
             param_grid = {
-                'penalty': ['elasticnet'],
-                'C': [0.5, 1, 2],
-                'fit_intercept': [True, False],
-                'l1_ratio': [np.arange(0.4, 0.8, 0.5)]
+            'n_estimators': [50, 100, 200],
+            'max_depth': [None, 10, 20, 30],
+            'min_samples_split': [2, 5, 10],
+            'min_samples_leaf': [1, 2, 4]
             }
             """
             param_grid = None
 
             # Training the model
-            model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
-                                       l1_ratio=0.5)
+            model = RandomForestClassifier(n_estimators=100, random_state=42)
+
             best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
                                      "True", MODEL_NAME, model_dir)
 
@@ -115,7 +114,7 @@ def main():
 
                 # Saving the best parameters
                 best_parameters = best_model.best_params_
-                results_path = os.path.join(model_dir, f"best_parameters_{COMBINED}.json")
+                results_path = os.path.join(model_dir, f"best_parameters_{COMBINED}_{IT}.json")
 
                 # Check if the file exists
                 if os.path.exists(results_path):
@@ -133,7 +132,7 @@ def main():
                     json.dump(data, f, indent=4)
 
                 # Saving the best estimator
-                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}.pkl"))
+                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}_{IT}.pkl"))
 
             # Append the results
             results.append({
@@ -147,7 +146,7 @@ def main():
         save_results(TARGET_1, f"{key}_binary", results, metrics_dir)
         logger.info(f"Completed {key} classification.")
 
-    logger.info("One-vs-all logistic regression completed.")
+    logger.info("One-vs-all random forest classification completed.")
 
 
 if __name__ == '__main__':

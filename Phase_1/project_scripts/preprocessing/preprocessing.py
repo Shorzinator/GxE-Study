@@ -116,7 +116,6 @@ def balance_data(X_train, y_train):
 
 
 def preprocess_multinomial(df, target):
-    logger.info("Starting data preprocessing for multinomial logistic regression ...\n")
 
     # Convert Sex to Is_Male binary column
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)

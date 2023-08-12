@@ -45,9 +45,10 @@ def save_results(target, type_of_classification, results, directory):
         if "train_metrics" in results[0] or "test_metrics" in results[0]:
             flattened_data = []
             for res in results:
+                interaction_name = res.get("interaction", "N/A")
                 for key, metrics in res.items():
                     if key in ["train_metrics", "test_metrics"]:
-                        flattened_data.append({"type": key, **metrics})
+                        flattened_data.append({"type": key, "interaction": interaction_name, **metrics})
             results_df = pd.DataFrame(flattened_data)
         else:
             results_df = pd.DataFrame(results)

@@ -47,9 +47,9 @@ def main():
     # List of features to consider for interactions
     feature_pairs = list(itertools.combinations(allFeatures, 2))
 
-    results = []
-
     for key, (X, y) in datasets.items():
+        results = []
+
         logging.info(f"Starting model for {key} ...\n")
 
         for feature_pair in feature_pairs:

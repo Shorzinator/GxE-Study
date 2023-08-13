@@ -14,5 +14,5 @@ SchoolConnect: School connectedness. FOCAL E.
 NeighborConnect: Neighborhood connectedness. FOCAL E.
 ParentalWarmth: Parental Warmth. FOCAL E.
 
-AntisocialTrajectory: Trajectories of Antisocial Behaviors. DV1. 1 = High Decline. 2 = Moderate. 3 = Adolescence-Peak. 4 = Low.
+AntisocialTrajectory: Trajectories of Antisocial Behaviors. DV1. 1 = High Decline. 2 = Moderate. 3 = Adolescence-Peak. 4 = Low
 SubstanceUseTrajectory: Trajectories of Substance Use Behaviors. DV2. 1 = High Use. 2 = Low Use. 3 = Typical Use.

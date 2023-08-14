@@ -136,10 +136,20 @@ def preprocess_multinomial(df, target):
 
     # Separate the target variable
     dependent = df[target]
-    feature_cols = ["Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-                    "NeighborConnect", "ParentalWarmth", "Is_Male"]
 
-    independent = df[feature_cols]
+    """
+       feature_cols = [
+           "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+           "NeighborConnect", "ParentalWarmth", "Is_Male"
+       ]
+       """
+
+    feature_cols_without_race = [
+        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+        "NeighborConnect", "ParentalWarmth", "Is_Male"
+    ]
+
+    independent = df[feature_cols_without_race]
     logger.info("Data preprocessing for multinomial logistic regression completed successfully.\n")
     return independent, dependent
 
@@ -163,11 +173,20 @@ def preprocess_ovr(df, target):
 
     # Separate the target variable
     outcome = df[target]
+
+    """
     feature_cols = [
         "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
         "NeighborConnect", "ParentalWarmth", "Is_Male"
     ]
-    df = df[feature_cols]
+    """
+
+    feature_cols_without_race = [
+        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+        "NeighborConnect", "ParentalWarmth", "Is_Male"
+    ]
+
+    df = df[feature_cols_without_race]
 
     # Create datasets for each binary classification task
     datasets = {
@@ -177,5 +196,5 @@ def preprocess_ovr(df, target):
     }
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
-    return datasets
+    return datasets, feature_cols_without_race
 

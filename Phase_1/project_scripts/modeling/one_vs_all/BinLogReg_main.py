@@ -1,12 +1,10 @@
-import itertools
 import json
 import warnings
 
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import FEATURES as allFeatures
 from Phase_1.project_scripts import get_path_from_root
-from Phase_1.project_scripts.utility.data_loader import load_data
+from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import *
 
 logging.basicConfig(level=logging.INFO)
@@ -24,20 +22,25 @@ def main():
 
     ensure_directory_exists(RESULTS_DIR)
 
-    # Subdirectories for model and metrics
+    # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics")
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race")
 
     ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
     # Load data
-    df = load_data()
+    df = load_data_old()
 
     # Preprocess the data specific for OvR
-    datasets = preprocess_ovr(df, "AntisocialTrajectory")
+    datasets, features = preprocess_ovr(df, "AntisocialTrajectory")
 
     # List of features to consider for interactions
-    feature_pairs = list(itertools.combinations(allFeatures, 2))
+    # feature_pairs = list(itertools.combinations(features, 2))
+
+    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male"]
+    fixed_element = "PolygenicScoreEXT"
+
+    feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]
 
     for key, (X, y) in datasets.items():
         results = []
@@ -76,7 +79,7 @@ def main():
 
             X_train_resampled = pd.DataFrame(X_train_resampled)
 
-            # Defining parameter grid for grid search. To initiate grid search, comment out the second definition
+            # Defining parameter grid for grid search. To initiate grid search, comment on the second definition
             """
             param_grid = {
                 'penalty': ['elasticnet'],
@@ -91,15 +94,11 @@ def main():
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)
             best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
-                                     "True", MODEL_NAME, model_dir)
-
-            logger.info("Fitting the model...\n")
+                                     "True", MODEL_NAME)
 
             # Predictions
             y_train_pred = best_model.predict(X_train_resampled)
             y_test_pred = best_model.predict(X_test_final)
-
-            logger.info("Calculating Metrics...\n")
 
             # Calculate metrics
             train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")

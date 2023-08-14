@@ -123,6 +123,8 @@ def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, 
         best_model.fit(X_train, y_train)
     else:
         best_model = estimator
+
+        logger.info("Fitting the model...\n")
         best_model.fit(X_train, y_train)
 
     if save_model and model_name:
@@ -150,6 +152,8 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
     :param weights: Weights for the custom metric. Should sum to 1.
     :return: A dictionary containing the calculated metrics
     """
+
+    logger.info("Calculating Metrics...\n")
 
     # Set default weights if none provided
     if weights is None:

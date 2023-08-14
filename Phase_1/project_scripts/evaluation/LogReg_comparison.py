@@ -51,7 +51,7 @@ def plot_comparison(metric, binary_df, multinomial_df, title, save_path, class_s
     plt.title(title, fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(os.path.join(save_path))
+    plt.savefig(os.path.join(save_path, f"AST_{i + 1}_v_4_{metric}_Comparison"))
     plt.close()
 
 
@@ -59,7 +59,7 @@ def plot_comparison(metric, binary_df, multinomial_df, title, save_path, class_s
 class_suffixes = ['1.0', '2.0', '3.0']
 for metric in metrics:
     for i, (binary_df, suffix) in enumerate(zip(binary_dfs, class_suffixes)):
-        save_path = os.path.join(get_path_from_root("results", "model_comparison_plots"))
+        save_path = os.path.join(get_path_from_root("results", "figures", "model_comparison_plots"))
         plot_comparison(metric, binary_df, multinomial_df, f"AST {i + 1}v4 - {metric} Comparison", save_path, suffix)
 
 print("All comparison plots saved successfully!")

@@ -27,7 +27,8 @@ def imputation_pipeline():
     """Imputation Pipeline."""
     numerical_features = ["PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
                           "ParentalWarmth", "Is_Male"]
-    categorical_features = ["Race"]
+    # categorical_features = ["Race"]
+    categorical_features = []
 
     numeric_transformer = Pipeline(steps=[
         ('impute', KNNImputer(n_neighbors=10))

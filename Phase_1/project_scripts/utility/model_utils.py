@@ -194,7 +194,6 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
 
     metrics["Custom_Metric"] = custom_metric_value
 
-
     return metrics
 
 
@@ -203,7 +202,7 @@ def get_cv_method(method='KFold', n_splits=5):
     Return a cross-validation method based on user's choice.
 
     Args:
-    :param method: The desired cross-validation method. Default is 'KFold'.
+    :param method: The desired cross-validation method. Default is 'KFold'
     :param n_splits: Number of splits. Relevant for KFold. Default is 5.
 
     Returns:

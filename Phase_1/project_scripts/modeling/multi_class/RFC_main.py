@@ -100,11 +100,12 @@ def main():
         # Define model
         model = RandomForestClassifier(n_estimators=100, random_state=42)
 
-        # Training model and calculating performance
+        # Training model
+        logger.info(f"Training the {MODEL_NAME} model...\n")
         best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
-                                 "False", MODEL_NAME, model_dir)
+                                 "False", MODEL_NAME, model_dir, IT)
 
-        logger.info("Fitting the model...\n")
+        logger.info("Predicting with the model...\n")
 
         # Predictions
         y_train_pred = best_model.predict(X_train_resampled)
@@ -115,9 +116,6 @@ def main():
         # Calculate metrics
         train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
         test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
-
-        # Saving the model
-        # joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
 
         # If the param_grid is not commented out, grid search would run and hence this would run as well
         if param_grid:

@@ -6,8 +6,6 @@ from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import FEATURES as allFeatures
 from Phase_1.project_scripts import get_path_from_root
-# Importing preprocessing functions
-# Importing utility functions
 from Phase_1.project_scripts.utility.data_loader import load_data
 from Phase_1.project_scripts.utility.model_utils import *
 
@@ -133,7 +131,7 @@ def main():
                     json.dump(data, f, indent=4)
 
                 # Saving the best estimator
-                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}.pkl"))
+                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}_{IT}.pkl"))
 
             # Append the results
             results.append({
@@ -144,7 +142,7 @@ def main():
 
         logging.info("Saving results ...\n")
 
-        save_results(TARGET_1, f"{key}_binary", results, metrics_dir)
+        save_results(TARGET_1, f"{key}_binary", results, metrics_dir, COMBINED, IT)
         logger.info(f"Completed {key} classification.")
 
     logger.info("One-vs-all logistic regression completed.")

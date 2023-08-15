@@ -1,6 +1,5 @@
 ./
     config.py
-    config.yaml
     Details_AST.txt
     directory_tree.txt
     update_directory_tree.py
@@ -40,14 +39,14 @@
         evaluation/
             bigPicture_BinLogReg.py
             class_performance_comparison.py
-            drop_column_analysis.py
             evaluation_BinLogReg.py
             evaluation_MultLogReg.py
             LogReg_comparison.py
             __init__.py
-            results/
-                evaluation/
-                    column_drop_evaluation.csv
+            drop column analysis/
+                drop_column_analysis.py
+                visualizing_drop_column_analysis.py
+                __init__.py
         modeling/
             __init__.py
             multi_class/
@@ -83,6 +82,12 @@
             basic_statistics.csv
             missing_values.csv
         evaluation/
+            accuracy_drop_column.png
+            column_drop_evaluation.csv
+            custom_score_drop_column.png
+            joint_plot.png
+            spider_chart_change_in_accuracy.png
+            spider_chart_change_in_custom_score.png
         figures/
             eda_plots/
                 AST_trajectory_distribution.png

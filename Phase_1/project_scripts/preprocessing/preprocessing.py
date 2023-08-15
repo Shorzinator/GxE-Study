@@ -108,7 +108,7 @@ def scaling_applier(scaler, X_train_imputed, X_test_imputed):
     return X_train_imputed_scaled, X_test_imputed_scaled
 
 
-def balance_data(X_train, y_train):
+def balance_data(X_train, y_train, key):
     """Data Balancing Pipeline."""
     logger.info("Balancing data ...\n")
 
@@ -117,17 +117,19 @@ def balance_data(X_train, y_train):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
-    # Extracting synthetic data
-    original_data = pd.concat([X_train, y_train], axis=1)
+    # Combine resampled data
     resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
+
+    # Combine original training data
+    original_data = pd.concat([X_train, y_train], axis=1)
 
     # Assuming there is no duplication in the original dataset
     synthetic_data = resampled_data.loc[~resampled_data.index.isin(original_data.index)]
 
-    # Save the synthetic data
+    # Save the original preprocessed data
     processed_data_path = get_path_from_root("data", "processed")
-    synthetic_data_file = os.path.join(processed_data_path, "synthetic_data.csv")
-    synthetic_data.to_csv(synthetic_data_file, index=False)
+    original_data_file = os.path.join(processed_data_path, f"original_preprocessed_data_{key}.csv")
+    original_data.to_csv(original_data_file, index=False)
     return X_resampled, y_resampled
 
 

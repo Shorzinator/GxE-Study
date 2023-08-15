@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import optuna
 from sklearn.metrics import accuracy_score, classification_report, matthews_corrcoef
 from sklearn.model_selection import GridSearchCV, KFold, RandomizedSearchCV, cross_val_score
@@ -138,16 +140,16 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
     :return: A dictionary containing the calculated metrics
     """
 
-    logger.info("Calculating Metrics...\n")
+    logger.info(f"Calculating {type} Metrics...\n")
 
     # Set default weights if none provided
     if weights is None:
         weights = {
-            "Accuracy": 0.2,
-            "MCC": 0.2,
+            "Accuracy": 0.4,
+            "MCC": 0.1,
             "Precision": 0.2,
             "Recall": 0.2,
-            "F1-Score": 0.2
+            "F1-Score": 0.1
         }
 
     # Check if predictions are all one class
@@ -165,21 +167,41 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
         "Matthews Correlation Coefficient": mcc
     }
 
-    # Extract metrics for all classes and calculate custom metric
-    custom_metric_value = accuracy * weights["Accuracy"] + mcc * weights["MCC"]
+    metrics = OrderedDict()
+    metrics["Model"] = model_name
+    metrics["Target"] = target
+    metrics["Accuracy"] = accuracy
+    metrics["Custom_Metric"] = None  # Placeholder - will be set later
+    metrics["Matthews Correlation Coefficient"] = mcc
+
+    # Extract metrics for all classes, but only add their average to the custom metric
+    avg_precision = avg_recall = avg_f1_score = 0
+    n_classes = 0
+
     for cls, cls_report in report.items():
         if isinstance(cls_report, dict):  # To ensure we're processing a class
+            n_classes += 1
             precision = cls_report['precision']
             recall = cls_report['recall']
             f1_score = cls_report['f1-score']
 
-            custom_metric_value += (precision * weights["Precision"] +
-                                    recall * weights["Recall"] +
-                                    f1_score * weights["F1-Score"])
+            avg_precision += precision
+            avg_recall += recall
+            avg_f1_score += f1_score
 
             metrics[f"{cls}_Precision"] = precision
             metrics[f"{cls}_Recall"] = recall
             metrics[f"{cls}_F1-Score"] = f1_score
+
+    avg_precision /= n_classes
+    avg_recall /= n_classes
+    avg_f1_score /= n_classes
+
+    custom_metric_value = (accuracy * weights["Accuracy"] +
+                           mcc * weights["MCC"] +
+                           avg_precision * weights["Precision"] +
+                           avg_recall * weights["Recall"] +
+                           avg_f1_score * weights["F1-Score"])
 
     metrics["Custom_Metric"] = custom_metric_value
 

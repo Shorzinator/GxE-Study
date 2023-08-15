@@ -78,10 +78,11 @@ def main():
             # Applying scaling
             scaler = scaling_pipeline(transformed_columns)
             X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
+            X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
 
             # Balancing data
             # logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
-            X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
+            X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
             # logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
 
             X_train_resampled = pd.DataFrame(X_train_resampled)

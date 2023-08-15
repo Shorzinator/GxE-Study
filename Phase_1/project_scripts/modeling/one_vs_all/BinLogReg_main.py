@@ -12,7 +12,7 @@ from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, im
     preprocess_ovr, scaling_applier, scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, \
-    ensure_directory_exists, train_model
+    ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -148,9 +148,9 @@ def main():
                 "test_metrics": test_metrics
             })
 
-        # logging.info("Saving results ...\n")
+        logging.info("Saving results ...\n")
 
-        # save_results(TARGET_1, f"{key}", results, metrics_dir)
+        save_results(TARGET_1, f"{key}", results, metrics_dir)
         logger.info(f"Completed {key} classification.")
 
     logger.info("One-vs-all logistic regression completed.")

@@ -1,5 +1,4 @@
 import logging
-import os
 
 import pandas as pd
 from imblearn.over_sampling import SMOTE
@@ -8,8 +7,6 @@ from sklearn.impute import KNNImputer
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -117,19 +114,6 @@ def balance_data(X_train, y_train, key):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
-    # Combine resampled data
-    resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
-
-    # Combine original training data
-    original_data = pd.concat([X_train, y_train], axis=1)
-
-    # Assuming there is no duplication in the original dataset
-    synthetic_data = resampled_data.loc[~resampled_data.index.isin(original_data.index)]
-
-    # Save the original preprocessed data
-    processed_data_path = get_path_from_root("data", "processed")
-    original_data_file = os.path.join(processed_data_path, f"original_preprocessed_data_{key}.csv")
-    original_data.to_csv(original_data_file, index=False)
     return X_resampled, y_resampled
 
 

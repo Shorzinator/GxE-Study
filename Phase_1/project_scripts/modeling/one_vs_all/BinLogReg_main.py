@@ -1,11 +1,18 @@
 import json
+import logging
+import os
 import warnings
 
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
+from Phase_1.config import TARGET_1
 from Phase_1.project_scripts import get_path_from_root
+from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
+    preprocess_ovr, scaling_applier, scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import *
+from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, \
+    ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -95,8 +102,7 @@ def main():
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)
 
-            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
-                                     "False", MODEL_NAME)
+            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid, MODEL_NAME)
 
             # Predictions
             y_train_pred = best_model.predict(X_train_resampled)
@@ -114,7 +120,7 @@ def main():
 
                 # Saving the best parameters
                 best_parameters = best_model.best_params_
-                results_path = os.path.join(model_dir, f"best_parameters_{COMBINED}.json")
+                results_path = os.path.join(model_dir, f"best_parameters.json")
 
                 # Check if the file exists
                 if os.path.exists(results_path):
@@ -132,7 +138,7 @@ def main():
                     json.dump(data, f, indent=4)
 
                 # Saving the best estimator
-                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}_{IT}.pkl"))
+                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator.pkl"))
 
             # Append the results
             results.append({
@@ -143,7 +149,7 @@ def main():
 
         logging.info("Saving results ...\n")
 
-        save_results(TARGET_1, f"{key}_binary", results, metrics_dir, COMBINED, IT)
+        save_results(TARGET_1, f"{key}", results, metrics_dir)
         logger.info(f"Completed {key} classification.")
 
     logger.info("One-vs-all logistic regression completed.")

@@ -9,7 +9,7 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from Phase_1.project_scripts import get_path_from_root
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

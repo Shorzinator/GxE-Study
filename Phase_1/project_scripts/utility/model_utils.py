@@ -1,11 +1,7 @@
-import os
-
-import joblib
 import optuna
 from sklearn.metrics import accuracy_score, classification_report, matthews_corrcoef
 from sklearn.model_selection import GridSearchCV, KFold, RandomizedSearchCV, cross_val_score
 
-from Phase_1.config import *
 from Phase_1.project_scripts.preprocessing.preprocessing import *
 
 logging.basicConfig(level=logging.INFO)
@@ -60,11 +56,9 @@ def add_interaction_terms(df, feature_pairs):
     return df
 
 
-def save_results(target, type_of_classification, results, directory, combine=None, it=None):
+def save_results(target, type_of_classification, results, directory):
     """
     Save the results in a structured directory and file.
-    :param it:
-    :param combine:
     :param directory: Model_dir or metrics_dir
     :param type_of_classification: multinomial, binary, etc.
     :param target: Target variable (either "AST" or "SUT")
@@ -97,20 +91,16 @@ def save_results(target, type_of_classification, results, directory, combine=Non
         logger.error(f"Error in save_results: {str(e)}")
 
 
-def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, model_name=None,
-                model_dir=None, IT=None):
+def train_model(X_train, y_train, estimator, param_grid=None, model_name=None):
     """
     Train the model, optionally perform grid search, and save it.
 
     Args:
-    :param IT:
     :param X_train: Training data.
     :param y_train: Training labels.
     :param estimator: The model/estimator to be trained.
     :param param_grid: Hyperparameters for grid search. If None, no grid search will be performed.
-    :param save_model: Boolean flag to decide whether to save the model or not.
     :param model_name: Name of the model, required if save_model is True.
-    :param model_dir: Directory to save model, required if save_model is True.
 
     Returns:
     :return: Trained model.
@@ -126,11 +116,6 @@ def train_model(X_train, y_train, estimator, param_grid=None, save_model=False, 
 
         logger.info("Fitting the model...\n")
         best_model.fit(X_train, y_train)
-
-    if save_model and model_name:
-        # Save the model using joblib
-        model_path = os.path.join(model_dir, f"{TARGET_1}_{model_name}_{COMBINED}_{IT}.pkl")
-        joblib.dump(best_model, model_path)
 
     return best_model
 
@@ -271,14 +256,14 @@ def grid_search_tuning(estimator, param_grid, scoring, cv):
     Parameters:
     - X_train, y_train: Training data
     - estimator: Model instance to be tuned
-    - param_grid: Dictionary with parameters names (str) as keys and lists of parameter settings to try as values.
+    - param_grid: Dictionary with parameter names (str) as keys and lists of parameter settings to try as values.
     - kwargs: Additional arguments for GridSearchCV
 
     Returns:
     - A dictionary containing the best hyperparameters, best score, and the complete results grid
     """
 
-    grid_search = GridSearchCV(estimator, param_grid, scoring, cv)
+    grid_search = GridSearchCV(estimator=estimator, param_grid=param_grid, scoring=scoring, cv=cv)
 
     return grid_search
 

@@ -1,4 +1,5 @@
 import logging
+import os
 
 import pandas as pd
 from imblearn.over_sampling import SMOTE
@@ -7,6 +8,8 @@ from sklearn.impute import KNNImputer
 from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+from Phase_1.project_scripts import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,8 +43,8 @@ def imputation_pipeline():
 
     preprocessor = ColumnTransformer(
         transformers=[
-            ('num', numeric_transformer, numerical_features),
-            ('cat', categorical_transformer, categorical_features)
+            ('num', numeric_transformer, numerical_features)
+            # ('cat', categorical_transformer, categorical_features)
         ])
 
     return preprocessor
@@ -57,8 +60,10 @@ def imputation_applier(impute, X):
     logger.info(f"Rows before imputing X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
     logger.info(f"Rows before imputing X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
     """
-    feature_names = (impute.named_transformers_['num'].named_steps['impute'].get_feature_names_out().tolist() +
-                     impute.named_transformers_['cat'].named_steps['onehot'].get_feature_names_out().tolist())
+    feature_names = [
+        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
+        "NeighborConnect", "ParentalWarmth", "Is_Male"
+    ]
 
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
     # print(X_train_imputed.columns)
@@ -84,7 +89,6 @@ def scaling_pipeline(transformed_features):
 
 
 def scaling_applier(scaler, X_train_imputed, X_test_imputed):
-
     initial_size_train = len(X_train_imputed)
     initial_size_test = len(X_test_imputed)
 
@@ -113,11 +117,21 @@ def balance_data(X_train, y_train):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
+    # Extracting synthetic data
+    original_data = pd.concat([X_train, y_train], axis=1)
+    resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
+
+    # Assuming there is no duplication in the original dataset
+    synthetic_data = resampled_data.loc[~resampled_data.index.isin(original_data.index)]
+
+    # Save the synthetic data
+    processed_data_path = get_path_from_root("data", "processed")
+    synthetic_data_file = os.path.join(processed_data_path, "synthetic_data.csv")
+    synthetic_data.to_csv(synthetic_data_file, index=False)
     return X_resampled, y_resampled
 
 
 def preprocess_multinomial(df, target):
-
     # Convert Sex to Is_Male binary column
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
@@ -155,7 +169,6 @@ def preprocess_multinomial(df, target):
 
 
 def preprocess_ovr(df, target):
-
     logger.info("Starting data preprocessing for one-vs-all logistic regression...\n")
 
     # Convert Sex to Is_Male binary column
@@ -197,4 +210,3 @@ def preprocess_ovr(df, target):
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
     return datasets, feature_cols_without_race
-

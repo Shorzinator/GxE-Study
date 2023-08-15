@@ -88,13 +88,15 @@ def main():
                 'l1_ratio': [np.arange(0.4, 0.8, 0.5)]
             }
             """
+
             param_grid = None
 
             # Training the model
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)
+
             best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
-                                     "True", MODEL_NAME)
+                                     "False", MODEL_NAME)
 
             # Predictions
             y_train_pred = best_model.predict(X_train_resampled)

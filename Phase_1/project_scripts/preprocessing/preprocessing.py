@@ -29,7 +29,7 @@ def split_data(df, outcome_series):
 def imputation_pipeline():
     """Imputation Pipeline."""
     numerical_features = ["PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
-                          "ParentalWarmth", "Is_Male"]
+                          "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"]
     # categorical_features = ["Race"]
     categorical_features = []
 
@@ -51,21 +51,17 @@ def imputation_pipeline():
 
 
 def imputation_applier(impute, X):
-    initial_size_train = len(X)
     logger.info("Applying Imputation ...\n")
 
     input_imputed = impute.fit_transform(X)
 
-    """
-    logger.info(f"Rows before imputing X_train: {initial_size_train}. Rows after: {len(X_train_imputed)}.")
-    logger.info(f"Rows before imputing X_test: {initial_size_test}. Rows after: {len(X_test_imputed)}.\n")
-    """
     feature_names = [
         "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male"
+        "NeighborConnect", "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"
     ]
 
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
+
     # print(X_train_imputed.columns)
 
     return X_train_imputed
@@ -117,15 +113,17 @@ def balance_data(X_train, y_train, key):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
+    """
     # Reset indices before concatenation
     X_resampled = X_resampled.reset_index(drop=True)
     y_resampled = y_resampled.reset_index(drop=True)
-
+    
     # Combine resampled data
     resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
     processed_data_path = get_path_from_root("data", "processed")
     resampled_data_file = os.path.join(processed_data_path, f"resampled_data_{key}.csv")
     resampled_data.to_csv(resampled_data_file, index=False)
+    """
 
     return X_resampled, y_resampled
 
@@ -174,11 +172,13 @@ def preprocess_ovr(df, target):
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
     # Handle outliers for PolygenicScoreEXT using IQR
+    initial_size = len(df)
     Q1 = df['PolygenicScoreEXT'].quantile(0.25)
     Q3 = df['PolygenicScoreEXT'].quantile(0.75)
     IQR = Q3 - Q1
     df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
               (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
 
     # Drop rows where the target variable is missing
     df = df.dropna(subset=[target])
@@ -186,19 +186,12 @@ def preprocess_ovr(df, target):
     # Separate the target variable
     outcome = df[target]
 
-    """
     feature_cols = [
-        "Race", "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male"
-    ]
-    """
-
-    feature_cols_without_race = [
         "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male"
+        "NeighborConnect", "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"
     ]
 
-    df = df[feature_cols_without_race]
+    df = df[feature_cols]
 
     # Create datasets for each binary classification task
     datasets = {
@@ -208,4 +201,4 @@ def preprocess_ovr(df, target):
     }
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
-    return datasets, feature_cols_without_race
+    return datasets, feature_cols

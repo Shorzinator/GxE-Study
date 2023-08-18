@@ -31,10 +31,11 @@ def main():
 
     # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race")
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race\\with SUT")
 
     ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
+
     # Load data
     df = load_data_old()
 
@@ -44,7 +45,8 @@ def main():
     # List of features to consider for interactions
     # feature_pairs = list(itertools.combinations(features, 2))
 
-    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male"]
+    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male",
+                "SubstanceUseTrajectory"]
     fixed_element = "PolygenicScoreEXT"
 
     feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]

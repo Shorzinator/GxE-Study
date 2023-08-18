@@ -24,7 +24,7 @@ def load_data():
 
 
 def load_data_old():
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(DATA_PATH_old)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")
     logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")

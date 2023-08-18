@@ -81,9 +81,6 @@ def save_results(target, type_of_classification, results, directory):
 
         dir_path = directory
 
-        # Check and create the directory if it doesn't exist
-        ensure_directory_exists(dir_path)
-
         results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
 
         # Save to CSV

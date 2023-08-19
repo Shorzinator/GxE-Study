@@ -45,7 +45,6 @@ def main():
     # List of features to consider for interactions
     # feature_pairs = list(itertools.combinations(features, 2))
 
-
     features = FEATURES.copy()
 
     features.remove("PolygenicScoreEXT")

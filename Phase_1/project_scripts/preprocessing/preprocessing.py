@@ -190,4 +190,4 @@ def preprocess_ovr(df, target):
     }
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
-    return datasets, feature_cols
+    return datasets

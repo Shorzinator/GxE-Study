@@ -1,206 +1,219 @@
 ./
-    config.py
-    Details_AST.txt
-    directory_tree.txt
     update_directory_tree.py
     variables.txt
+    config.py
+    directory_tree.txt
+    Details_AST.txt
     __init__.py
-    data/
-        processed/
-            original_preprocessed_data_1_vs_4.csv
-            original_preprocessed_data_2_vs_4.csv
-            original_preprocessed_data_3_vs_4.csv
-            resampled_data_1_vs_4.csv
-            resampled_data_2_vs_4.csv
-            resampled_data_3_vs_4.csv
-            synthetic_data_1_vs_4.csv
-            synthetic_data_2_vs_4.csv
-            synthetic_data_3_vs_4.csv
-        raw/
-            Data_GxE_on_EXT_Trajectories.csv
-            Data_GxE_on_EXT_trajectories_new.csv
-            additional_datasets/
-    documentation/
-        AntisocialTrajectory_Analysis.md
-    notebooks/
     project_scripts/
         __init__.py
         EDA/
-            AST_trajectory_analysis.py
-            basic_statistics_and_missing_values.py
-            boxplot_visualizations.py
             categorical_feature_analysis.py
-            contingency_tables.py
-            correlation_analysis.py
             distribution_visualization.py
+            boxplot_visualizations.py
+            correlation_analysis.py
+            __init__.py
+            contingency_tables.py
+            basic_statistics_and_missing_values.py
             pca.py
             SUT_trajectory_analysis.py
+            AST_trajectory_analysis.py
+        __pycache__/
+            __init__.cpython-39.pyc
+        modeling/
             __init__.py
+            one_vs_all/
+                BinLogReg_main.py
+                __init__.py
+                RFC_main.py
+                xgboost_main.py
+            multi_class/
+                MultLogReg_main.py
+                __init__.py
+                RFC_main.py
         evaluation/
-            bigPicture_BinLogReg.py
-            class_performance_comparison.py
-            evaluation_BinLogReg.py
-            evaluation_MultLogReg.py
             LogReg_comparison.py
             __init__.py
+            evaluation_BinLogReg.py
+            class_performance_comparison.py
+            bigPicture_BinLogReg.py
+            comparing_results_with_SUT.py
+            evaluation_MultLogReg.py
             drop column analysis/
                 drop_column_analysis.py
                 visualizing_drop_column_analysis.py
                 __init__.py
-        modeling/
-            __init__.py
-            multi_class/
-                MultLogReg_main.py
-                RFC_main.py
-                __init__.py
-            one_vs_all/
-                BinLogReg_main.py
-                RFC_main.py
-                xgboost_main.py
-                __init__.py
-                __pycache__/
         preprocessing/
+            __init__.py
             preprocessing.py
-            __init__.py
             __pycache__/
-                preprocessing.cpython-39.pyc
                 __init__.cpython-39.pyc
+                preprocessing.cpython-39.pyc
         utility/
-            data_loader.py
             model_utils.py
-            path_utils.py
+            data_loader.py
             __init__.py
+            path_utils.py
             __pycache__/
+                __init__.cpython-39.pyc
                 data_loader.cpython-39.pyc
                 model_utils.cpython-39.pyc
                 path_utils.cpython-39.pyc
-                __init__.cpython-39.pyc
-        __pycache__/
-            __init__.cpython-39.pyc
+    documentation/
+        AntisocialTrajectory_Analysis.md
+    __pycache__/
+        __init__.cpython-39.pyc
+        config.cpython-39.pyc
     results/
+        one_vs_all/
+            random_forest_results/
+                metrics/
+                    AST_1_vs_4_binary_SMOTE_IT.csv
+                    AST_3_vs_4_binary_SMOTE_IT.csv
+                    AST_2_vs_4_binary_SMOTE_IT.csv
+            logistic_regression_results/
+                metrics/
+                    without Race/
+                        AST_2_vs_4_without_SUT.csv
+                        .DS_Store
+                        AST_3_vs_4_without_SUT.csv
+                        AST_1_vs_4_without_SUT.csv
+                        with SUT/
+                            .DS_Store
+                            AST_2_vs_4_with_SUT.csv
+                            AST_3_vs_4_with_SUT.csv
+                            AST_1_vs_4_with_SUT.csv
+                    with Race/
+                        AST_3_vs_4_binary_SMOTE_GCV_KF_IT.csv
+                        AST_1_vs_4_binary_SMOTE_GCV_KF_IT.csv
+                        AST_2_vs_4_binary_SMOTE_GCV_KF_IT.csv
+                metrics\with SUT/
+                    AST_2_vs_4.csv
+                    AST_3_vs_4.csv
+                    AST_1_vs_4.csv
+                metrics\without Race\with SUT/
+                    .DS_Store
+                    AST_2_vs_4_with_SUT.csv
+                    AST_3_vs_4_with_SUT.csv
+                    AST_1_vs_4_with_SUT.csv
+                models/
+                metrics\without Race/
+                    .DS_Store
+                    AST_2_vs_4.csv
+                    AST_3_vs_4.csv
+                    AST_1_vs_4.csv
+            xgboost_results/
+                AST_1_vs_4_results.csv
+                AST_2_vs_4_results.csv
+                AST_3_vs_4_results.csv
         eda_results/
-            basic_statistics.csv
             missing_values.csv
-        evaluation/
-            accuracy_drop_column.png
-            column_drop_evaluation.csv
-            custom_score_drop_column.png
-            joint_plot.png
-            spider_chart_change_in_accuracy.png
-            spider_chart_change_in_custom_score.png
+            basic_statistics.csv
         figures/
+            gxe_interaction_plots/
+                BinLogReg_plots/
+                    macro avg_Precision_Ranked Top Interactions for 4.0.png
+                    weighted avg_F1-Score_Ranked Top Interactions for 4.0.png
+                    weighted avg_Precision_Ranked Top Interactions for 4.0.png
+                    4.0_Recall_Ranked Top Interactions for 4.0.png
+                    4.0_Precision_Ranked Top Interactions for 4.0.png
+                    weighted avg_Recall_Ranked Top Interactions for 4.0.png
+                    macro avg_Recall_Ranked Top Interactions for 4.0.png
+                    Accuracy_Ranked Top Interactions for 4.0.png
+                    macro avg_F1-Score_Ranked Top Interactions for 4.0.png
+                    4.0_F1-Score_Ranked Top Interactions for 4.0.png
             eda_plots/
-                AST_trajectory_distribution.png
                 SUT_trajectory_distribution.png
+                AST_trajectory_distribution.png
+                pca/
+                    pca_results.png
                 AST_trajectory_analysis/
+                    AST_boxplot_SchoolConnect.png
+                    AST_boxplot_PolygenicScoreEXT.png
                     AST_boxplot_Age.png
                     AST_boxplot_DelinquentPeer.png
                     AST_boxplot_NeighborConnect.png
-                    AST_boxplot_ParentalWarmth.png
-                    AST_boxplot_PolygenicScoreEXT.png
                     AST_boxplot_Race.png
-                    AST_boxplot_SchoolConnect.png
-                boxplot_visualization/
-                    Age_boxplot.png
-                    DelinquentPeer_boxplot.png
-                    FamilyID_boxplot.png
-                    ID_boxplot.png
-                    NeighborConnect_boxplot.png
-                    ParentalWarmth_boxplot.png
-                    PolygenicScoreEXT_boxplot.png
-                    Race_boxplot.png
-                    SchoolConnect_boxplot.png
-                    Sex_boxplot.png
-                    SubstanceUseTrajectory_boxplot.png
-                categorical_feature_analysis/
-                    Race_countplot.png
+                    AST_boxplot_ParentalWarmth.png
                 contingency_table/
                     Race_AntisocialTrajectory-contingency_table.png
                 correlation_analysis/
                     correlation_matrix.png
                 distribution_visualization/
-                    Age_distribution.png
-                    DelinquentPeer_distribution.png
-                    FamilyID_distribution.png
-                    ID_distribution.png
-                    NeighborConnect_distribution.png
-                    ParentalWarmth_distribution.png
-                    PolygenicScoreEXT_distribution.png
-                    Race_distribution.png
-                    SchoolConnect_distribution.png
-                    Sex_distribution.png
                     SubstanceUseTrajectory_distribution.png
-                pca/
-                    pca_results.png
+                    FamilyID_distribution.png
+                    DelinquentPeer_distribution.png
+                    SchoolConnect_distribution.png
+                    ParentalWarmth_distribution.png
+                    NeighborConnect_distribution.png
+                    Age_distribution.png
+                    Race_distribution.png
+                    PolygenicScoreEXT_distribution.png
+                    Sex_distribution.png
+                    ID_distribution.png
+                categorical_feature_analysis/
+                    Race_countplot.png
                 SUT_trajectory_analysis/
+                    SUT_boxplot_ParentalWarmth.png
+                    SUT_boxplot_SchoolConnect.png
                     SUT_boxplot_Age.png
                     SUT_boxplot_DelinquentPeer.png
                     SUT_boxplot_NeighborConnect.png
-                    SUT_boxplot_ParentalWarmth.png
-                    SUT_boxplot_PolygenicScoreEXT.png
                     SUT_boxplot_Race.png
-                    SUT_boxplot_SchoolConnect.png
+                    SUT_boxplot_PolygenicScoreEXT.png
+                boxplot_visualization/
+                    DelinquentPeer_boxplot.png
+                    NeighborConnect_boxplot.png
+                    SubstanceUseTrajectory_boxplot.png
+                    PolygenicScoreEXT_boxplot.png
+                    ID_boxplot.png
+                    SchoolConnect_boxplot.png
+                    Race_boxplot.png
+                    FamilyID_boxplot.png
+                    ParentalWarmth_boxplot.png
+                    Sex_boxplot.png
+                    Age_boxplot.png
             gxe_comparison_plots/
                 performance_comparison.png
-            gxe_interaction_plots/
-                BinLogReg_plots/
-                    4.0_F1-Score_Ranked Top Interactions for 4.0.png
-                    4.0_Precision_Ranked Top Interactions for 4.0.png
-                    4.0_Recall_Ranked Top Interactions for 4.0.png
-                    Accuracy_Ranked Top Interactions for 4.0.png
-                    macro avg_F1-Score_Ranked Top Interactions for 4.0.png
-                    macro avg_Precision_Ranked Top Interactions for 4.0.png
-                    macro avg_Recall_Ranked Top Interactions for 4.0.png
-                    weighted avg_F1-Score_Ranked Top Interactions for 4.0.png
-                    weighted avg_Precision_Ranked Top Interactions for 4.0.png
-                    weighted avg_Recall_Ranked Top Interactions for 4.0.png
             model_comparison_plots/
-                AST_1_v_4_Accuracy_Comparison.png
-                AST_1_v_4_F1-Score_Comparison.png
-                AST_1_v_4_Precision_Comparison.png
                 AST_1_v_4_Recall_Comparison.png
-                AST_2_v_4_Accuracy_Comparison.png
-                AST_2_v_4_F1-Score_Comparison.png
-                AST_2_v_4_Precision_Comparison.png
-                AST_2_v_4_Recall_Comparison.png
-                AST_3_v_4_Accuracy_Comparison.png
-                AST_3_v_4_F1-Score_Comparison.png
-                AST_3_v_4_Precision_Comparison.png
+                AST_1_v_4_F1-Score_Comparison.png
                 AST_3_v_4_Recall_Comparison.png
+                AST_1_v_4_Precision_Comparison.png
+                AST_1_v_4_Accuracy_Comparison.png
+                AST_2_v_4_Precision_Comparison.png
+                AST_3_v_4_Precision_Comparison.png
+                AST_2_v_4_Accuracy_Comparison.png
+                AST_2_v_4_Recall_Comparison.png
+                AST_2_v_4_F1-Score_Comparison.png
+                AST_3_v_4_F1-Score_Comparison.png
+                AST_3_v_4_Accuracy_Comparison.png
+        evaluation/
+            joint_plot.png
+            spider_chart_change_in_custom_score.png
+            accuracy_drop_column.png
+            spider_chart_change_in_accuracy.png
+            column_drop_evaluation.csv
+            custom_score_drop_column.png
         multi_class/
+            random_forest_results/
+                metrics/
+                    AST_multinomial_SMOTE_GCV_KF_IT.csv
             logistic_regression_results/
                 metrics/
                     with Race/
                         AST_multinomial_SMOTE_noGCV_noKF_IT.csv
-                    without Race/
-            random_forest_results/
-                metrics/
-                    AST_multinomial_SMOTE_GCV_KF_IT.csv
-                models/
-        one_vs_all/
-            logistic_regression_results/
-                metrics/
-                    with Race/
-                        AST_1_vs_4_binary_SMOTE_GCV_KF_IT.csv
-                        AST_2_vs_4_binary_SMOTE_GCV_KF_IT.csv
-                        AST_3_vs_4_binary_SMOTE_GCV_KF_IT.csv
-                    without Race/
-                        AST_1_vs_4.csv
-                        AST_2_vs_4.csv
-                        AST_3_vs_4.csv
-                models/
-            random_forest_results/
-                metrics/
-                    AST_1_vs_4_binary_SMOTE_IT.csv
-                    AST_2_vs_4_binary_SMOTE_IT.csv
-                    AST_3_vs_4_binary_SMOTE_IT.csv
-                models/
-            xgboost_results/
-                AST_1_vs_4_results.csv
-                AST_2_vs_4_results.csv
-                AST_3_vs_4_results.csv
-                metrics/
-                models/
-    __pycache__/
-        config.cpython-39.pyc
-        __init__.cpython-39.pyc
+    data/
+        processed/
+            synthetic_data_1_vs_4.csv
+            original_preprocessed_data_1_vs_4.csv
+            resampled_data_1_vs_4.csv
+            resampled_data_2_vs_4.csv
+            resampled_data_3_vs_4.csv
+            original_preprocessed_data_3_vs_4.csv
+            original_preprocessed_data_2_vs_4.csv
+            synthetic_data_3_vs_4.csv
+            synthetic_data_2_vs_4.csv
+        raw/
+            Data_GxE_on_EXT_trajectories_new.csv
+            Data_GxE_on_EXT_Trajectories.csv

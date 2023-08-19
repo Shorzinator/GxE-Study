@@ -67,6 +67,8 @@ def save_results(target, type_of_classification, results, directory):
     :param results: The results data (a dictionary)
     """
     try:
+        logging.info("Saving results  ...\n")
+
         # Check if the results need to be flattened
         if "train_metrics" in results[0] or "test_metrics" in results[0]:
             flattened_data = []
@@ -142,8 +144,8 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
     # Set default weights if none provided
     if weights is None:
         weights = {
-            "Accuracy": 0.4,
-            "MCC": 0.1,
+            "Accuracy": 0.25,
+            "MCC": 0.25,
             "Precision": 0.2,
             "Recall": 0.2,
             "F1-Score": 0.1

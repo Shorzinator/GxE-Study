@@ -10,6 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+from Phase_1.config import FEATURES
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -28,9 +29,8 @@ def split_data(df, outcome_series):
 
 def imputation_pipeline():
     """Imputation Pipeline."""
-    numerical_features = ["PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect",
-                          "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"]
-    # categorical_features = ["Race"]
+    numerical_features = FEATURES
+
     categorical_features = []
 
     numeric_transformer = Pipeline(steps=[
@@ -55,10 +55,7 @@ def imputation_applier(impute, X):
 
     input_imputed = impute.fit_transform(X)
 
-    feature_names = [
-        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"
-    ]
+    feature_names = FEATURES
 
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
 
@@ -155,10 +152,7 @@ def preprocess_multinomial(df, target):
        ]
        """
 
-    feature_cols_without_race = [
-        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male"
-    ]
+    feature_cols_without_race = FEATURES
 
     independent = df[feature_cols_without_race]
     logger.info("Data preprocessing for multinomial logistic regression completed successfully.\n")
@@ -186,10 +180,7 @@ def preprocess_ovr(df, target):
     # Separate the target variable
     outcome = df[target]
 
-    feature_cols = [
-        "PolygenicScoreEXT", "Age", "DelinquentPeer", "SchoolConnect",
-        "NeighborConnect", "ParentalWarmth", "Is_Male", "SubstanceUseTrajectory"
-    ]
+    feature_cols = FEATURES
 
     df = df[feature_cols]
 

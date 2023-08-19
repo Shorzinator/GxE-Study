@@ -3,7 +3,7 @@ GRID_SEARCHER = "GCV"
 BALANCER = "SMOTE"
 IT = "IT"   # Interaction term
 FEATURES = ['PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect',
-            'NeighborConnect', 'ParentalWarmth', 'Is_Male']
+            'NeighborConnect', 'ParentalWarmth', 'Is_Male', "SubstanceUseTrajectory"]
 
 TARGET_1 = "AST"
 TARGET_2 = "SUT"

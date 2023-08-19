@@ -110,7 +110,6 @@ def balance_data(X_train, y_train, key):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
-    """
     # Reset indices before concatenation
     X_resampled = X_resampled.reset_index(drop=True)
     y_resampled = y_resampled.reset_index(drop=True)
@@ -118,9 +117,8 @@ def balance_data(X_train, y_train, key):
     # Combine resampled data
     resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
     processed_data_path = get_path_from_root("data", "processed")
-    resampled_data_file = os.path.join(processed_data_path, f"resampled_data_{key}.csv")
+    resampled_data_file = os.path.join(processed_data_path, f"resampled_data_{key}_with_SUT.csv")
     resampled_data.to_csv(resampled_data_file, index=False)
-    """
 
     return X_resampled, y_resampled
 

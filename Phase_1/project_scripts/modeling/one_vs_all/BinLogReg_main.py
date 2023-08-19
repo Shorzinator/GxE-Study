@@ -31,7 +31,7 @@ def main():
 
     # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics//without Race")
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics//without Race//with SUT")
 
     ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
@@ -152,7 +152,7 @@ def main():
                 "test_metrics": test_metrics
             })
 
-        save_results(TARGET_1, f"{key}_without_SUT", results, metrics_dir)
+        save_results(TARGET_1, f"{key}_with_SUT", results, metrics_dir)
         logger.info(f"Completed {key} classification.\n")
 
     logger.info("One-vs-all logistic regression completed.")

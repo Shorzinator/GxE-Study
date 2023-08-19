@@ -6,7 +6,7 @@ import warnings
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import TARGET_1
+from Phase_1.config import TARGET_1, FEATURES
 from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
     preprocess_ovr, scaling_applier, scaling_pipeline, split_data
@@ -31,7 +31,7 @@ def main():
 
     # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race\\with SUT")
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics//without Race")
 
     ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
@@ -45,8 +45,10 @@ def main():
     # List of features to consider for interactions
     # feature_pairs = list(itertools.combinations(features, 2))
 
-    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male",
-                "SubstanceUseTrajectory"]
+
+    features = FEATURES.copy()
+
+    features.remove("PolygenicScoreEXT")
     fixed_element = "PolygenicScoreEXT"
 
     feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]
@@ -150,8 +152,7 @@ def main():
                 "test_metrics": test_metrics
             })
 
-        logging.info("Saving results ...\n")
-        save_results(TARGET_1, f"{key}", results, metrics_dir)
+        save_results(TARGET_1, f"{key}_without_SUT", results, metrics_dir)
         logger.info(f"Completed {key} classification.\n")
 
     logger.info("One-vs-all logistic regression completed.")

@@ -191,3 +191,28 @@ def preprocess_ovr(df, target):
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
     return datasets
+
+
+def preprocess_general(df, target):
+    logger.info("Starting data preprocessing for clustering analysis...\n")
+
+    # Convert Sex to Is_Male binary column
+    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+
+    # Handle outliers for PolygenicScoreEXT using IQR
+    initial_size = len(df)
+    Q1 = df['PolygenicScoreEXT'].quantile(0.25)
+    Q3 = df['PolygenicScoreEXT'].quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
+              (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
+
+    # Drop rows where the target variable is missing
+    df = df.dropna(subset=[target])
+
+    feature_cols = FEATURES
+    df = df[feature_cols]
+
+    logger.info("Data preprocessing for clustering analysis completed successfully.\n")
+    return df

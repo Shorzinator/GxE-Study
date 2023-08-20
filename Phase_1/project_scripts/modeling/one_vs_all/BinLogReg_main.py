@@ -6,13 +6,13 @@ import warnings
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import TARGET_1, FEATURES
+from Phase_1.config import TARGET_1
 from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
     preprocess_ovr, scaling_applier, scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, \
-    ensure_directory_exists, train_model, save_results
+    ensure_directory_exists, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -31,11 +31,10 @@ def main():
 
     # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics//without Race//with SUT")
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race")
 
     ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
-
     # Load data
     df = load_data_old()
 
@@ -45,9 +44,7 @@ def main():
     # List of features to consider for interactions
     # feature_pairs = list(itertools.combinations(features, 2))
 
-    features = FEATURES.copy()
-
-    features.remove("PolygenicScoreEXT")
+    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male"]
     fixed_element = "PolygenicScoreEXT"
 
     feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]
@@ -151,8 +148,10 @@ def main():
                 "test_metrics": test_metrics
             })
 
-        save_results(TARGET_1, f"{key}_with_SUT", results, metrics_dir)
-        logger.info(f"Completed {key} classification.\n")
+        #logging.info("Saving results ...\n")
+
+        #save_results(TARGET_1, f"{key}", results, metrics_dir)
+        logger.info(f"Completed {key} classification.")
 
     logger.info("One-vs-all logistic regression completed.")
 

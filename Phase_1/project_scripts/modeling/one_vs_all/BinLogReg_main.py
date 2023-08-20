@@ -40,7 +40,7 @@ def main():
     df = load_data_old()
 
     # Preprocess the data specific for OvR
-    datasets, features = preprocess_ovr(df, "AntisocialTrajectory")
+    datasets = preprocess_ovr(df, "AntisocialTrajectory")
 
     # List of features to consider for interactions
     # feature_pairs = list(itertools.combinations(features, 2))

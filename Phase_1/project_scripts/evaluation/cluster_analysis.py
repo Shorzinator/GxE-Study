@@ -49,7 +49,7 @@ def plot_elbow(X_scaled):
 
 def plot_clusters(X, clusters, feature_pair, pca_transformed_data, centroids_pca):
     plt.figure(figsize=(10, 7))
-    plt.scatter(pca_transformed_data[:, 0], pca_transformed_data[:, 1], c=clusters, cmap='viridis', s=50, alpha=0.6)
+    plt.scatter(pca_transformed_data[:, 0], pca_transformed_data[:, 1], c=clusters, cmap='viridis', s=50, alpha=0.5)  # Adjust the alpha parameter
     plt.scatter(centroids_pca[:, 0], centroids_pca[:, 1], color='red', s=150, marker='X')
     plt.title(f"Clusters for Interaction: {feature_pair[0]} x {feature_pair[1]}")
     plt.xlabel("First Principal Component")
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         plot_elbow(X_scaled)
 
-        kmeans = KMeans(n_clusters=3, n_init=10)
+        kmeans = KMeans(n_clusters=2, n_init=10)
         clusters = kmeans.fit_predict(X_scaled)
 
         pca = PCA(n_components=2)
@@ -98,17 +98,13 @@ if __name__ == "__main__":
 
         # Extract cluster statistics
         centroids = scaler.inverse_transform(kmeans.cluster_centers_)
+        cluster_sizes = pd.Series(clusters).value_counts().sort_index()
 
         cluster_summary = {
             "interaction term": f"{feature_pair[0]}_x_{feature_pair[1]}",
             "silhouette_score": silhouette_score(X_scaled, clusters),
+            "centroids": centroids.tolist()
         }
-
-        cluster_stats = X_final.groupby(clusters).agg(['mean', 'std'])
-        for i in range(3):  # for each cluster
-            for column in X_final.columns:
-                cluster_summary[f"cluster_{i}_{column}_mean"] = cluster_stats[column]['mean'].iloc[i]
-                cluster_summary[f"cluster_{i}_{column}_std"] = cluster_stats[column]['std'].iloc[i]
 
         results.append(cluster_summary)
 

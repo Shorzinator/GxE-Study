@@ -113,7 +113,7 @@ def balance_data(X_train, y_train, key):
     # Reset indices before concatenation
     X_resampled = X_resampled.reset_index(drop=True)
     y_resampled = y_resampled.reset_index(drop=True)
-    
+
     # Combine resampled data
     resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
     processed_data_path = get_path_from_root("data", "processed")

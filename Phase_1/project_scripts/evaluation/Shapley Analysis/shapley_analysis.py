@@ -47,13 +47,13 @@ def load_from_disk(path):
 
 
 def visualize_shap_values(shap_values, X, config_name, feature_names, interaction_term=None):
-    plt.figure(figsize=(20, 15))
+    plt.figure(figsize=(40, 15))
     shap.summary_plot(shap_values, X, feature_names=feature_names, show=False)
     title = f"SHAP Summary Plot for {config_name}"
     if interaction_term:
         term_str = " x ".join(interaction_term)
         title += f" (Interaction: {term_str})"
-    plt.title(title)
+    plt.title(title, fontsize=10)
     plt.tight_layout()
     filename = f"shap_summary_{config_name}"
     if interaction_term:

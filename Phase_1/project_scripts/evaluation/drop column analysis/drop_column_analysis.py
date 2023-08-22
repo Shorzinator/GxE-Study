@@ -10,7 +10,8 @@ from Phase_1.config import FEATURES
 from Phase_1.project_scripts.preprocessing.preprocessing import imputation_applier, imputation_pipeline, preprocess_ovr, \
     scaling_applier, scaling_pipeline, split_data
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, train_model
+from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, calculate_metrics, \
+    ensure_directory_exists, train_model
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.INFO)
@@ -92,6 +93,9 @@ def evaluate_with_drop_column(output_column):
 
             impute = imputation_pipeline()
             X_train_imputed = imputation_applier(impute, X_train)
+
+            X_train_imputed = add_interaction_terms(X_train_imputed, feature_pair)
+
             X_test_imputed = imputation_applier(impute, X_test)
 
             scaler = scaling_pipeline(X_train_imputed.columns.tolist())

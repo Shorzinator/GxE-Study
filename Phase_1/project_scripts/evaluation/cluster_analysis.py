@@ -1,13 +1,11 @@
-import os
-import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
 from sklearn.decomposition import PCA
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
-from Phase_1.project_scripts.utility.model_utils import *
-from Phase_1.project_scripts.utility.data_loader import *
+from sklearn.metrics import silhouette_score
+
 from Phase_1.config import FEATURES
+from Phase_1.project_scripts.utility.data_loader import *
+from Phase_1.project_scripts.utility.model_utils import *
 
 RESULTS_DIR = get_path_from_root("results", "evaluation", "cluster_analysis")
 ensure_directory_exists(RESULTS_DIR)
@@ -87,7 +85,7 @@ if __name__ == "__main__":
 
         plot_elbow(X_scaled)
 
-        kmeans = KMeans(n_clusters=2, n_init=10)
+        kmeans = KMeans(n_clusters=3, n_init=10)
         clusters = kmeans.fit_predict(X_scaled)
 
         pca = PCA(n_components=2)

@@ -1,9 +1,11 @@
+import os
 from collections import OrderedDict
 
 import optuna
 from sklearn.metrics import accuracy_score, classification_report, matthews_corrcoef
 from sklearn.model_selection import GridSearchCV, KFold, RandomizedSearchCV, cross_val_score
 
+from Phase_1.config import IT, TARGET_2
 from Phase_1.project_scripts.preprocessing.preprocessing import *
 
 logging.basicConfig(level=logging.INFO)
@@ -61,7 +63,7 @@ def add_interaction_terms(df, feature_pairs):
     return df
 
 
-def save_results(target, type_of_classification, results, directory, interaction=True):
+def save_results(target, type_of_classification, results, directory, interaction):
     """
     Save the results in a structured directory and file.
     :param interaction: Boolean value to decide whether to add IT or not
@@ -87,10 +89,12 @@ def save_results(target, type_of_classification, results, directory, interaction
 
         dir_path = directory
 
-        if interaction:
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+        if interaction==True:
+            logging.info("Saving results with interaction terms...\n")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{TARGET_2}.csv")
         else:
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_noIT.csv")
+            logging.info("Saving results without interaction terms...\n")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}_no{TARGET_2}.csv")
 
         # Save to CSV
         results_df.to_csv(results_file, index=False)

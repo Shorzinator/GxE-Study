@@ -19,26 +19,26 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
+    # Original columns
+    original_columns = X_train.columns.tolist()
     # Applying imputation and one-hot encoding on training data
     impute = imputation_pipeline()
     X_train_imputed = imputation_applier(impute, X_train)
+    X_train_imputed.columns = original_columns  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for training data
     X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
 
     # Applying imputation and one-hot encoding on testing data
     X_test_imputed = imputation_applier(impute, X_test)
+    X_test_imputed.columns = original_columns  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for testing data
     X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
     X_test_final = pd.DataFrame(X_test_final)
 
-    # Capture transformed column names after preprocessing the training data
-    transformed_columns = X_train_final.columns.tolist()
-
     # Applying scaling
-    scaler = scaling_pipeline(transformed_columns)
-    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_test_final)
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
 
     # Balancing data
@@ -53,22 +53,21 @@ def apply_preprocessing_without_interaction_terms(X, y, key):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
+    # Capturing original column names
+    original_columns = X_train.columns.tolist()
+
     # Applying imputation and one-hot encoding on training data
     impute = imputation_pipeline()
     X_train_final = imputation_applier(impute, X_train)
-    X_train_final = pd.DataFrame(X_train_final)
+    X_train_final.columns = original_columns  # re-assigning column names
 
     # Applying imputation and one-hot encoding on testing data
     X_test_final = imputation_applier(impute, X_test)
-    X_test_final = pd.DataFrame(X_test_final)
-
-    # Capture transformed column names after preprocessing the training data
-    transformed_columns = X_train_final.columns.tolist()
+    X_test_final.columns = original_columns  # re-assigning column names
 
     # Applying scaling
-    scaler = scaling_pipeline(transformed_columns)
-    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
-    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_test_final)
+    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled, columns=original_columns)
 
     # Balancing data
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
@@ -124,34 +123,19 @@ def imputation_applier(impute, X):
     return X_train_imputed
 
 
-def scaling_pipeline(transformed_features):
-    """Scaling Pipeline."""
-
-    scaler = Pipeline(steps=[
-        ('scaler', StandardScaler())
-    ])
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ('num', scaler, transformed_features),
-        ],
-        remainder='passthrough'  # Non-scaled features are passed through without any transformation
-    )
-
-    return preprocessor
-
-
-def scaling_applier(scaler, X_train_imputed, X_test_imputed):
-    initial_size_train = len(X_train_imputed)
-    initial_size_test = len(X_test_imputed)
-
+def scaling_applier(X_train_imputed, X_test_imputed):
     logger.info("Applying scaling ...\n")
 
+    # Initialize scaler
+    scaler = StandardScaler()
+
+    # Fit on training data and transform
     X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
     X_test_imputed_scaled = scaler.transform(X_test_imputed)
 
-    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
-    X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled)
+    # Convert back to DataFrame and retain column names
+    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled, columns=X_train_imputed.columns)
+    X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled, columns=X_test_imputed.columns)
 
     return X_train_imputed_scaled, X_test_imputed_scaled
 

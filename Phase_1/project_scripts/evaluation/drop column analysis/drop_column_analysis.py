@@ -54,21 +54,28 @@ def visualize_results(df, metric, key):
 
     # Decide color palette based on positive or negative change
     df["positive_change"] = df[y_col] > 0
-    palette = sns.color_palette("coolwarm_r", 2)
+    palette = {True: "g", False: "r"}  # Green for positive change and Red for negative
 
     # Bar plot for given metric
     plt.figure(figsize=(20, 8))
-    ax1 = sns.barplot(data=df, x="column_dropped", y=y_col, hue="positive_change", palette=palette, dodge=False)
+    ax1 = sns.barplot(data=df, x="column_dropped", y=y_col, palette=df["positive_change"].map(palette), dodge=False)
     plt.title(f"Change in {metric} by Column Dropped", fontsize=20)
     plt.xlabel("Columns Dropped", fontsize=17)
     plt.ylabel(ylabel, fontsize=17)
     plt.xticks(rotation=45)
-    plt.legend(title="Positive Change", loc="upper right", fontsize=14, labels=['Yes', 'No'])
+
+    # Custom Legend
+    from matplotlib.lines import Line2D
+    legend_elements = [Line2D([0], [0], color='g', label='Positive Change'),
+                       Line2D([0], [0], color='r', label='Negative Change')]
+    ax1.legend(handles=legend_elements, loc="upper right", fontsize=14)
+
     annotate_bars(ax1)
     plt.tight_layout()
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.savefig(os.path.join(RESULTS_DIR, f"{save_name}_{key}.png"))
     plt.close()
+
 
 
 def evaluate_with_drop_column(output_column):

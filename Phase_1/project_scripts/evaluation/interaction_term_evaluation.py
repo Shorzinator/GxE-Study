@@ -180,8 +180,7 @@ def plot_comparison(metrics_without_interaction, metrics_with_interaction_avg):
 
 def plot_comparison(metrics_without_interaction, metrics_with_interaction_avg):
     labels = list(metrics_without_interaction.keys())
-    metrics_of_interest = ['Accuracy', 'Custom_Metric', 'Matthews Correlation Coefficient',
-                           'macro avg_F1-Score', 'weighted avg_F1-Score']
+    metrics_of_interest = ['Accuracy', 'Custom_Metric', 'MCC', 'macro avg_F1-Score', 'weighted avg_F1-Score']
 
     barWidth = 0.5
     r1 = np.arange(len(metrics_of_interest))
@@ -199,7 +198,7 @@ def plot_comparison(metrics_without_interaction, metrics_with_interaction_avg):
         bars = plt.bar(r1, differences, color='g', width=barWidth, edgecolor='grey')
 
         plt.title(f'Metric Differences for {label}')
-        plt.xticks(r1, metrics_of_interest, rotation=45)
+        plt.xticks(r1, metrics_of_interest, rotation=45, ha="center")  # Center align x-tick labels
 
         # Annotate each bar with its value
         for bar in bars:

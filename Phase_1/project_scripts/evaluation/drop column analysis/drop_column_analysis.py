@@ -22,7 +22,7 @@ ensure_directory_exists(RESULTS_DIR)
 MODEL_NAME = "logistic_regression"
 
 
-def visualize_results(df):
+def visualize_results(df, metric, key):
     """
     Visualizes the change in metrics and saves the plots with enhanced styling and annotations.
     """
@@ -40,33 +40,28 @@ def visualize_results(df):
                         textcoords='offset points',
                         fontsize=9)  # Adjust fontsize for annotations
 
-    # Sort the dataframe by change_in_accuracy for better visualization
-    df = df.sort_values(by="change_in_accuracy", ascending=False)
+    # Decide metric-specific details
+    if metric == "Accuracy":
+        y_col = "change_in_accuracy"
+        ylabel = "Change in Accuracy"
+        save_name = "accuracy_drop_column"
+    else:  # Custom Score
+        y_col = "change_in_custom_score"
+        ylabel = "Change in Custom Score"
+        save_name = "custom_score_drop_column"
 
-    # Bar plot for change in accuracy
-    plt.figure(figsize=(20, 8))  # Adjust the size of the figure
-    ax1 = sns.barplot(data=df, x="column_dropped", y="change_in_accuracy", hue="type")
-    plt.title("Change in Accuracy by Column Dropped", fontsize=20)
+    # Bar plot for given metric
+    plt.figure(figsize=(20, 8))
+    ax1 = sns.barplot(data=df, x="column_dropped", y=y_col, hue="type")
+    plt.title(f"Change in {metric} by Column Dropped", fontsize=20)
     plt.xlabel("Columns Dropped", fontsize=17)
-    plt.ylabel("Change in Accuracy", fontsize=17)
+    plt.ylabel(ylabel, fontsize=17)
     plt.xticks(rotation=45)
     plt.legend(title="Dataset Type", loc="upper right", fontsize=14)
     annotate_bars(ax1)
     plt.tight_layout()
-    plt.grid(axis='y')  # Add horizontal gridlines
-    plt.savefig(os.path.join(RESULTS_DIR, "accuracy_drop_column.png"))
-
-    # Bar plot for change in custom score
-    plt.figure(figsize=(18, 7))
-    ax2 = sns.barplot(data=df, x="column_dropped", y="change_in_custom_score", hue="type")
-    plt.title("Change in Custom Score by Column Dropped", fontsize=18)
-    plt.xlabel("Columns Dropped", fontsize=15)
-    plt.ylabel("Change in Custom Score", fontsize=15)
-    plt.xticks(rotation=45)
-    plt.legend(title="Dataset Type", loc="upper right", fontsize=12)
-    annotate_bars(ax2)
-    plt.tight_layout()
-    plt.savefig(os.path.join(RESULTS_DIR, "custom_score_drop_column.png"))
+    plt.grid(axis='y')
+    plt.savefig(os.path.join(RESULTS_DIR, f"{save_name}_{key}.png"))
     plt.close()
 
 
@@ -125,9 +120,9 @@ def evaluate_with_drop_column(output_column):
         results_df.to_csv(os.path.join(RESULTS_DIR, f"column_drop_evaluation_{key}.csv"), index=False)
 
         logging.info("Visualizing results ...\n")
-
-        # Visualize the results
-        visualize_results(results_df)
+        # Visualize the results for both metrics
+        for metric in ["Accuracy", "Custom Score"]:
+            visualize_results(results_df, metric, key)
 
 
 if __name__ == "__main__":

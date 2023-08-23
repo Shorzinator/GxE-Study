@@ -2,6 +2,7 @@
     config.py
     Details_AST.txt
     directory_tree.txt
+    To Do.txt
     update_directory_tree.py
     variables.txt
     __init__.py
@@ -10,12 +11,6 @@
             original_preprocessed_data_1_vs_4.csv
             original_preprocessed_data_2_vs_4.csv
             original_preprocessed_data_3_vs_4.csv
-            resampled_data_1_vs_4.csv
-            resampled_data_1_vs_4_with_SUT.csv
-            resampled_data_2_vs_4.csv
-            resampled_data_2_vs_4_with_SUT.csv
-            resampled_data_3_vs_4.csv
-            resampled_data_3_vs_4_with_SUT.csv
             synthetic_data_1_vs_4.csv
             synthetic_data_2_vs_4.csv
             synthetic_data_3_vs_4.csv
@@ -40,10 +35,10 @@
             SUT_trajectory_analysis.py
             __init__.py
         evaluation/
-            class_performance_comparison.py
             cluster_analysis.py
             comparing_results_with_SUT.py
             evaluation_BinLogReg.py
+            interaction_term_evaluation.py
             LogReg_comparison.py
             paired_t_test_accuracy.py
             paired_t_test_custom_metric.py
@@ -53,7 +48,6 @@
                 visualizing_drop_column_analysis.py
                 __init__.py
             Shapley Analysis/
-                comparison.py
                 shapley_analysis.py
                 __init__.py
         modeling/
@@ -91,9 +85,17 @@
             basic_statistics.csv
             missing_values.csv
         evaluation/
-            accuracy_drop_column.png
+            accuracy_drop_column_1_vs_4.png
+            accuracy_drop_column_2_vs_4.png
+            accuracy_drop_column_3_vs_4.png
             column_drop_evaluation.csv
-            custom_score_drop_column.png
+            column_drop_evaluation_1_vs_4.csv
+            column_drop_evaluation_2_vs_4.csv
+            column_drop_evaluation_3_vs_4.csv
+            custom_score_drop_column_1_vs_4.png
+            custom_score_drop_column_2_vs_4.png
+            custom_score_drop_column_3_vs_4.png
+            interaction_term_comparison_plot.png
             joint_plot.png
             paired_ttest_results.csv
             spider_chart_change_in_accuracy.png
@@ -108,6 +110,16 @@
                 clusters_PolygenicScoreEXT_x_SchoolConnect.png
                 clusters_PolygenicScoreEXT_x_SubstanceUseTrajectory.png
                 elbow_plot.png
+            interaction_term_evaluation/
+                interaction_term_evaluation_results.csv
+                metrics_without_interaction.csv
+                metrics_with_interaction_PolygenicScoreEXT_Age.csv
+                metrics_with_interaction_PolygenicScoreEXT_DelinquentPeer.csv
+                metrics_with_interaction_PolygenicScoreEXT_Is_Male.csv
+                metrics_with_interaction_PolygenicScoreEXT_NeighborConnect.csv
+                metrics_with_interaction_PolygenicScoreEXT_ParentalWarmth.csv
+                metrics_with_interaction_PolygenicScoreEXT_SchoolConnect.csv
+                metrics_with_interaction_PolygenicScoreEXT_SubstanceUseTrajectory.csv
             shapley_analysis/
                 shap_values_1_vs_4.pkl
                 shap_values_2_vs_4.pkl
@@ -231,9 +243,15 @@
                         AST_2_vs_4_binary_SMOTE_GCV_KF_IT.csv
                         AST_3_vs_4_binary_SMOTE_GCV_KF_IT.csv
                     without Race/
-                        AST_1_vs_4_without_SUT.csv
-                        AST_2_vs_4_without_SUT.csv
-                        AST_3_vs_4_without_SUT.csv
+                        AST_1_vs_4.csv
+                        AST_1_vs_4_noIT.csv
+                        AST_1_vs_4_noIT_noSUT.csv
+                        AST_2_vs_4.csv
+                        AST_2_vs_4_noIT.csv
+                        AST_2_vs_4_noIT_noSUT.csv
+                        AST_3_vs_4.csv
+                        AST_3_vs_4_noIT.csv
+                        AST_3_vs_4_noIT_noSUT.csv
                         with SUT/
                             AST_1_vs_4_with_SUT.csv
                             AST_2_vs_4_with_SUT.csv

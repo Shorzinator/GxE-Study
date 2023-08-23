@@ -7,7 +7,8 @@ from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import TARGET_1
 from Phase_1.project_scripts import get_path_from_root
-from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing, preprocess_ovr
+from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
+    preprocess_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, \
     ensure_directory_exists, save_results, train_model
@@ -53,11 +54,13 @@ def main():
         logging.info(f"Starting model for {key} ...\n")
 
         for feature_pair in feature_pairs:
-            X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing(X, y, feature_pair, key)
+            X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing_with_interaction_terms(X, y, feature_pair, key)
 
             # Training the model
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)
+
+            param_grid = None   # Not performing grid search
 
             best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid, MODEL_NAME)
 
@@ -78,9 +81,9 @@ def main():
 
         logging.info("Saving results ...\n")
 
-        save_results(TARGET_1, f"{key}", results, metrics_dir)
+        save_results(TARGET_1, f"{key}", results, metrics_dir, "True")
 
-        logger.info(f"Completed {key} classification.")
+        logger.info(f"Completed {key} classification.\n")
 
     logger.info("One-vs-all logistic regression completed.")
 

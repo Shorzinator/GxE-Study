@@ -10,6 +10,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+MODEL_NAME = "logistic_regression"
+
+
 def hyperparameter_tuning(X_train, y_train, estimator, tuning_method="grid_search", **kwargs):
     """
     Performs hyperparameter tuning based on the specified method.
@@ -58,7 +61,7 @@ def add_interaction_terms(df, feature_pairs):
     return df
 
 
-def save_results(target, type_of_classification, results, directory):
+def save_results(target, type_of_classification, results, directory, interaction=True):
     """
     Save the results in a structured directory and file.
     :param directory: Model_dir or metrics_dir
@@ -83,7 +86,10 @@ def save_results(target, type_of_classification, results, directory):
 
         dir_path = directory
 
-        results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+        if interaction:
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+        else:
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_noIT.csv")
 
         # Save to CSV
         results_df.to_csv(results_file, index=False)
@@ -127,10 +133,10 @@ def ensure_directory_exists(directory):
         os.makedirs(directory)
 
 
-def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
+def calculate_metrics(y_true, y_pred, model_name, target, type_of_config, weights=None):
     """
     Calculate metrics for the multinomial model predictions.
-    :param type: Test or train
+    :param type_of_config: Test or train
     :param y_true: True labels
     :param y_pred: Predicted label
     :param model_name: Name of the model
@@ -139,7 +145,7 @@ def calculate_metrics(y_true, y_pred, model_name, target, type, weights=None):
     :return: A dictionary containing the calculated metrics
     """
 
-    logger.info(f"Calculating {type} Metrics...\n")
+    logger.info(f"Calculating {type_of_config} Metrics...\n")
 
     # Set default weights if none provided
     if weights is None:

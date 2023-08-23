@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def apply_preprocessing(X, y, feature_pair, key):
+def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
@@ -28,9 +28,6 @@ def apply_preprocessing(X, y, feature_pair, key):
     # Generate interaction terms using the transformed column names for training data
     X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
 
-    # Capture transformed column names after preprocessing the training data
-    transformed_columns = X_train_final.columns.tolist()
-
     # Applying imputation and one-hot encoding on testing data
     X_test_imputed = imputation_applier(impute, X_test)
 
@@ -38,17 +35,45 @@ def apply_preprocessing(X, y, feature_pair, key):
     X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
     X_test_final = pd.DataFrame(X_test_final)
 
+    # Capture transformed column names after preprocessing the training data
+    transformed_columns = X_train_final.columns.tolist()
+
     # Applying scaling
     scaler = scaling_pipeline(transformed_columns)
     X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
 
     # Balancing data
-    # logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
-    # logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
 
     X_train_resampled = pd.DataFrame(X_train_resampled)
+
+    return X_train_resampled, y_train_resampled, X_test_final, y_test
+
+
+def apply_preprocessing_without_interaction_terms(X, y, key):
+    # Split, train using df_temp, and get metrics
+    X_train, X_test, y_train, y_test = split_data(X, y)
+
+    # Applying imputation and one-hot encoding on training data
+    impute = imputation_pipeline()
+    X_train_final = imputation_applier(impute, X_train)
+    X_train_final = pd.DataFrame(X_train_final)
+
+    # Applying imputation and one-hot encoding on testing data
+    X_test_final = imputation_applier(impute, X_test)
+    X_test_final = pd.DataFrame(X_test_final)
+
+    # Capture transformed column names after preprocessing the training data
+    transformed_columns = X_train_final.columns.tolist()
+
+    # Applying scaling
+    scaler = scaling_pipeline(transformed_columns)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
+    X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
+
+    # Balancing data
+    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
 
     return X_train_resampled, y_train_resampled, X_test_final, y_test
 

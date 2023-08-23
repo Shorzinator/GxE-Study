@@ -28,7 +28,6 @@ def visualize_results(df, metric, key):
     """
     # Set style for the plots
     sns.set_style("whitegrid")
-    sns.set_palette("pastel")
 
     # Function to annotate the bars
     def annotate_bars(ax):
@@ -50,17 +49,24 @@ def visualize_results(df, metric, key):
         ylabel = "Change in Custom Score"
         save_name = "custom_score_drop_column"
 
+    # Sort the dataframe by the metric for better visualization
+    df = df.sort_values(by=y_col, ascending=False)
+
+    # Decide color palette based on positive or negative change
+    df["positive_change"] = df[y_col] > 0
+    palette = sns.color_palette("coolwarm_r", 2)
+
     # Bar plot for given metric
     plt.figure(figsize=(20, 8))
-    ax1 = sns.barplot(data=df, x="column_dropped", y=y_col, hue="type")
+    ax1 = sns.barplot(data=df, x="column_dropped", y=y_col, hue="positive_change", palette=palette, dodge=False)
     plt.title(f"Change in {metric} by Column Dropped", fontsize=20)
     plt.xlabel("Columns Dropped", fontsize=17)
     plt.ylabel(ylabel, fontsize=17)
     plt.xticks(rotation=45)
-    plt.legend(title="Dataset Type", loc="upper right", fontsize=14)
+    plt.legend(title="Positive Change", loc="upper right", fontsize=14, labels=['Yes', 'No'])
     annotate_bars(ax1)
     plt.tight_layout()
-    plt.grid(axis='y')
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.savefig(os.path.join(RESULTS_DIR, f"{save_name}_{key}.png"))
     plt.close()
 

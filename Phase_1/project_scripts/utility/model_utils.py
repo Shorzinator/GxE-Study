@@ -64,6 +64,7 @@ def add_interaction_terms(df, feature_pairs):
 def save_results(target, type_of_classification, results, directory, interaction=True):
     """
     Save the results in a structured directory and file.
+    :param interaction: Boolean value to decide whether to add IT or not
     :param directory: Model_dir or metrics_dir
     :param type_of_classification: multinomial, binary, etc.
     :param target: Target variable (either "AST" or "SUT")

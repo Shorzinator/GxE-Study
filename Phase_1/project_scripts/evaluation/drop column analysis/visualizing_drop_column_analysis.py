@@ -6,9 +6,20 @@ import seaborn as sns
 
 from Phase_1.project_scripts import get_path_from_root
 
-# Load the data
-data_path = get_path_from_root("results", "evaluation", "column_drop_evaluation.csv")
-df = pd.read_csv(data_path)
+
+def combine_data_from_files(filenames):
+    dfs = [pd.read_csv(file) for file in filenames]
+    combined_df = pd.concat(dfs, axis=0, ignore_index=True)
+    return combined_df
+
+
+filenames = [
+    get_path_from_root("results", "evaluation", "column_drop_evaluation_1_vs_4.csv"),
+    get_path_from_root("results", "evaluation", "column_drop_evaluation_2_vs_4.csv"),
+    get_path_from_root("results", "evaluation", "column_drop_evaluation_3_vs_4.csv")
+]
+
+df = combine_data_from_files(filenames)
 
 # Select the metrics and group by type and column_dropped
 grouped = df.groupby(['type', 'column_dropped']).mean().reset_index()

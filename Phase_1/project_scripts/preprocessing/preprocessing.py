@@ -8,14 +8,14 @@ from sklearn.model_selection import StratifiedShuffleSplit
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from Phase_1.config import FEATURES
+from Phase_1.config import *
 from Phase_1.project_scripts.utility.model_utils import add_interaction_terms
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key):
+def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key, features):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
@@ -23,14 +23,14 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key):
     original_columns = X_train.columns.tolist()
     # Applying imputation and one-hot encoding on training data
     impute = imputation_pipeline()
-    X_train_imputed = imputation_applier(impute, X_train)
+    X_train_imputed = imputation_applier(impute, X_train, features)
     X_train_imputed.columns = original_columns  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for training data
     X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
 
     # Applying imputation and one-hot encoding on testing data
-    X_test_imputed = imputation_applier(impute, X_test)
+    X_test_imputed = imputation_applier(impute, X_test, features)
     X_test_imputed.columns = original_columns  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for testing data
@@ -49,7 +49,7 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key):
     return X_train_resampled, y_train_resampled, X_test_final, y_test
 
 
-def apply_preprocessing_without_interaction_terms(X, y, key):
+def apply_preprocessing_without_interaction_terms(X, y, key, feature_names):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
@@ -57,12 +57,12 @@ def apply_preprocessing_without_interaction_terms(X, y, key):
     original_columns = X_train.columns.tolist()
 
     # Applying imputation and one-hot encoding on training data
-    impute = imputation_pipeline()
-    X_train_final = imputation_applier(impute, X_train)
+    impute = imputation_pipeline(feature_names)
+    X_train_final = imputation_applier(impute, X_train, feature_names)
     X_train_final.columns = original_columns  # re-assigning column names
 
     # Applying imputation and one-hot encoding on testing data
-    X_test_final = imputation_applier(impute, X_test)
+    X_test_final = imputation_applier(impute, X_test, feature_names)
     X_test_final.columns = original_columns  # re-assigning column names
 
     # Applying scaling
@@ -83,14 +83,12 @@ def split_data(df, outcome_series):
         X_train = df.iloc[train_idx].reset_index(drop=True)
         X_test = df.iloc[test_idx].reset_index(drop=True)
         y_train, y_test = outcome_series.iloc[train_idx], outcome_series.iloc[test_idx]
+
     return X_train, X_test, y_train, y_test
 
 
-def imputation_pipeline():
+def imputation_pipeline(numerical_features):
     """Imputation Pipeline."""
-    numerical_features = FEATURES
-
-    categorical_features = []
 
     numeric_transformer = Pipeline(steps=[
         ('impute', KNNImputer(n_neighbors=10))
@@ -109,16 +107,12 @@ def imputation_pipeline():
     return preprocessor
 
 
-def imputation_applier(impute, X):
+def imputation_applier(impute, X, feature_names):
     logger.info("Applying Imputation ...\n")
 
     input_imputed = impute.fit_transform(X)
 
-    feature_names = FEATURES
-
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
-
-    # print(X_train_imputed.columns)
 
     return X_train_imputed
 
@@ -149,11 +143,11 @@ def balance_data(X_train, y_train, key):
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
+    """
     # Reset indices before concatenation
     X_resampled = X_resampled.reset_index(drop=True)
     y_resampled = y_resampled.reset_index(drop=True)
 
-    """    
     # Combine resampled data
     resampled_data = pd.concat([X_resampled, y_resampled], axis=1)
     processed_data_path = get_path_from_root("data", "processed")

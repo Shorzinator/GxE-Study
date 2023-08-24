@@ -5,7 +5,6 @@ import optuna
 from sklearn.metrics import accuracy_score, classification_report, matthews_corrcoef
 from sklearn.model_selection import GridSearchCV, KFold, RandomizedSearchCV, cross_val_score
 
-from Phase_1.config import IT, TARGET_2
 from Phase_1.project_scripts.preprocessing.preprocessing import *
 
 logging.basicConfig(level=logging.INFO)
@@ -13,33 +12,6 @@ logger = logging.getLogger(__name__)
 
 
 MODEL_NAME = "logistic_regression"
-
-
-def hyperparameter_tuning(X_train, y_train, estimator, tuning_method="grid_search", **kwargs):
-    """
-    Performs hyperparameter tuning based on the specified method.
-
-    Parameters:
-    - X_train, y_train: Training data
-    - estimator: Model instance to be tuned
-    - tuning_method: Method for hyperparameter tuning ("grid_search", "random_search", "smbo", etc.)
-    - kwargs: Additional arguments required for the specific tuning method
-
-    Returns:
-    - A dictionary containing the best hyperparameters, the best score, and detailed evaluation log
-    """
-
-    if tuning_method == "grid_search":
-        return grid_search_tuning(X_train, y_train, estimator, **kwargs)
-
-    elif tuning_method == "random_search":
-        return random_search_tuning(X_train, y_train, estimator, **kwargs)
-
-    elif tuning_method == "smbo":
-        return smbo_tuning(X_train, y_train, estimator, **kwargs)
-
-    else:
-        raise ValueError(f"Tuning method {tuning_method} not recognized.")
 
 
 def add_interaction_terms(df, feature_pairs):
@@ -72,6 +44,11 @@ def save_results(target, type_of_classification, results, directory, interaction
     :param target: Target variable (either "AST" or "SUT")
     :param results: The results data (a dictionary)
     """
+    if target == "AntisocialTrajectory":
+        target = "AST"
+    else:
+        target = "SUT"
+
     try:
         logging.info("Saving results  ...\n")
 
@@ -89,12 +66,12 @@ def save_results(target, type_of_classification, results, directory, interaction
 
         dir_path = directory
 
-        if interaction==True:
+        if interaction:
             logging.info("Saving results with interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{TARGET_2}.csv")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
         else:
             logging.info("Saving results without interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}_no{TARGET_2}.csv")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}.csv")
 
         # Save to CSV
         results_df.to_csv(results_file, index=False)
@@ -103,7 +80,7 @@ def save_results(target, type_of_classification, results, directory, interaction
         logger.error(f"Error in save_results: {str(e)}")
 
 
-def train_model(X_train, y_train, estimator, param_grid=None, model_name=None):
+def train_model(X_train, y_train, estimator, param_grid=None):
     """
     Train the model, optionally perform grid search, and save it.
 
@@ -112,18 +89,19 @@ def train_model(X_train, y_train, estimator, param_grid=None, model_name=None):
     :param y_train: Training labels.
     :param estimator: The model/estimator to be trained.
     :param param_grid: Hyperparameters for grid search. If None, no grid search will be performed.
-    :param model_name: Name of the model, required if save_model is True.
 
     Returns:
     :return: Trained model.
     """
 
     if param_grid:
+
         # If param_grid is provided, perform GridSearchCV
         cv_method = get_cv_method()
         best_model = grid_search_tuning(estimator, param_grid, 'f1_weighted', cv_method)
         best_model.fit(X_train, y_train)
     else:
+
         best_model = estimator
 
         logger.info("Fitting the model...\n")
@@ -138,10 +116,10 @@ def ensure_directory_exists(directory):
         os.makedirs(directory)
 
 
-def calculate_metrics(y_true, y_pred, model_name, target, type_of_config, weights=None):
+def calculate_metrics(y_true, y_pred, model_name, target, test_or_train, weights=None):
     """
     Calculate metrics for the multinomial model predictions.
-    :param type_of_config: Test or train
+    :param test_or_train: Test or train
     :param y_true: True labels
     :param y_pred: Predicted label
     :param model_name: Name of the model
@@ -150,7 +128,12 @@ def calculate_metrics(y_true, y_pred, model_name, target, type_of_config, weight
     :return: A dictionary containing the calculated metrics
     """
 
-    logger.info(f"Calculating {type_of_config} Metrics...\n")
+    logger.info(f"Calculating {test_or_train} Metrics...\n")
+
+    if target == 'AntisocialTrajectory':
+        target = 'AST'
+    else:
+        target = 'SUT'
 
     # Set default weights if none provided
     if weights is None:
@@ -216,6 +199,34 @@ def calculate_metrics(y_true, y_pred, model_name, target, type_of_config, weight
     metrics["Custom_Metric"] = custom_metric_value
 
     return metrics
+
+
+def hyperparameter_tuning(X_train, y_train, estimator, tuning_method="grid_search", **kwargs):
+    """
+    Performs hyperparameter tuning based on the specified method.
+
+    Parameters:
+    - X_train, y_train: Training data
+    - estimator: Model instance to be tuned
+    - tuning_method: Method for hyperparameter tuning ("grid_search", "random_search", "smbo", etc.)
+    - kwargs: Additional arguments required for the specific tuning method
+
+    Returns:
+    - A dictionary containing the best hyperparameters, the best score, and detailed evaluation log
+    """
+
+    if tuning_method == "grid_search":
+        return grid_search_tuning(X_train, y_train, estimator, **kwargs)
+
+    elif tuning_method == "random_search":
+        return random_search_tuning(X_train, y_train, estimator, **kwargs)
+
+    elif tuning_method == "smbo":
+        return smbo_tuning(X_train, y_train, estimator, **kwargs)
+
+    else:
+        raise ValueError(f"Tuning method {tuning_method} not recognized.")
+
 
 
 def get_cv_method(method='KFold', n_splits=5):

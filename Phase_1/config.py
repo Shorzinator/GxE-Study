@@ -5,6 +5,9 @@ IT = "IT"   # Interaction term
 FEATURES = ['PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect',
             'NeighborConnect', 'ParentalWarmth', 'Is_Male']
 
+FEATURES_FOR_AST = FEATURES + ["SubstanceUseTrajectory"]
+FEATURES_FOR_SUT = FEATURES + ["AntisocialTrajectory"]
+
 TARGET_1 = "AST"
 TARGET_2 = "SUT"
 

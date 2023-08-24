@@ -5,7 +5,7 @@ import warnings
 
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import TARGET_1
+from Phase_1.config import *
 from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
     apply_preprocessing_without_interaction_terms, preprocess_ovr
@@ -23,8 +23,13 @@ RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results
 TYPE_OF_CLASSIFICATION = "binary"
 
 
-def main(interaction):
+def main(interaction, target):
     logger.info("Starting one-vs-all logistic regression...")
+
+    if target == "AntisocialTrajectory":
+        features = FEATURES_FOR_AST
+    else:
+        features = FEATURES_FOR_SUT
 
     # Subdirectories for a model and metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics\\without Race")
@@ -34,12 +39,7 @@ def main(interaction):
     df = load_data_old()
 
     # Preprocess the data specific for OvR
-    datasets = preprocess_ovr(df, "AntisocialTrajectory")
-
-    features = ["Age", "DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth", "Is_Male"]
-    fixed_element = "PolygenicScoreEXT"
-
-    feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]
+    datasets = preprocess_ovr(df, target)
 
     for key, (X, y) in datasets.items():
         results = []
@@ -47,9 +47,16 @@ def main(interaction):
         logging.info(f"Starting model for {key} ...\n")
 
         if interaction:
+
+            temp = features.copy()
+            features.remove("PolygenicScoreEXT")
+            fixed_element = "PolygenicScoreEXT"
+
+            feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
+
             for feature_pair in feature_pairs:
                 X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing_with_interaction_terms(
-                    X, y, feature_pair, key)
+                    X, y, feature_pair, key, features)
 
                 # Training the model
                 model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
@@ -57,15 +64,15 @@ def main(interaction):
 
                 param_grid = None  # Not performing grid search
 
-                best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid, MODEL_NAME)
+                best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid)
 
                 # Predictions
                 y_train_pred = best_model.predict(X_train_resampled)
                 y_test_pred = best_model.predict(X_test_final)
 
                 # Calculate metrics
-                train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
-                test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
+                train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, target, "train")
+                test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
                 # Append the results
                 results.append({
@@ -75,7 +82,7 @@ def main(interaction):
                 })
         else:
             X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing_without_interaction_terms(
-                X, y, key)
+                X, y, key, features)
 
             # Training the model
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
@@ -83,15 +90,15 @@ def main(interaction):
 
             param_grid = None  # Not performing grid search
 
-            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid, MODEL_NAME)
+            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid)
 
             # Predictions
             y_train_pred = best_model.predict(X_train_resampled)
             y_test_pred = best_model.predict(X_test_final)
 
             # Calculate metrics
-            train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
-            test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
+            train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, target, "train")
+            test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
             # Append the results
             results.append({
@@ -101,7 +108,7 @@ def main(interaction):
 
         logging.info("Saving results ...\n")
 
-        save_results(TARGET_1, f"{key}", results, metrics_dir, interaction=interaction)
+        save_results(target, f"{key}", results, metrics_dir, interaction=interaction)
 
         logger.info(f"Completed {key} classification.\n")
 
@@ -109,4 +116,4 @@ def main(interaction):
 
 
 if __name__ == '__main__':
-    main(interaction=False)
+    main(interaction=False, target="AntisocialTrajectory")

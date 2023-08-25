@@ -21,9 +21,11 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key, features
 
     # Original columns
     original_columns = X_train.columns.tolist()
+
     # Applying imputation and one-hot encoding on training data
-    impute = imputation_pipeline()
+    impute = imputation_pipeline(features)
     X_train_imputed = imputation_applier(impute, X_train, features)
+
     X_train_imputed.columns = original_columns  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for training data
@@ -42,14 +44,14 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key, features
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled)
 
     # Balancing data
-    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
+    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
 
     X_train_resampled = pd.DataFrame(X_train_resampled)
 
     return X_train_resampled, y_train_resampled, X_test_final, y_test
 
 
-def apply_preprocessing_without_interaction_terms(X, y, key, feature_names):
+def apply_preprocessing_without_interaction_terms(X, y, key, features):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 
@@ -57,12 +59,12 @@ def apply_preprocessing_without_interaction_terms(X, y, key, feature_names):
     original_columns = X_train.columns.tolist()
 
     # Applying imputation and one-hot encoding on training data
-    impute = imputation_pipeline(feature_names)
-    X_train_final = imputation_applier(impute, X_train, feature_names)
+    impute = imputation_pipeline(features)
+    X_train_final = imputation_applier(impute, X_train, features)
     X_train_final.columns = original_columns  # re-assigning column names
 
     # Applying imputation and one-hot encoding on testing data
-    X_test_final = imputation_applier(impute, X_test, feature_names)
+    X_test_final = imputation_applier(impute, X_test, features)
     X_test_final.columns = original_columns  # re-assigning column names
 
     # Applying scaling
@@ -70,7 +72,7 @@ def apply_preprocessing_without_interaction_terms(X, y, key, feature_names):
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled, columns=original_columns)
 
     # Balancing data
-    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, key)
+    X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
 
     return X_train_resampled, y_train_resampled, X_test_final, y_test
 
@@ -84,7 +86,7 @@ def split_data(df, outcome_series):
         X_test = df.iloc[test_idx].reset_index(drop=True)
         y_train, y_test = outcome_series.iloc[train_idx], outcome_series.iloc[test_idx]
 
-    return X_train, X_test, y_train, y_test
+    return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
 
 
 def imputation_pipeline(numerical_features):
@@ -134,7 +136,7 @@ def scaling_applier(X_train_imputed, X_test_imputed):
     return X_train_imputed_scaled, X_test_imputed_scaled
 
 
-def balance_data(X_train, y_train, key):
+def balance_data(X_train, y_train):
     """Data Balancing Pipeline."""
     logger.info("Balancing data ...\n")
 
@@ -192,7 +194,44 @@ def preprocess_multinomial(df, target):
     return independent, dependent
 
 
-def preprocess_ovr(df, target):
+# Modifying the preprocess_sut_ovr function to have Typical Use as the baseline
+
+def preprocess_sut_ovr(df, features):
+    logger.info("Starting data preprocessing for one-vs-all logistic regression with Typical Use as baseline...\n")
+
+    # Convert Sex to Is_Male binary column
+    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+
+    # Handle outliers for PolygenicScoreEXT using IQR
+    initial_size = len(df)
+    Q1 = df['PolygenicScoreEXT'].quantile(0.25)
+    Q3 = df['PolygenicScoreEXT'].quantile(0.75)
+    IQR = Q3 - Q1
+    df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
+              (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
+
+    # Drop rows where the target variable is missing
+    df = df.dropna(subset=['SubstanceUseTrajectory'])
+
+    # Separate the target variable
+    outcome = df['SubstanceUseTrajectory']
+
+    feature_cols = features
+
+    df = df[feature_cols]
+
+    # Create datasets for binary classification with Typical Use as baseline
+    datasets = {
+        "1_vs_3": (df[outcome.isin([1, 3])].copy(), outcome[outcome.isin([1, 3])].copy()),
+        "2_vs_3": (df[outcome.isin([2, 3])].copy(), outcome[outcome.isin([2, 3])].copy())
+    }
+
+    logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
+    return datasets
+
+
+def preprocess_ast_ovr(df, features):
     logger.info("Starting data preprocessing for one-vs-all logistic regression...\n")
 
     # Convert Sex to Is_Male binary column
@@ -208,12 +247,12 @@ def preprocess_ovr(df, target):
     logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
 
     # Drop rows where the target variable is missing
-    df = df.dropna(subset=[target])
+    df = df.dropna(subset=["AntisocialTrajectory"])
 
     # Separate the target variable
-    outcome = df[target]
+    outcome = df["AntisocialTrajectory"]
 
-    feature_cols = FEATURES
+    feature_cols = features
 
     df = df[feature_cols]
 
@@ -228,7 +267,7 @@ def preprocess_ovr(df, target):
     return datasets
 
 
-def preprocess_general(df, target):
+def preprocess_general(df, target, features):
     logger.info("Starting data preprocessing for clustering analysis...\n")
 
     # Convert Sex to Is_Male binary column
@@ -246,7 +285,7 @@ def preprocess_general(df, target):
     # Drop rows where the target variable is missing
     df = df.dropna(subset=[target])
 
-    feature_cols = FEATURES
+    feature_cols = features
     df = df[feature_cols]
 
     logger.info("Data preprocessing for clustering analysis completed successfully.\n")

@@ -228,7 +228,6 @@ def hyperparameter_tuning(X_train, y_train, estimator, tuning_method="grid_searc
         raise ValueError(f"Tuning method {tuning_method} not recognized.")
 
 
-
 def get_cv_method(method='KFold', n_splits=5):
     """
     Return a cross-validation method based on user's choice.

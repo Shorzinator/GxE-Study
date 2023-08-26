@@ -17,7 +17,7 @@ from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-RESULTS_DIR = get_path_from_root("results", "evaluation")
+RESULTS_DIR = get_path_from_root("results", "evaluation", "drop column analysis")
 ensure_directory_exists(RESULTS_DIR)
 MODEL_NAME = "logistic_regression"
 
@@ -77,8 +77,7 @@ def visualize_results(df, metric, key):
     plt.close()
 
 
-
-def evaluate_with_drop_column(output_column):
+def evaluate_with_drop_column(target):
     """
     Evaluates model performance by iteratively dropping columns.
     """
@@ -86,7 +85,7 @@ def evaluate_with_drop_column(output_column):
     ensure_directory_exists(RESULTS_DIR)
 
     df = load_data_old()
-    datasets = preprocess_ovr(df, output_column)
+    datasets = preprocess_ovr(df, target)
 
     for key, (X, y) in datasets.items():
         # Store results
@@ -139,5 +138,4 @@ def evaluate_with_drop_column(output_column):
 
 
 if __name__ == "__main__":
-    output_column_name = "AntisocialTrajectory"
-    evaluate_with_drop_column(output_column_name)
+    evaluate_with_drop_column(target="AntisocialTrajectory")

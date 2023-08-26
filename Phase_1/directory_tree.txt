@@ -1,6 +1,5 @@
 ./
     config.py
-    Details_AST.txt
     directory_tree.txt
     To Do.txt
     update_directory_tree.py
@@ -236,27 +235,21 @@
                 models/
         one_vs_all/
             logistic_regression_results/
-                model_coefficients.json
                 metrics/
+                    AST_1_vs_4.csv
+                    AST_1_vs_4_noIT.csv
+                    AST_2_vs_4.csv
+                    AST_2_vs_4_noIT.csv
+                    AST_3_vs_4.csv
+                    AST_3_vs_4_noIT.csv
+                    SUT_1_vs_3.csv
+                    SUT_1_vs_3_noIT.csv
+                    SUT_2_vs_3.csv
+                    SUT_2_vs_3_noIT.csv
                     with Race/
                         AST_1_vs_4_binary_SMOTE_GCV_KF_IT.csv
                         AST_2_vs_4_binary_SMOTE_GCV_KF_IT.csv
                         AST_3_vs_4_binary_SMOTE_GCV_KF_IT.csv
-                    without Race/
-                        AST_1_vs_4.csv
-                        AST_1_vs_4_noIT.csv
-                        AST_1_vs_4_noIT_noSUT.csv
-                        AST_2_vs_4.csv
-                        AST_2_vs_4_noIT.csv
-                        AST_2_vs_4_noIT_noSUT.csv
-                        AST_3_vs_4.csv
-                        AST_3_vs_4_noIT.csv
-                        AST_3_vs_4_noIT_noSUT.csv
-                        with SUT/
-                            AST_1_vs_4_with_SUT.csv
-                            AST_2_vs_4_with_SUT.csv
-                            AST_3_vs_4_with_SUT.csv
-                models/
             random_forest_results/
                 metrics/
                     AST_1_vs_4_binary_SMOTE_IT.csv

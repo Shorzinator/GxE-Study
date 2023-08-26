@@ -1,7 +1,10 @@
+import os
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from Phase_1.project_scripts import get_path_from_root
+from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists
+from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 MODEL_NAME = "logistic_regression"
 
@@ -33,18 +36,18 @@ def plot_differences(file_with_IT, file_without_IT, title_suffix):
     differences = with_IT_avg - without_IT_test[metrics_to_compare]
 
     # Plotting the differences with enhancements
-    plt.figure(figsize=(15, 7))
+    plt.figure(figsize=(14, 7))
 
     # Use different colors for positive and negative differences
     bar_colors = ['limegreen' if diff > 0 else 'tomato' for diff in differences]
 
     bars = plt.bar(differences.index, differences.values, color=bar_colors, width=0.6)
 
-    # Annotations directly on the bars
+    # Annotations directly on top of the bars
     for bar in bars:
         yval = bar.get_height()
-        plt.text(bar.get_x() + bar.get_width() / 2, yval + (0.01 if yval > 0 else -0.03), round(yval, 3),
-                 ha='center', va='bottom' if yval > 0 else 'top', fontsize=9, fontweight='bold')
+        plt.text(bar.get_x() + bar.get_width() / 2, yval + (0.005 if yval > 0 else -0.015),
+                 f"{yval:.3f}", ha='center', va='center', fontsize=9, fontweight='bold')
 
     plt.axhline(y=0, color='black', linestyle='--')
     plt.title(
@@ -56,7 +59,9 @@ def plot_differences(file_with_IT, file_without_IT, title_suffix):
     plt.grid(axis='y', linestyle='--', alpha=0.7)
 
     plt.tight_layout()
-    # plt.savefig(f"results/difference_plot_{title_suffix}.png")  # Save the plot
+    path = get_path_from_root("results", "evaluation", "comparison")
+    ensure_directory_exists(path)
+    plt.savefig(os.path.join(path, f"difference_plot_{title_suffix}.png"))  # Save the plot
     plt.show()
 
 

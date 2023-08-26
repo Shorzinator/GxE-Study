@@ -6,9 +6,9 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import FEATURES
+from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_without_interaction_terms, \
-    preprocess_ovr
+    preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, \
     ensure_directory_exists, train_model
@@ -22,7 +22,7 @@ ensure_directory_exists(RESULTS_DIR)
 MODEL_NAME = "logistic_regression"
 
 
-def visualize_results(df, metric, key):
+def visualize_results(df, metric, key, shorthand):
     """
     Visualizes the change in metrics and saves the plots with enhanced styling and annotations.
     """
@@ -73,7 +73,7 @@ def visualize_results(df, metric, key):
     annotate_bars(ax1)
     plt.tight_layout()
     plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.savefig(os.path.join(RESULTS_DIR, f"{save_name}_{key}.png"))
+    plt.savefig(os.path.join(RESULTS_DIR, f"{save_name}_{shorthand}_{key}.png"))
     plt.close()
 
 
@@ -82,18 +82,28 @@ def evaluate_with_drop_column(target):
     Evaluates model performance by iteratively dropping columns.
     """
     logging.info("Evaluating model performance by iteratively dropping columns ...")
-    ensure_directory_exists(RESULTS_DIR)
 
+    # Load the data
     df = load_data_old()
-    datasets = preprocess_ovr(df, target)
+
+    # Preprocessing based on the target variable
+    if target == "AntisocialTrajectory":
+        features = FEATURES_FOR_AST
+        datasets = preprocess_ast_ovr(df, features)
+        shorthand = "AST"
+    else:
+        features = FEATURES_FOR_SUT
+        datasets = preprocess_sut_ovr(df, features)
+        shorthand = "SUT"
 
     for key, (X, y) in datasets.items():
         # Store results
         results = []
 
-        X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, key)
-        X_train = pd.DataFrame(X_train)
+        # Applying additional preprocessing
+        X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, features)
 
+        # Defining the model to be trained
         model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga", l1_ratio=0.5)
 
         # Storing the original model's performance as the baseline
@@ -101,9 +111,7 @@ def evaluate_with_drop_column(target):
         y_pred = original_model.predict(X_test)
         baseline_metrics = calculate_metrics(y_test, y_pred, MODEL_NAME, key, "test")
 
-        feature_names = FEATURES
-
-        for column in feature_names:
+        for column in features:
             try:
                 logger.info(f"Training model without {column} column.\n")
                 X_temp = X_train.drop(column, axis=1)
@@ -129,13 +137,13 @@ def evaluate_with_drop_column(target):
 
         logging.info("Saving results ...\n")
         results_df = pd.DataFrame(results)
-        results_df.to_csv(os.path.join(RESULTS_DIR, f"column_drop_evaluation_{key}.csv"), index=False)
+        results_df.to_csv(os.path.join(RESULTS_DIR, f"column_drop_evaluation_AST_{shorthand}_{key}.csv"), index=False)
 
         logging.info("Visualizing results ...\n")
         # Visualize the results for both metrics
         for metric in ["Accuracy", "Custom Score"]:
-            visualize_results(results_df, metric, key)
+            visualize_results(results_df, metric, key, shorthand)
 
 
 if __name__ == "__main__":
-    evaluate_with_drop_column(target="AntisocialTrajectory")
+    evaluate_with_drop_column(target="SubstanceUseTrajectory")

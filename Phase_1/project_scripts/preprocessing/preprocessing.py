@@ -51,7 +51,7 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key, features
     return X_train_resampled, y_train_resampled, X_test_final, y_test
 
 
-def apply_preprocessing_without_interaction_terms(X, y, key, features):
+def apply_preprocessing_without_interaction_terms(X, y, features):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
 

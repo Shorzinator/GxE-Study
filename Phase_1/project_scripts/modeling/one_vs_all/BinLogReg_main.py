@@ -25,11 +25,6 @@ TYPE_OF_CLASSIFICATION = "binary"
 def main(interaction, target):
     logger.info("Starting one-vs-all logistic regression...")
 
-    if target == "AntisocialTrajectory":
-        features = FEATURES_FOR_AST
-    else:
-        features = FEATURES_FOR_SUT
-
     # Subdirectories for a model and metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
     ensure_directory_exists(metrics_dir)
@@ -39,8 +34,10 @@ def main(interaction, target):
 
     # Preprocess the data specific for OvR
     if target == "AntisocialTrajectory":
+        features = FEATURES_FOR_AST
         datasets = preprocess_ast_ovr(df, features)
     else:
+        features = FEATURES_FOR_SUT
         datasets = preprocess_sut_ovr(df, features)
 
     for key, (X, y) in datasets.items():

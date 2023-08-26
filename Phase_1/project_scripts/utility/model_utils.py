@@ -105,6 +105,7 @@ def train_model(X_train, y_train, estimator, param_grid=None):
         best_model = estimator
 
         logger.info("Fitting the model...\n")
+        y_train = y_train.values.ravel()
         best_model.fit(X_train, y_train)
 
     return best_model

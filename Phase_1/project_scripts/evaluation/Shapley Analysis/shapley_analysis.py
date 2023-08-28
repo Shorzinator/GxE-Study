@@ -1,4 +1,4 @@
-import logging
+import os
 import os
 import pickle
 
@@ -7,19 +7,21 @@ import shap
 from PIL import Image
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import FEATURES
 from Phase_1.project_scripts import get_path_from_root
-from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
-    preprocess_ovr, scaling_applier, scaling_pipeline, split_data
+from Phase_1.project_scripts.preprocessing.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, ensure_directory_exists, train_model
+from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 MODEL_NAME = "logistic_regression_shapley"
+
 RESULTS_DIR = get_path_from_root("results", "evaluation", "shapley_analysis")
 VISUALIZATION_DIR = get_path_from_root(RESULTS_DIR, "visualizations")
+ensure_directory_exists(RESULTS_DIR)
+ensure_directory_exists(VISUALIZATION_DIR)
+
 TYPE_OF_CLASSIFICATION = "binary"
 
 
@@ -47,6 +49,7 @@ def load_from_disk(path):
 
 
 def visualize_shap_values(shap_values, X, config_name, feature_names, interaction_term=None):
+
     plt.figure(figsize=(40, 15))
     shap.summary_plot(shap_values, X, feature_names=feature_names, show=False)
     title = f"SHAP Summary Plot for {config_name}"
@@ -60,7 +63,7 @@ def visualize_shap_values(shap_values, X, config_name, feature_names, interactio
         term_str = "_".join(interaction_term)
         filename += f"_{term_str}"
     save_path = get_path_from_root(VISUALIZATION_DIR, f"{filename}.png")
-    plt.savefig(save_path)
+    # plt.savefig(save_path)
     plt.close()
 
 
@@ -116,43 +119,82 @@ def compare_shap_plots(interactions_cache, interaction_term):
     plt.show()
 
 
-def main():
+def main(target, interaction):
     logger.info("Starting Shapley value analysis for one-vs-all logistic regression...")
-    ensure_directory_exists(RESULTS_DIR)
-    ensure_directory_exists(VISUALIZATION_DIR)
+
+    # Loading the data
     df = load_data_old()
-    datasets = preprocess_ovr(df, "AntisocialTrajectory")
-    features = FEATURES.copy()
-    features.remove("PolygenicScoreEXT")
-    fixed_element = "PolygenicScoreEXT"
-    feature_pairs = [(fixed_element, x) for x in features if x != fixed_element]
+
+    # Applying preprocessing
+    if target == "AntisocialTrajectory":
+        features = FEATURES_FOR_AST
+        datasets = preprocess_ast_ovr(df, features)
+    else:
+        features = FEATURES_FOR_SUT
+        datasets = preprocess_sut_ovr(df, features)
+
     interactions_cache = {}
-    for config_name, (X, y) in datasets.items():
-        for feature_pair in feature_pairs:
-            X_train, X_test, y_train, y_test = split_data(X, y)
-            impute = imputation_pipeline()
-            X_train_imputed = imputation_applier(impute, X_train)
-            X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
-            transformed_columns = X_train_final.columns.tolist()
-            X_test_imputed = imputation_applier(impute, X_test)
-            X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
-            scaler = scaling_pipeline(transformed_columns)
-            X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
-            X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train, config_name)
+    results = []
+    for key, (X, y) in datasets.items():
+        if interaction:
+
+            temp = features.copy()
+            temp.remove("PolygenicScoreEXT")
+            fixed_element = "PolygenicScoreEXT"
+            feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
+
+            for feature_pair in feature_pairs:
+
+                # Applying additional preprocessing
+                X_train, y_train, X_test, y_test = apply_preprocessing_with_interaction_terms(X, y, feature_pair, key,
+                                                                                              features)
+
+                model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
+                                           l1_ratio=0.5)
+
+                best_model = train_model(X_train, y_train, model, None)
+
+                shap_values = compute_shap_values(best_model, X_train)
+                interactions_cache.setdefault(feature_pair, []).append((key, X_train, shap_values))
+                #visualize_shap_values(shap_values, X_train, key, X_train.columns.tolist(), interaction_term=feature_pair)
+
+                # Save the SHAP values to a DataFrame and append to the results list
+                shap_df = pd.DataFrame(shap_values, columns=X_train.columns)
+                shap_df['config'] = key
+                shap_df['interaction'] = ' x '.join(feature_pair)
+                results.append(shap_df)
+
+        else:
+            # Applying additional preprocessing
+            X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, features)
+
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)
-            best_model = train_model(X_train_resampled, y_train_resampled, model, None, MODEL_NAME)
-            shap_values = compute_shap_values(best_model, X_test_imputed_scaled)
-            interactions_cache.setdefault(feature_pair, []).append((config_name, X_test_imputed_scaled, shap_values))
-            visualize_shap_values(shap_values, X_test_imputed_scaled, config_name, transformed_columns,
-                                  interaction_term=feature_pair)
-        logger.info(f"Completed Shapley analysis for {config_name}.")
 
-    for interaction_term, data in interactions_cache.items():
-        create_comparison_image(data, interaction_term)
+            # Train the model
+            best_model = train_model(X_train, y_train, model, None)
+
+            # Compute and visualize SHAP values
+            shap_values = compute_shap_values(best_model, X_train)
+            #visualize_shap_values(shap_values, X_train, key, X_train.columns.tolist())
+
+            # Save the SHAP values to a DataFrame and append to the results list
+            shap_df = pd.DataFrame(shap_values, columns=X_train.columns)
+            shap_df['config'] = key
+            shap_df['interaction'] = 'None'
+            results.append(shap_df)
+
+        logger.info(f"Completed Shapley analysis for {key}.")
+
+    #for interaction_term, data in interactions_cache.items():
+    #    create_comparison_image(data, interaction_term)
+
+    # Concatenate all the results DataFrames and save to CSV
+    results_df = pd.concat(results, ignore_index=True)
+    results_df.to_csv(get_path_from_root(RESULTS_DIR, 'shapley_results.csv'), index=False)
 
     logger.info("Shapley value analysis completed.")
 
 
 if __name__ == '__main__':
-    main()
+    main(target="AntisocialTrajectory", interaction="True")

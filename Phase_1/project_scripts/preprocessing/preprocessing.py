@@ -15,25 +15,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def apply_preprocessing_with_interaction_terms(X, y, feature_pair, key, features):
+def apply_preprocessing_with_interaction_terms(X, y, feature_pair, features):
     # Split, train using df_temp, and get metrics
     X_train, X_test, y_train, y_test = split_data(X, y)
-
-    # Original columns
-    original_columns = X_train.columns.tolist()
 
     # Applying imputation and one-hot encoding on training data
     impute = imputation_pipeline(features)
     X_train_imputed = imputation_applier(impute, X_train, features)
 
-    X_train_imputed.columns = original_columns  # re-assigning column names
+    X_train_imputed.columns = features  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for training data
     X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
 
     # Applying imputation and one-hot encoding on testing data
     X_test_imputed = imputation_applier(impute, X_test, features)
-    X_test_imputed.columns = original_columns  # re-assigning column names
+    X_test_imputed.columns = features  # re-assigning column names
 
     # Generate interaction terms using the transformed column names for testing data
     X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
@@ -217,7 +214,11 @@ def preprocess_sut_ovr(df, features):
     # Separate the target variable
     outcome = df['SubstanceUseTrajectory']
 
-    feature_cols = features
+    # Adding these terms to tackle cohort differences in Psychosocial Environments
+    df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
+    df['PolygenicScoreEXT_x_Age'] = df['PolygenicScoreEXT'] * df['Age']
+
+    feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
 
     df = df[feature_cols]
 
@@ -228,7 +229,7 @@ def preprocess_sut_ovr(df, features):
     }
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
-    return datasets
+    return datasets, feature_cols
 
 
 def preprocess_ast_ovr(df, features):
@@ -249,10 +250,14 @@ def preprocess_ast_ovr(df, features):
     # Drop rows where the target variable is missing
     df = df.dropna(subset=["AntisocialTrajectory"])
 
+    # Adding these terms to tackle cohort differences in Psychosocial Environments
+    df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
+    df['PolygenicScoreEXT_x_Age'] = df['PolygenicScoreEXT'] * df['Age']
+
     # Separate the target variable
     outcome = df["AntisocialTrajectory"]
 
-    feature_cols = features
+    feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
 
     df = df[feature_cols]
 
@@ -264,7 +269,7 @@ def preprocess_ast_ovr(df, features):
     }
 
     logger.info("Data preprocessing for one-vs-all logistic regression completed successfully.\n")
-    return datasets
+    return datasets, feature_cols
 
 
 def preprocess_general(df, target, features):

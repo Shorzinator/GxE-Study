@@ -35,9 +35,28 @@ def add_interaction_terms(df, feature_pairs):
     return df
 
 
-def save_results(target, type_of_classification, results, directory, interaction):
+def add_squared_terms(df):
+    """
+    Add squared terms of all features in the dataframe.
+
+    Args:
+    df (pd.DataFrame): Dataframe containing the features
+
+    Returns:
+    pd.DataFrame: Dataframe with added squared terms
+    """
+    temp = df.drop(columns=['PolygenicScoreEXT_x_Age', 'PolygenicScoreEXT_x_Is_Male'], errors='ignore')
+
+    for feature in temp.columns:
+        df[f"{feature}^2"] = df[feature] ** 2
+
+    return df
+
+
+def save_results(target, type_of_classification, results, directory, interaction, statistical_control):
     """
     Save the results in a structured directory and file.
+    :param statistical_control: Whether squared terms were added or not
     :param interaction: Boolean value to decide whether to add IT or not
     :param directory: Model_dir or metrics_dir
     :param type_of_classification: multinomial, binary, etc.
@@ -66,13 +85,21 @@ def save_results(target, type_of_classification, results, directory, interaction
 
         dir_path = directory
 
-        if interaction:
-            logging.info("Saving results with interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+        results_file = ""
+        if statistical_control is True:
+            if interaction:
+                logging.info("Saving results with interaction terms...\n")
+                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_USC.csv")
+            else:
+                logging.info("Saving results without interaction terms...\n")
+                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}_USC.csv")
         else:
-            logging.info("Saving results without interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}.csv")
-
+            if interaction:
+                logging.info("Saving results with interaction terms...\n")
+                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+            else:
+                logging.info("Saving results without interaction terms...\n")
+                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}.csv")
         # Save to CSV
         results_df.to_csv(results_file, index=False)
 

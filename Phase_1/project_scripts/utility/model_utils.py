@@ -50,13 +50,12 @@ def add_squared_terms(df):
     for feature in temp.columns:
         df[f"{feature}^2"] = df[feature] ** 2
 
-    return df
+    return pd.DataFrame(df)
 
 
-def save_results(target, type_of_classification, results, directory, interaction, statistical_control):
+def save_results(target, type_of_classification, results, directory, interaction):
     """
     Save the results in a structured directory and file.
-    :param statistical_control: Whether squared terms were added or not
     :param interaction: Boolean value to decide whether to add IT or not
     :param directory: Model_dir or metrics_dir
     :param type_of_classification: multinomial, binary, etc.
@@ -69,37 +68,24 @@ def save_results(target, type_of_classification, results, directory, interaction
         target = "SUT"
 
     try:
-        logging.info("Saving results  ...\n")
+        flattened_data = []
+        for res in results:
+            interaction_name = res.get("interaction", "N/A")
+            for key, metrics in res.items():
+                if key in ["validation_metrics", "test_metrics"]:
+                    flattened_data.append({"type": key, "interaction": interaction_name, **metrics})
 
-        # Check if the results need to be flattened
-        if "train_metrics" in results[0] or "test_metrics" in results[0]:
-            flattened_data = []
-            for res in results:
-                interaction_name = res.get("interaction", "N/A")
-                for key, metrics in res.items():
-                    if key in ["train_metrics", "test_metrics"]:
-                        flattened_data.append({"type": key, "interaction": interaction_name, **metrics})
-            results_df = pd.DataFrame(flattened_data)
-        else:
-            results_df = pd.DataFrame(results)
+        results_df = pd.DataFrame(flattened_data)
 
         dir_path = directory
 
-        results_file = ""
-        if statistical_control is True:
-            if interaction:
-                logging.info("Saving results with interaction terms...\n")
-                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_USC.csv")
-            else:
-                logging.info("Saving results without interaction terms...\n")
-                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}_USC.csv")
+        if interaction:
+            logging.info("Saving results with interaction terms...\n")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
         else:
-            if interaction:
-                logging.info("Saving results with interaction terms...\n")
-                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
-            else:
-                logging.info("Saving results without interaction terms...\n")
-                results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_no{IT}.csv")
+            logging.info("Saving results without interaction terms...\n")
+            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_noIT.csv")
+
         # Save to CSV
         results_df.to_csv(results_file, index=False)
 
@@ -180,13 +166,6 @@ def calculate_metrics(y_true, y_pred, model_name, target, test_or_train, weights
     report = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
     accuracy = accuracy_score(y_true, y_pred)
     mcc = matthews_corrcoef(y_true, y_pred)
-
-    metrics = {
-        "Model": model_name,
-        "Target": target,
-        "Accuracy": accuracy,
-        "Matthews Correlation Coefficient": mcc
-    }
 
     metrics = OrderedDict()
     metrics["Model"] = model_name

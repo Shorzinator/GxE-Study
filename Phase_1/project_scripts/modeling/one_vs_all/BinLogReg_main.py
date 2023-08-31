@@ -22,8 +22,8 @@ RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results
 TYPE_OF_CLASSIFICATION = "binary"
 
 
-def main(interaction, target, statistical_control):
-    logger.info("Starting one-vs-all logistic regression...")
+def main(interaction, target):
+    logger.info(f"Starting one-vs-all {MODEL_NAME}...")
 
     # Subdirectories for a model and metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
@@ -42,79 +42,73 @@ def main(interaction, target, statistical_control):
         results = []
 
         logging.info(f"Starting model for {key} ...\n")
-        if statistical_control:
-            logging.info("Implementing Statistical Control...\n")
-            X = add_squared_terms(X)
-            temp = features.copy()
-            temp.remove("Age")
-            temp.remove("Is_Male")
-            temp.remove("PolygenicScoreEXT_x_Is_Male")
-            temp.remove("PolygenicScoreEXT_x_Age")
+
+        logging.info("Implementing Statistical Control...\n")
+        X = add_squared_terms(X)
+
+        # Training the model
+        model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
+                                   l1_ratio=0.5)
+
+        param_grid = None  # Not performing grid search
 
         if interaction:
 
-            fixed_element = "PolygenicScoreEXT"
+            temp = features.copy()
+            temp.remove("PolygenicScoreEXT_x_Is_Male")
+            temp.remove("PolygenicScoreEXT_x_Age")
+            temp.remove("Age")
+            temp.remove("Is_Male")
 
+            fixed_element = "PolygenicScoreEXT"
             feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
 
             for feature_pair in feature_pairs:
-                X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing_with_interaction_terms(
+                X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_with_interaction_terms(
                     X, y, feature_pair, features)
 
-                # Training the model
-                model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
-                                           l1_ratio=0.5)
+                best_model = train_model(X_train, y_train, model, param_grid)
 
-                param_grid = None  # Not performing grid search
+                # Validate the model
+                y_val_pred = best_model.predict(X_val)
+                val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
 
-                best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid)
-
-                # Predictions
-                y_train_pred = best_model.predict(X_train_resampled)
-                y_test_pred = best_model.predict(X_test_final)
-
-                # Calculate metrics
-                train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, target, "train")
+                # Test the model
+                y_test_pred = best_model.predict(X_test)
                 test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
-                # Append the results
                 results.append({
                     "interaction": f"{feature_pair[0]}_x_{feature_pair[1]}",
-                    "train_metrics": train_metrics,
+                    "validation_metrics": val_metrics,
                     "test_metrics": test_metrics
                 })
         else:
-            X_train_resampled, y_train_resampled, X_test_final, y_test = apply_preprocessing_without_interaction_terms(
+            X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(
                 X, y, features)
 
-            # Training the model
-            model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
-                                       l1_ratio=0.5)
+            best_model = train_model(X_train, y_train, model, param_grid)
 
-            param_grid = None  # Not performing grid search
+            # Validate the model
+            y_val_pred = best_model.predict(X_val)
+            val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
 
-            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid)
-
-            # Predictions
-            y_train_pred = best_model.predict(X_train_resampled)
-            y_test_pred = best_model.predict(X_test_final)
-
-            # Calculate metrics
-            train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, target, "train")
+            # Test the model
+            y_test_pred = best_model.predict(X_test)
             test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
-            # Append the results
             results.append({
-                "train_metrics": train_metrics,
+                "validation_metrics": val_metrics,
                 "test_metrics": test_metrics
             })
 
         logger.info(f"Completed {key} classification.\n")
 
-        save_results(target, f"{key}", results, metrics_dir, interaction, statistical_control)
+        save_results(target, f"{key}", results, metrics_dir, interaction)
 
     logger.info("One-vs-all logistic regression completed.")
 
 
 if __name__ == '__main__':
-    main(interaction=True, target="AntisocialTrajectory", statistical_control="True")
+    target_1 = "AntisocialTrajectory"
+    target_2 = "SubstanceUseTrajectory"
+    main(interaction=True, target=target_1)

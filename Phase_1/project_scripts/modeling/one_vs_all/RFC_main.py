@@ -1,13 +1,16 @@
-import itertools
-import json
+import logging
+import os
 import warnings
 
 from sklearn.ensemble import RandomForestClassifier
 
-from Phase_1.config import FEATURES as allFeatures
+from Phase_1.config import *
 from Phase_1.project_scripts import get_path_from_root
-from Phase_1.project_scripts.utility.data_loader import load_data
-from Phase_1.project_scripts.utility.model_utils import *
+from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
+    apply_preprocessing_without_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
+from Phase_1.project_scripts.utility.data_loader import load_data_old
+from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
+    ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -19,134 +22,98 @@ RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results
 TYPE_OF_CLASSIFICATION = "binary"
 
 
-def main():
-    logger.info("Starting one-vs-all random forest classifier...")
+def main(interaction, target):
+    logger.info(f"Starting one-vs-all {MODEL_NAME}...")
 
-    ensure_directory_exists(RESULTS_DIR)
-
-    # Subdirectories for model and metrics
-    model_dir = os.path.join(RESULTS_DIR, "models")
+    # Subdirectories for a model and metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
-
-    ensure_directory_exists(model_dir)
     ensure_directory_exists(metrics_dir)
+
     # Load data
-    df = load_data()
+    df = load_data_old()
 
     # Preprocess the data specific for OvR
-    logger.info("Starting data preprocessing for random forest classification ...\n")
-    datasets = preprocess_ovr(df, "AntisocialTrajectory")
-
-    # List of features to consider for interactions
-    feature_pairs = list(itertools.combinations(allFeatures, 2))
+    if target == "AntisocialTrajectory":
+        datasets, features = preprocess_ast_ovr(df, FEATURES_FOR_AST)
+    else:
+        datasets, features = preprocess_sut_ovr(df, FEATURES_FOR_SUT)
 
     for key, (X, y) in datasets.items():
         results = []
 
         logging.info(f"Starting model for {key} ...\n")
 
-        for feature_pair in feature_pairs:
-            # Split, train using df_temp, and get metrics
-            X_train, X_test, y_train, y_test = split_data(X, y)
+        logging.info("Implementing Statistical Control...\n")
+        X = add_squared_terms(X)
 
-            # Applying imputation and one-hot encoding on training data
-            impute = imputation_pipeline()
-            X_train_imputed = imputation_applier(impute, X_train)
+        param_grid = None  # Not performing grid search
 
-            # Generate interaction terms using the transformed column names for training data
-            X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
+        # Training the model
+        model = RandomForestClassifier(
+            n_estimators=50,
+            max_depth=10,
+            min_samples_split=20,
+            min_samples_leaf=10,
+            random_state=42
+        )
 
-            # Capture transformed column names after preprocessing the training data
-            transformed_columns = X_train_final.columns.tolist()
+        if interaction:
 
-            # Applying imputation and one-hot encoding on testing data
-            X_test_imputed = imputation_applier(impute, X_test)
+            temp = features.copy()
+            temp.remove("PolygenicScoreEXT_x_Is_Male")
+            temp.remove("PolygenicScoreEXT_x_Age")
+            temp.remove("Age")
+            temp.remove("Is_Male")
 
-            # Generate interaction terms using the transformed column names for testing data
-            X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
-            X_test_final = pd.DataFrame(X_test_final)
+            fixed_element = "PolygenicScoreEXT"
+            feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
 
-            # Applying scaling
-            scaler = scaling_pipeline(transformed_columns)
-            X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(scaler, X_train_final, X_test_final)
+            for feature_pair in feature_pairs:
+                X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_with_interaction_terms(
+                    X, y, feature_pair, features)
 
-            # Balancing data
-            # logger.info(f"Distribution before balancing:\n{y_train.value_counts(normalize=True)}\n")
-            X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
-            # logger.info(f"Distribution after balancing:\n{y_train_resampled.value_counts(normalize=True)}\n")
+                best_model = train_model(X_train, y_train, model, param_grid)
 
-            X_train_resampled = pd.DataFrame(X_train_resampled)
+                # Validate the model
+                y_val_pred = best_model.predict(X_val)
+                val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
 
-            # Defining parameter grid for grid search. To initiate grid search, comment out the second definition
-            """
-            param_grid = {
-            'n_estimators': [50, 100, 200],
-            'max_depth': [None, 10, 20, 30],
-            'min_samples_split': [2, 5, 10],
-            'min_samples_leaf': [1, 2, 4]
-            }
-            """
-            param_grid = None
+                # Test the model
+                y_test_pred = best_model.predict(X_test)
+                test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
-            logger.info(f"Training the {MODEL_NAME} model...\n")
-            # Training the model
-            model = RandomForestClassifier(n_estimators=1000, random_state=42, oob_score=True, bootstrap=True,
-                                           min_samples_split=5)
+                results.append({
+                    "interaction": f"{feature_pair[0]}_x_{feature_pair[1]}",
+                    "validation_metrics": val_metrics,
+                    "test_metrics": test_metrics
+                })
+        else:
+            X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(
+                X, y, features)
 
-            best_model = train_model(X_train_resampled, y_train_resampled, model, param_grid,
-                                     "True", MODEL_NAME, model_dir, IT)
+            best_model = train_model(X_train, y_train, model, param_grid)
 
-            logger.info("Predicting with the model...\n")
+            # Validate the model
+            y_val_pred = best_model.predict(X_val)
+            val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
 
-            # Predictions
-            y_train_pred = best_model.predict(X_train_resampled)
-            y_test_pred = best_model.predict(X_test_final)
+            # Test the model
+            y_test_pred = best_model.predict(X_test)
+            test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
-            logger.info("Calculating Metrics...\n")
-
-            # Calculate metrics
-            train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
-            test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
-
-            # If the param_grid is not commented out, grid search would run and hence this would run as well
-            if param_grid:
-
-                # Saving the best parameters
-                best_parameters = best_model.best_params_
-                results_path = os.path.join(model_dir, f"best_parameters_{COMBINED}_{IT}.json")
-
-                # Check if the file exists
-                if os.path.exists(results_path):
-                    # Read the current content of the JSON file
-                    with open(results_path, 'r') as f:
-                        data = json.load(f)
-                else:
-                    data = {}
-
-                # Append new results to the data
-                data['run_{}'.format(len(data) + 1)] = best_parameters
-
-                # Write the updated data back to the JSON file
-                with open(results_path, 'w') as f:
-                    json.dump(data, f, indent=4)
-
-                # Saving the best estimator
-                best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}_{IT}.pkl"))
-
-            # Append the results
             results.append({
-                "interaction": f"{feature_pair[0]}_x_{feature_pair[1]}",
-                "train_metrics": train_metrics,
+                "validation_metrics": val_metrics,
                 "test_metrics": test_metrics
             })
 
-        logging.info("Saving results ...\n")
+        logger.info(f"Completed {key} classification.\n")
 
-        save_results(TARGET_1, f"{key}_binary", results, metrics_dir)
-        logger.info(f"Completed {key} classification.")
+        save_results(target, f"{key}", results, metrics_dir, interaction)
 
-    logger.info("One-vs-all random forest classification completed.")
+    logger.info(f"One-vs-all {MODEL_NAME} completed.")
 
 
 if __name__ == '__main__':
-    main()
+    target_1 = "AntisocialTrajectory"
+    target_2 = "SubstanceUseTrajectory"
+    main(interaction=True, target=target_1)

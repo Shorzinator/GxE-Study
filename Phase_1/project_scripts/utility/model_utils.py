@@ -53,7 +53,7 @@ def add_squared_terms(df):
     return pd.DataFrame(df)
 
 
-def save_results(target, type_of_classification, results, directory, interaction):
+def save_results(target, type_of_classification, results, directory, interaction, model_name):
     """
     Save the results in a structured directory and file.
     :param interaction: Boolean value to decide whether to add IT or not
@@ -81,10 +81,10 @@ def save_results(target, type_of_classification, results, directory, interaction
 
         if interaction:
             logging.info("Saving results with interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}.csv")
+            results_file = os.path.join(dir_path, f"{model_name}_{target}_{type_of_classification}.csv")
         else:
             logging.info("Saving results without interaction terms...\n")
-            results_file = os.path.join(dir_path, f"{target}_{type_of_classification}_noIT.csv")
+            results_file = os.path.join(dir_path, f"{model_name}_{target}_{type_of_classification}_noIT.csv")
 
         # Save to CSV
         results_df.to_csv(results_file, index=False)

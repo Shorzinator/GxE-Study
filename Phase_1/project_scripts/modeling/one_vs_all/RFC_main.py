@@ -108,7 +108,7 @@ def main(interaction, target):
 
         logger.info(f"Completed {key} classification.\n")
 
-        save_results(target, f"{key}", results, metrics_dir, interaction)
+        save_results(target, f"{key}", results, metrics_dir, interaction, MODEL_NAME)
 
     logger.info(f"One-vs-all {MODEL_NAME} completed.")
 

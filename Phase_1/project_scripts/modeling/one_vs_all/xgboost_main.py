@@ -2,166 +2,136 @@ import logging
 import os
 import warnings
 
-import joblib
-import pandas as pd
 import xgboost as xgb
-from sklearn.preprocessing import LabelEncoder
 
-from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_pipeline, preprocess_ovr, \
-    scaling_pipeline, split_data
-from Phase_1.project_scripts.utility.data_loader import load_data
-from Phase_1.project_scripts.utility.model_utils import calculate_metrics
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
-
-warnings.filterwarnings("ignore")
+from Phase_1.config import *
+from Phase_1.project_scripts import get_path_from_root
+from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
+    apply_preprocessing_without_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
+from Phase_1.project_scripts.utility.data_loader import load_data_old
+from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
+    ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-NUM_CORES = 2
+warnings.filterwarnings("ignore", category=UserWarning)
+
+MODEL_NAME = "xgboost"
+RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results")
 
 
-def train_model(outcome_val, baseline_val, X_train, X_test, y_train, y_test, preprocessor, NUM_CORES, model_dir):
-    """ Train the model for the given outcome value """
-
-    logger.info(f"Training model for outcome: {outcome_val} ...")
-
-    # Applying preprocessing pipeline
-    X_train = preprocessor.fit_transform(X_train)
-    X_test = preprocessor.transform(X_test)
-
-    # Balancing the dataset
-    X_resampled, y_resampled = balance_data(X_train, y_train)
-    logger.info(f"Data shape after balancing: {X_resampled.shape}")
-    logger.info(f"Balanced training data shape for {outcome_val}: {X_resampled.shape}")
-    logger.info(f"Balanced outcome value counts for {outcome_val}: \n{pd.Series(y_resampled).value_counts()}")
-
-    # Use LabelEncoder to transform y_resampled to have values starting from 0
-    le = LabelEncoder()
-    y_resampled = le.fit_transform(y_resampled)
-
-    # XGBoost model
-    xgb_model = xgb.XGBClassifier(n_jobs=NUM_CORES, use_label_encoder=False, eval_metric='mlogloss', max_depth=10,
-                                  learning_rate=0.1, sampling_method="gradient_based")
-
-    # Randomized search for hyperparameter tuning
-    params = {
-        'max_depth': [3, 4, 5, 6, 7, 8, 9],
-        'learning_rate': [0.01, 0.05, 0.1, 0.5],
-        'n_estimators': [50, 100, 200, 500],
-        'gamma': [0, 0.5, 1],
-        'subsample': [0.8, 1],
-        'colsample_bytree': [0.8, 1],
-        'objective': ['binary:logistic']
-    }
-    # Train the model with default parameters
-    xgb_model.fit(X_resampled, y_resampled)
-
+def binary_map(y, positive_class):
     """
-    grid_search = GridSearchCV(xgb_model, params, cv=StratifiedKFold(5), scoring='f1_weighted', n_jobs=NUM_CORES)
-    grid_search.fit(X_resampled, y_resampled)
+    Dynamically map the target variable for binary classification.
+    Args:
+    - y: Target variable series.
+    - positive_class: The class to be considered as positive (1).
+
+    Returns:
+    - Mapped target variable series.
     """
+    # All classes in y
+    classes = sorted(y.unique())
 
-    # Saving the model
-    joblib.dump(xgb_model, os.path.join(model_dir, f"xgboost_model_{outcome_val}.pkl"))
+    # Determine the baseline category (assuming it's the last when sorted)
+    baseline = classes[-1]
 
-    y_pred_train = xgb_model.predict(X_train)
-    y_pred_test = xgb_model.predict(X_test)
-    logger.info(
-        f"Predicted training outcome value counts for {outcome_val}: \n{pd.Series(y_pred_train).value_counts()}")
-    logger.info(f"Predicted test outcome value counts for {outcome_val}: \n{pd.Series(y_pred_test).value_counts()}")
-
-    # Correct the calls to the calculate_metrics function
-    train_metrics = calculate_metrics(y_train, y_pred_train, "xgboost", "AST", f"{outcome_val}_vs_{baseline_val}")
-    test_metrics = calculate_metrics(y_test, y_pred_test, "xgboost", "AST", f"{outcome_val}_vs_{baseline_val}")
-
-    return train_metrics, test_metrics
+    # Map the positive class to 1 and baseline to 0
+    return y.map({positive_class: 1, baseline: 0})
 
 
-if __name__ == "__main__":
-    df = load_data()
-    logger.info(f"Original distribution of 'AST':\n{df['AntisocialTrajectory'].value_counts()}\n")
-    print()
+def main(interaction, target):
+    logger.info(f"Starting one-vs-all {MODEL_NAME}...")
 
-    target = "AntisocialTrajectory"
+    # Subdirectories for a model and metrics
+    metrics_dir = os.path.join(RESULTS_DIR, "metrics")
+    ensure_directory_exists(metrics_dir)
 
-    datasets = preprocess_ovr(df, target)  # preprocessing
-    logger.info(f"Data shape after preprocessing: {df.shape}")
-    logger.info(f"Original distribution of 'AST':\n{df['AntisocialTrajectory'].value_counts()}\n")
-    print()
+    # Load data
+    df = load_data_old()
 
-    # Establish the model-specific directories
-    model_name = "xgboost"
+    # Preprocess the data specific for OvR
+    if target == "AntisocialTrajectory":
+        datasets, features = preprocess_ast_ovr(df, FEATURES_FOR_AST)
+    else:
+        datasets, features = preprocess_sut_ovr(df, FEATURES_FOR_SUT)
 
-    # Use the path utility to get the path for xgboost_results
-    results_dir = get_path_from_root("results", "one_vs_all", f"{model_name}_results")
+    for key, (X, y) in datasets.items():
+        results = []
 
-    # Ensure the xgboost_results directory exists
-    if not os.path.exists(results_dir):
-        os.makedirs(results_dir)
+        logging.info(f"Starting model for {key} ...\n")
 
-    # Subdirectories for model and metrics
-    model_dir = os.path.join(results_dir, "models")
-    metrics_dir = os.path.join(results_dir, "metrics")
+        logging.info("Implementing Statistical Control...\n")
+        X = add_squared_terms(X)
 
-    # Ensure the subdirectories exist
-    if not os.path.exists(model_dir):
-        os.makedirs(model_dir)
-    if not os.path.exists(metrics_dir):
-        os.makedirs(metrics_dir)
+        if "_vs_" in key:
+            positive_class = int(key.split("_vs_")[0])  # Extracting the category to be considered positive
+            y = binary_map(y, positive_class)
 
-    metrics_dict = {}
-    baseline_val = 4
+        param_grid = None  # Not performing grid search
 
-    for target_val, (data, outcome) in datasets.items():
-        logger.info(f"Data shape after preprocessing for {target_val}: {data.shape}")
-        logger.info(f"Outcome value counts for {target_val}: \n{outcome.value_counts()}")
+        # Training the model
+        model = xgb.XGBClassifier(objective='binary:logistic', n_estimators=100, use_label_encoder=False,
+                                  eval_metric='logloss', class_weight='balanced')
 
-        # Split data
-        X_train, X_test, y_train, y_test = split_data(data, outcome)
-        logger.info(f"Training data shape for {target_val}: {X_train.shape}")
-        logger.info(f"Test data shape for {target_val}: {X_test.shape}")
-        logger.info(f"Training outcome value counts for {target_val}: \n{y_train.value_counts()}")
-        logger.info(f"Test outcome value counts for {target_val}: \n{y_test.value_counts()}")
+        if interaction:
 
-        # Applying imputation
-        impute = imputation_pipeline(X_train)
-        X_train = impute.fit_transform(X_train)
-        X_test = impute.transform(X_test)
+            temp = features.copy()
+            temp.remove("PolygenicScoreEXT_x_Is_Male")
+            temp.remove("PolygenicScoreEXT_x_Age")
+            temp.remove("Age")
+            temp.remove("Is_Male")
 
-        # Applying scaling
-        scaler = scaling_pipeline(X_train)
-        X_train = scaler.fit_transform(X_train)
-        X_test = scaler.transform(X_test)
+            fixed_element = "PolygenicScoreEXT"
+            feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
 
-        X_train = pd.DataFrame(X_train)
-        X_test = pd.DataFrame(X_test)
+            for feature_pair in feature_pairs:
+                X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_with_interaction_terms(
+                    X, y, feature_pair, features)
 
-        logger.info(f"Training data shape after imputation and scaling for {target_val}: {X_train.shape}")
-        logger.info(f"Test data shape after imputation and scaling for {target_val}: {X_test.shape}")
+                best_model = train_model(X_train, y_train, model, param_grid)
 
-        train_metrics, test_metrics = train_model(target_val,
-                                                  baseline_val,
-                                                  X_train,
-                                                  X_test,
-                                                  y_train,
-                                                  y_test,
-                                                  preprocessor,
-                                                  NUM_CORES,
-                                                  model_dir)
+                # Validate the model
+                y_val_pred = best_model.predict(X_val)
+                val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
 
-        metrics_dict[f"{target_val}_vs_{baseline_val}"] = {"train": train_metrics, "test": test_metrics}
+                # Test the model
+                y_test_pred = best_model.predict(X_test)
+                test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
-    # Saving metrics to CSV
-    for split, split_data in metrics_dict.items():
-        flattened_data = {}
-        for key, value in split_data.items():
-            if value is not None:
-                for metric, metric_value in value.items():
-                    flattened_data[f"{key}_{metric}"] = metric_value
-            else:
-                logger.warning(f"No metrics found for {key} in split {split}.")
-        df_metrics = pd.DataFrame([flattened_data])
-        df_metrics.to_csv(os.path.join(metrics_dir, f"AST_{split}_vs_{baseline_val}.csv"))
+                results.append({
+                    "interaction": f"{feature_pair[0]}_x_{feature_pair[1]}",
+                    "validation_metrics": val_metrics,
+                    "test_metrics": test_metrics
+                })
+        else:
+            X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(
+                X, y, features)
 
-    logger.info("Completed.")
+            best_model = train_model(X_train, y_train, model, param_grid)
+
+            # Validate the model
+            y_val_pred = best_model.predict(X_val)
+            val_metrics = calculate_metrics(y_val, y_val_pred, MODEL_NAME, target, "validation")
+
+            # Test the model
+            y_test_pred = best_model.predict(X_test)
+            test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
+
+            results.append({
+                "validation_metrics": val_metrics,
+                "test_metrics": test_metrics
+            })
+
+        logger.info(f"Completed {key} classification.\n")
+
+        save_results(target, f"{key}", results, metrics_dir, interaction, MODEL_NAME)
+
+    logger.info(f"One-vs-all {MODEL_NAME} completed.")
+
+
+if __name__ == '__main__':
+    target_1 = "AntisocialTrajectory"
+    target_2 = "SubstanceUseTrajectory"
+    main(interaction=True, target=target_1)

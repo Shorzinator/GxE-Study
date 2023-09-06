@@ -2,6 +2,7 @@ import logging
 import os
 import warnings
 
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import *
@@ -10,7 +11,7 @@ from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocess
     apply_preprocessing_without_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
-    ensure_directory_exists, save_results, train_model
+    ensure_directory_exists, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,12 +23,46 @@ RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results
 TYPE_OF_CLASSIFICATION = "binary"
 
 
+def save_processed_data(X, y, target, case, interaction, directory, feature_pair):
+    """
+    Save the processed datasets for each specific case before training.
+
+    Args:
+    - X: Processed features.
+    - y: Processed target.
+    - target: Either "AntisocialTrajectory" or "SubstanceUseTrajectory".
+    - case: Specific case like "1_vs_3".
+    - interaction: Boolean indicating if interaction terms were used.
+    - directory: The directory where data should be saved.
+    """
+    # Creating a filename based on the target, case, and interaction.
+    if target == "SubstanceUseTrajectory":
+        target = "SUT"
+    else:
+        target = "AST"
+
+    if interaction:
+        filename = f"{target}_{case}_{feature_pair[0]}_x_{feature_pair[1]}_IT.csv"
+    else:
+        filename = f"{target}_{case}_{feature_pair[0]}_x_{feature_pair[1]}_noIT.csv"
+
+    # Merging the features and target into a single dataframe.
+    df_to_save = pd.concat([X, y], axis=1)
+
+    # Saving the dataframe to the specified directory.
+    save_path = os.path.join(directory, filename)
+    df_to_save.to_csv(save_path, index=False)
+    logger.info(f"Saved data for {target} {case}...\n")
+
+
 def main(interaction, target):
     logger.info(f"Starting one-vs-all {MODEL_NAME}...")
 
     # Subdirectories for a model and metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
+    processed_data_dir = os.path.join(RESULTS_DIR, "processed_data")
     ensure_directory_exists(metrics_dir)
+    ensure_directory_exists(processed_data_dir)
 
     # Load data
     df = load_data_old()
@@ -46,11 +81,11 @@ def main(interaction, target):
         logging.info("Implementing Statistical Control...\n")
         X = add_squared_terms(X)
 
-        # Training the model
-        model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
-                                   l1_ratio=0.5)
-
         param_grid = None  # Not performing grid search
+
+        # Defining the model
+        model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
+                                   l1_ratio=0.5, class_weight='balanced')
 
         if interaction:
 
@@ -67,6 +102,11 @@ def main(interaction, target):
                 X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_with_interaction_terms(
                     X, y, feature_pair, features)
 
+                if key == "2_vs_3":
+                    # Before training the model, save the processed datasets.
+                    save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir, feature_pair)
+
+                # Training the model
                 best_model = train_model(X_train, y_train, model, param_grid)
 
                 # Validate the model
@@ -86,6 +126,10 @@ def main(interaction, target):
             X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(
                 X, y, features)
 
+            # Before training the model, save the processed datasets.
+            save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir)
+
+            # Training the model
             best_model = train_model(X_train, y_train, model, param_grid)
 
             # Validate the model
@@ -103,12 +147,12 @@ def main(interaction, target):
 
         logger.info(f"Completed {key} classification.\n")
 
-        save_results(target, f"{key}", results, metrics_dir, interaction)
+        # save_results(target, f"{key}", results, metrics_dir, interaction, MODEL_NAME)
 
-    logger.info("One-vs-all logistic regression completed.")
+    logger.info(f"One-vs-all {MODEL_NAME} completed.")
 
 
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
-    main(interaction=True, target=target_1)
+    main(interaction=True, target=target_2)

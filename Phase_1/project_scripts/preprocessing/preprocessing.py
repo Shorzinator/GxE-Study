@@ -197,7 +197,7 @@ def balance_data(X_train, y_train):
     logger.info("Balancing data...\n")
 
     initial_size = len(X_train)
-    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="all")
+    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="not majority")
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 

@@ -135,12 +135,12 @@ def imputation_pipeline(numerical_features):
     return preprocessor
 
 
-def imputation_applier(impute, X, feature_names, fit=False):
+def imputation_applier(impute, df, feature_names, fit=False):
     """
     Applies imputation on the data.
 
+    :param df: Dataframe
     :param impute: ColumnTransformer, imputation transformer
-    :param X: DataFrame, feature matrix
     :param feature_names: list, list of feature names
     :param fit: bool, whether to fit the transformer
     :return: DataFrame, imputed data
@@ -148,9 +148,9 @@ def imputation_applier(impute, X, feature_names, fit=False):
     logger.info("Applying imputation...\n")
 
     if fit:
-        input_imputed = impute.fit_transform(X)
+        input_imputed = impute.fit_transform(df)
     else:
-        input_imputed = impute.transform(X)
+        input_imputed = impute.transform(df)
 
     X_train_imputed = pd.DataFrame(input_imputed, columns=feature_names)
 
@@ -196,10 +196,21 @@ def balance_data(X_train, y_train):
     """
     logger.info("Balancing data...\n")
 
+    # Print distribution before SMOTE
+    # logger.info("Before SMOTE:")
+    # for label, count in y_train.value_counts().items():
+    #     logger.info(f"Class {label}: {count}")
+
     initial_size = len(X_train)
     smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="not majority")
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
-    logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
+
+    # Print distribution after SMOTE
+    # logger.info("After SMOTE:")
+    # for label, count in y_resampled.value_counts().items():
+    #     logger.info(f"Class {label}: {count}")
+
+    # logger.info(f"Rows before balancing: {initial_size}. Rows after: {len(X_resampled)}.\n")
 
     logger.info("Data balanced successfully...\n")
     return X_resampled, y_resampled
@@ -246,11 +257,11 @@ def preprocess_sut_ovr(df, features):
               (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
     logger.info(f"Rows before handling outliers: {initial_size}. Rows after: {len(df)}.\n")
 
-    # Drop rows where the target variable is missing
-    df = df.dropna(subset=['SubstanceUseTrajectory'])
-
     # Separate the target variable
     outcome = df['SubstanceUseTrajectory']
+
+    # Drop rows where the target variable is missing
+    df.dropna(subset=['SubstanceUseTrajectory'])
 
     # Adding these terms to tackle cohort differences in Psychosocial Environments
     df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']

@@ -11,7 +11,7 @@ from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocess
     apply_preprocessing_without_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
-    ensure_directory_exists, train_model
+    ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -58,7 +58,7 @@ def save_processed_data(X, y, target, case, interaction, directory, feature_pair
 def main(interaction, target):
     logger.info(f"Starting one-vs-all {MODEL_NAME}...")
 
-    # Subdirectories for a model and metrics
+    # Subdirectories for metrics
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
     processed_data_dir = os.path.join(RESULTS_DIR, "processed_data")
     ensure_directory_exists(metrics_dir)
@@ -89,11 +89,17 @@ def main(interaction, target):
 
         if interaction:
 
+            # Creating pairs for interaction terms
             temp = features.copy()
             temp.remove("PolygenicScoreEXT_x_Is_Male")
             temp.remove("PolygenicScoreEXT_x_Age")
             temp.remove("Age")
             temp.remove("Is_Male")
+
+            if target == "AntisocialTrajectory":
+                temp.remove("SubstanceUseTrajectory")
+            else:
+                temp.remove("AntisocialTrajectory")
 
             fixed_element = "PolygenicScoreEXT"
             feature_pairs = [(fixed_element, x) for x in temp if x != fixed_element]
@@ -102,9 +108,9 @@ def main(interaction, target):
                 X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_with_interaction_terms(
                     X, y, feature_pair, features)
 
-                if key == "2_vs_3":
-                    # Before training the model, save the processed datasets.
-                    save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir, feature_pair)
+                # if key == "2_vs_3":
+                # Before training the model, save the processed datasets.
+                # save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir, feature_pair)
 
                 # Training the model
                 best_model = train_model(X_train, y_train, model, param_grid)
@@ -127,7 +133,7 @@ def main(interaction, target):
                 X, y, features)
 
             # Before training the model, save the processed datasets.
-            save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir)
+            # save_processed_data(X_train, y_train, target, key, interaction, processed_data_dir)
 
             # Training the model
             best_model = train_model(X_train, y_train, model, param_grid)
@@ -147,7 +153,7 @@ def main(interaction, target):
 
         logger.info(f"Completed {key} classification.\n")
 
-        # save_results(target, f"{key}", results, metrics_dir, interaction, MODEL_NAME)
+        save_results(target, f"{key}", results, metrics_dir, interaction, MODEL_NAME)
 
     logger.info(f"One-vs-all {MODEL_NAME} completed.")
 

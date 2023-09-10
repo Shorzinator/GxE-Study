@@ -53,6 +53,11 @@
                 __init__.py
         modeling/
             __init__.py
+            MRF/
+                mrf_main.py
+                mrf_utils.py
+                __pycache__/
+                    mrf_utils.cpython-39.pyc
             multi_class/
                 MultLogReg_main.py
                 RFC_main.py
@@ -63,10 +68,14 @@
                 xgboost_main.py
                 __init__.py
                 __pycache__/
+            __pycache__/
+                __init__.cpython-39.pyc
         preprocessing/
+            mrf_preprocessing.py
             preprocessing.py
             __init__.py
             __pycache__/
+                mrf_preprocessing.cpython-39.pyc
                 preprocessing.cpython-39.pyc
                 __init__.cpython-39.pyc
         utility/
@@ -233,14 +242,37 @@
             logistic_regression_results/
                 metrics/
                     logistic_regression_AST_1_vs_4.csv
+                    logistic_regression_AST_1_vs_4_noIT.csv
                     logistic_regression_AST_2_vs_4.csv
+                    logistic_regression_AST_2_vs_4_noIT.csv
                     logistic_regression_AST_3_vs_4.csv
+                    logistic_regression_AST_3_vs_4_noIT.csv
+                    logistic_regression_SUT_1_vs_3.csv
+                    logistic_regression_SUT_1_vs_3_noIT.csv
+                    logistic_regression_SUT_2_vs_3.csv
+                    logistic_regression_SUT_2_vs_3_noIT.csv
+                processed_data/
+                    SUT_2_vs_3_PolygenicScoreEXT_x_AntisocialTrajectory_IT.csv
+                    SUT_2_vs_3_PolygenicScoreEXT_x_DelinquentPeer_IT.csv
+                    SUT_2_vs_3_PolygenicScoreEXT_x_NeighborConnect_IT.csv
+                    SUT_2_vs_3_PolygenicScoreEXT_x_ParentalWarmth_IT.csv
+                    SUT_2_vs_3_PolygenicScoreEXT_x_SchoolConnect_IT.csv
+            markov_random_field_results/
+                metrics/
             random_forest_results/
                 metrics/
+                    random_forest_AST_1_vs_4.csv
+                    random_forest_AST_2_vs_4.csv
+                    random_forest_AST_3_vs_4.csv
                     random_forest_SUT_1_vs_3.csv
                     random_forest_SUT_2_vs_3.csv
             xgboost_results/
                 metrics/
+                    xgboost_AST_1_vs_4.csv
+                    xgboost_AST_2_vs_4.csv
+                    xgboost_AST_3_vs_4.csv
+                    xgboost_SUT_1_vs_3.csv
+                    xgboost_SUT_2_vs_3.csv
     __pycache__/
         config.cpython-39.pyc
         __init__.cpython-39.pyc

@@ -17,7 +17,7 @@ from Phase_1.project_scripts.preprocessing.mrf_preprocessing import primary_prep
     secondary_preprocessing_without_interaction_mrf
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, save_results
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -30,7 +30,8 @@ def get_evidence_bin(value, bin_edges):
     """
     Get the bin index for the given value based on bin edges.
     """
-    return np.digitize(value, bin_edges) - 1
+    bin_index = np.digitize(value, bin_edges) - 1
+    return min(bin_index, len(bin_edges)-2)  # ensure the bin_index doesn't exceed the number of bins - 1
 
 
 def main(target):
@@ -62,6 +63,9 @@ def main(target):
     X_combined = pd.concat([X_train, X_val, X_test], axis=0)
     y_combined = pd.concat([y_train, y_val, y_test], axis=0)
     data_combined = pd.concat([X_combined, y_combined], axis=1)
+
+    # Check the first few rows of the combined data
+    logger.debug(f"First few rows of combined data:\n{data_combined.head()}")
 
     # Define the MRF graphical model
     logger.info("Defining the MRF graphical model...\n")
@@ -108,6 +112,8 @@ def main(target):
     continuous_feature_bins = {feature: np.histogram_bin_edges(data_combined[feature], bins=n_bins) for feature in
                                features_to_bin}
 
+    logger.debug(f"Bin edges:\n{continuous_feature_bins}")
+
     logger.info("Making predictions...\n")
 
     y_pred = []
@@ -116,9 +122,18 @@ def main(target):
     for index, row in X_test.iterrows():
         evidence = {}
         for feature in features_to_bin:
-            evidence[feature] = get_evidence_bin(row[feature], continuous_feature_bins[feature])
+            bin_value = get_evidence_bin(row[feature], continuous_feature_bins[feature])
+            evidence[feature] = bin_value
 
-        print(evidence)
+            # Print out the bins assigned to values of PolygenicScoreEXT_x_Age
+            if feature == 'PolygenicScoreEXT_x_Age' and bin_value == 4:
+                print(f"Value: {row[feature]}, Bin: {bin_value}")
+
+        for col, value in row.items():
+            if value >= 2:  # Because we are getting error for value '3', let's check for all values >= 2
+                print(f"Feature: {col}, Value in X_test: {value}")
+
+        logger.debug(f"Evidence for row {index}:\n{evidence}")
 
         if target == "AntisocialTrajectory":
             prediction = bp.map_query(variables=["AntisocialTrajectory"], evidence=evidence)

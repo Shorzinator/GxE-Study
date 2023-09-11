@@ -3,7 +3,7 @@ import logging
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -80,6 +80,9 @@ def logistic_regression_pairwise_potential(data, variable1, variable2):
 
     clf = LogisticRegression(max_iter=10000, multi_class="ovr")
     clf.fit(X, y)
+
+    # Log some details about the logistic regression model
+    logger.debug(f"Classes for {variable1} as predicted by logistic regression: {clf.classes_}")  # ADDED
 
     def potential(value1, value2):
         prob = clf.predict_proba([[value2]])[0]

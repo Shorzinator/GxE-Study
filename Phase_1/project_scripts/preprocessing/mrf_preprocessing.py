@@ -12,6 +12,7 @@ def primary_preprocessing_mrf(df, features, target):
     """
     Preprocess the data for Markov Random Field modeling.
     """
+    logger.info("Initiating Primary preprocessing...\n")
     # Data Cleaning
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
 
@@ -23,13 +24,14 @@ def primary_preprocessing_mrf(df, features, target):
               (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
 
     # Check for NaN values post outlier handling
-    check_nan_values(df, "after outlier handling")
+    # check_nan_values(df, "after outlier handling")
+
 
     # Drop rows where the target variable is missing
     initial_rows = len(df)
     df = df.dropna(subset=[target])
     rows_after_dropping = len(df)
-    logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values.")
+    logger.info(f"\nDropped {initial_rows - rows_after_dropping} rows due to missing target values...\n")
 
     # Feature Engineering
     df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
@@ -48,6 +50,8 @@ def secondary_preprocessing_without_interaction_mrf(X, y, features):
     """
     Applies preprocessing steps on training, validation, and testing data.
     """
+    logger.info("Initiating Secondary preprocessing...\n")
+
     # Split data
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
 

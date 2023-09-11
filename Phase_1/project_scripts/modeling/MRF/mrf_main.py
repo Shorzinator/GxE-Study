@@ -3,6 +3,7 @@ import os
 import warnings
 
 import networkx as nx
+import numpy as np
 import pandas as pd
 from pgmpy.factors.discrete import DiscreteFactor
 from pgmpy.inference import BeliefPropagation
@@ -23,6 +24,13 @@ warnings.filterwarnings("ignore", category=UserWarning)
 
 MODEL_NAME = "markov_random_field"
 RESULTS_DIR = get_path_from_root("results", "multi_class", f"{MODEL_NAME}_results")
+
+
+def get_evidence_bin(value, bin_edges):
+    """
+    Get the bin index for the given value based on bin edges.
+    """
+    return np.digitize(value, bin_edges) - 1
 
 
 def main(target):
@@ -50,29 +58,26 @@ def main(target):
     # Applying secondary preprocessing
     X_train, y_train, X_val, y_val, X_test, y_test = secondary_preprocessing_without_interaction_mrf(X, y, features)
 
-    logger.info("Checking for null values...\n")
-    if X_train.isnull().any().any() or y_train.isnull().any().any():
-        print("NaN values detected in the training set after secondary preprocessing!")
-    if X_val.isnull().any().any() or y_val.isnull().any().any():
-        print("NaN values detected in the validation set after secondary preprocessing!")
-    if X_test.isnull().any().any() or y_test.isnull().any().any():
-        print("NaN values detected in the test set after secondary preprocessing!")
-    logger.info("Check for null values complete...\n")
+    # Combining data to replicate processed 'data_processed'
+    X_combined = pd.concat([X_train, X_val, X_test], axis=0)
+    y_combined = pd.concat([y_train, y_val, y_test], axis=0)
+    data_combined = pd.concat([X_combined, y_combined], axis=1)
 
     # Define the MRF graphical model
     logger.info("Defining the MRF graphical model...\n")
-    mrf_graph_list = create_mrf_structure(data_preprocessed.columns)
+    outcome_variables = ["AntisocialTrajectory", "SubstanceUseTrajectory"]
+    mrf_graph_list = create_mrf_structure(features, "PolygenicScoreEXT", outcome_variables)
     mrf_graph = nx.Graph(mrf_graph_list)
     model = MarkovNetwork()
-    model.add_nodes_from(data_preprocessed.columns)
+    model.add_nodes_from(data_combined.columns)
     model.add_edges_from(mrf_graph.edges())
 
     # Set up potential functions
     logger.info("Setting up unary potential functions...\n")
     for node in mrf_graph.nodes():
         factor = DiscreteFactor([node], [2],
-                                [unary_potential(data_preprocessed, node, 0),
-                                 unary_potential(data_preprocessed, node, 1)])
+                                [unary_potential(data_combined, node, 0),
+                                 unary_potential(data_combined, node, 1)])
         model.add_factors(factor)
 
     # Pairwise potentials using logistic regression
@@ -88,37 +93,45 @@ def main(target):
         factor = DiscreteFactor([node1, node2], [2, 2], factor_values)
         model.add_factors(factor)
 
+    for variable in model.nodes():
+        print(variable, model.get_cardinality(variable))
+
     # Inference (as an example)
     logger.info("Performing inference...\n")
     bp = BeliefPropagation(model)
 
-    # Evidence variables for the model. These can be adjusted based on the available data or experiment design.
-    evidence_variables = {
-        'DelinquentPeer': 1,
-        'SchoolConnect': 1,
-        'NeighborConnect': 1,
-        'ParentalWarmth': 1
-    }
+    # Define bin edges for discretized features
+    n_bins = 5  # For example, if you want five bins
+    features_to_bin = ['DelinquentPeer', 'SchoolConnect', 'NeighborConnect', 'ParentalWarmth', 'PolygenicScoreEXT',
+                       'Age']
+
+    continuous_feature_bins = {feature: np.histogram_bin_edges(data_combined[feature], bins=n_bins) for feature in
+                               features_to_bin}
 
     logger.info("Making predictions...\n")
+
     y_pred = []
     results = []
-    if target == "AntisocialTrajectory":
-        for index, row in X_test.iterrows():
-            evidence = {var: row[var] for var in evidence_variables}
+
+    for index, row in X_test.iterrows():
+        evidence = {}
+        for feature in features_to_bin:
+            evidence[feature] = get_evidence_bin(row[feature], continuous_feature_bins[feature])
+
+        print(evidence)
+
+        if target == "AntisocialTrajectory":
             prediction = bp.map_query(variables=["AntisocialTrajectory"], evidence=evidence)
             y_pred.append(prediction["AntisocialTrajectory"])
-
-        metrics = calculate_metrics(y_test, y_pred, model_name="MRF", target="AntisocialTrajectory",
-                                    test_or_train="Test")
-        results.append({"test_metrics": metrics})
-
-    if target == "SubstanceUseTrajectory":
-        for index, row in X_test.iterrows():
-            evidence = {var: row[var] for var in evidence_variables}
+        elif target == "SubstanceUseTrajectory":
             prediction = bp.map_query(variables=["SubstanceUseTrajectory"], evidence=evidence)
             y_pred.append(prediction["SubstanceUseTrajectory"])
 
+    if target == "AntisocialTrajectory":
+        metrics = calculate_metrics(y_test, y_pred, model_name="MRF", target="AntisocialTrajectory",
+                                    test_or_train="Test")
+        results.append({"test_metrics": metrics})
+    elif target == "SubstanceUseTrajectory":
         metrics = calculate_metrics(y_test, y_pred, model_name="MRF", target="SubstanceUseTrajectory",
                                     test_or_train="Test")
         results.append({"test_metrics": metrics})
@@ -132,4 +145,5 @@ def main(target):
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
+
     main(target=target_1)

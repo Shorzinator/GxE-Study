@@ -1,5 +1,6 @@
 import logging
 
+from Phase_1.project_scripts.modeling.MRF.mrf_utils import check_nan_values
 from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
     split_data
 
@@ -7,16 +8,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def preprocess_for_mrf(df, features, target):
+def primary_preprocessing_mrf(df, features, target):
     """
     Preprocess the data for Markov Random Field modeling.
-
-    Args:
-    - df (pd.DataFrame): The raw data.
-    - features (list): List of features to consider.
-
-    Returns:
-    - pd.DataFrame: The preprocessed data.
     """
     # Data Cleaning
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
@@ -28,31 +22,32 @@ def preprocess_for_mrf(df, features, target):
     df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) |
               (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
 
+    # Check for NaN values post outlier handling
+    check_nan_values(df, "after outlier handling")
+
     # Drop rows where the target variable is missing
+    initial_rows = len(df)
     df = df.dropna(subset=[target])
+    rows_after_dropping = len(df)
+    logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values.")
 
     # Feature Engineering
-    # Adding these terms to tackle cohort differences in Psychosocial Environments
     df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
     df['PolygenicScoreEXT_x_Age'] = df['PolygenicScoreEXT'] * df['Age']
 
     feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
 
+    # Check for NaN values post-feature engineering
+    check_nan_values(df, "after feature engineering")
+
+    logger.info("Primary preprocessing completed successfully...\n")
     return df, feature_cols
 
 
-def apply_preprocessing_without_interaction_terms_mrf(X, y, features):
+def secondary_preprocessing_without_interaction_mrf(X, y, features):
     """
-    Applies preprocessing steps including imputation, one-hot encoding, interaction terms, scaling, and balancing
-    on training, validation, and testing data.
-
-    :param X: DataFrame, feature matrix
-    :param y: Series, target variable
-    :param features: list, list of feature names
-    :return: DataFrames, preprocessed training, validation, and testing data
+    Applies preprocessing steps on training, validation, and testing data.
     """
-    logger.info("Starting preprocessing with interaction terms in MRF...\n")
-
     # Split data
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
 
@@ -62,8 +57,16 @@ def apply_preprocessing_without_interaction_terms_mrf(X, y, features):
     X_val_imputed = imputation_applier(impute, X_val, features)
     X_test_imputed = imputation_applier(impute, X_test, features)
 
+    # Check for NaN values post-imputation
+    check_nan_values(X_train_imputed, "X_train after imputation")
+    check_nan_values(X_val_imputed, "X_val after imputation")
+    check_nan_values(X_test_imputed, "X_test after imputation")
+
     # Balance data
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed, y_train)
 
-    logger.info("Preprocessing with interaction terms completed successfully.\n")
+    # Check for NaN values post balancing
+    check_nan_values(X_train_resampled, "X_train after balancing")
+
+    logger.info("Secondary preprocessing completed successfully...\n")
     return X_train_resampled, y_train_resampled, X_val_imputed, y_val, X_test_imputed, y_test

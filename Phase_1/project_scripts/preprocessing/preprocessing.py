@@ -70,7 +70,8 @@ def apply_preprocessing_without_interaction_terms(X, y, features):
 
     # Apply imputation and one-hot encoding
     impute = imputation_pipeline(features)
-    X_train_final = imputation_applier(impute, X_train, features, fit=True)
+
+    X_train_final = imputation_applier(impute, X_train, features)
     X_val_final = imputation_applier(impute, X_val, features)
     X_test_final = imputation_applier(impute, X_test, features)
 
@@ -135,7 +136,7 @@ def imputation_pipeline(numerical_features):
     return preprocessor
 
 
-def imputation_applier(impute, df, feature_names, fit=False):
+def imputation_applier(impute, df, feature_names, fit=True):
     """
     Applies imputation on the data.
 
@@ -195,11 +196,6 @@ def balance_data(X_train, y_train):
     :return: DataFrames, resampled training data and target variable
     """
     logger.info("Balancing data...\n")
-
-    # Print distribution before SMOTE
-    # logger.info("Before SMOTE:")
-    # for label, count in y_train.value_counts().items():
-    #     logger.info(f"Class {label}: {count}")
 
     initial_size = len(X_train)
     smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="not majority")
@@ -319,3 +315,26 @@ def preprocess_ast_ovr(df, features):
 
     logger.info("Data preprocessing completed successfully.\n")
     return datasets, feature_cols
+
+
+def preprocess_for_genetic_model(X, y):
+    """
+    Preprocesses the data for the genetic model (Model 3).
+
+    :param X: Features
+    :param y: outcome
+    :return: Preprocessed features and outcomes
+    """
+    logger.info("Starting preprocessing for genetic model...\n")
+
+    # Derive Is_Male from Sex
+    y['Is_Male'] = (y['Sex'] == 0.5).astype(int)
+
+    # Impute missing values in y with column means
+    y = y.apply(lambda col: col.fillna(col.mean()))
+
+    logger.info("Primary preprocessing for Model 3 completed successfully.\n")
+
+    return X, y
+
+

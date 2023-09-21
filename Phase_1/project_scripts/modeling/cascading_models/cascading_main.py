@@ -1,9 +1,7 @@
-import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, precision_score, r2_score, roc_auc_score
 
-from Phase_1.project_scripts.preprocessing.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import *
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
@@ -105,7 +103,7 @@ def main(target):
         logger.info("Model 1 started...\n")
 
         X_train_1, y_train_1, X_val_1, y_val_1, X_test_1, y_test_1 = (
-            apply_preprocessing_without_interaction_terms(X, y, feature_cols)
+            ap_without_it(X, y, feature_cols)
         )
 
         model_1 = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
@@ -131,7 +129,7 @@ def main(target):
         X = X[E_cols]
 
         X_train_2, y_train_2, X_val_2, y_val_2, X_test_2, y_test_2 = (
-            apply_preprocessing_without_interaction_terms(X, y, E_cols)
+            ap_without_it(X, y, E_cols)
         )
 
         model_2 = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
@@ -151,24 +149,47 @@ def main(target):
     logger.info("Model 3 started...\n")
 
     E_outcomes = ['Age', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect', 'ParentalWarmth', 'Is_Male']
-    X = df[["PolygenicScoreEXT"]]
-    y = df[E_outcomes]
+    X = pd.DataFrame(df[["PolygenicScoreEXT"]])
+    y = pd.DataFrame(df[E_outcomes])
 
     # Primary preprocessing
-    X, y = preprocess_for_genetic_model(X, y)
+    y = y.apply(lambda col: col.fillna(col.mean()))
 
     # Secondary Preprocessing
-    X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, ["PolygenicScoreEXT"])
+    X_train, y_train, X_val, y_val, X_test, y_test = ap_without_it_genetic(X, y, ["PolygenicScoreEXT"])
 
+    # Initialize KNNImputer
+    imputer = KNNImputer(n_neighbors=5)
+
+    # Fit on y_train
+    imputer.fit(y_train)
+
+    # Transform (impute) the datasets
+    y_train_imputed = imputer.transform(y_train)
+    y_val_imputed = imputer.transform(y_val)
+    y_test_imputed = imputer.transform(y_test)
+
+    # If needed, convert back to DataFrame
+    y_train = pd.DataFrame(y_train_imputed, columns=y_train.columns)
+    y_val = pd.DataFrame(y_val_imputed, columns=y_val.columns)
+    y_test = pd.DataFrame(y_test_imputed, columns=y_test.columns)
+
+    # Defining the model
     model_3 = RandomForestRegressor(random_state=42)
 
+    # Defining parameter grid for hyperparameter tuning; None implies no tuning being done.
     param_grid_3 = None
 
+    # Training the model
     best_model_3 = train_model(X_train, y_train, model_3, param_grid_3)
 
+    # Making predictions based on the best model received.
     predictions_3 = best_model_3.predict(X_val)
 
+    # Calculating metrics to judge model performance.
     metrics_3 = evaluate_regression_model(predictions_3, y_val)
+
+    # Saving model performance for further analysis.
     save_performance_metrics_csv(metrics_3, f"{target}_Model3")
 
     logger.info("Model 3 complete...\n")

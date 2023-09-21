@@ -4,7 +4,7 @@ import pandas as pd
 from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import KNNImputer
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -53,7 +53,7 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, features):
     return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
 
 
-def apply_preprocessing_without_interaction_terms(X, y, features):
+def ap_without_it(X, y, features):
     """
     Applies preprocessing steps including imputation, one-hot encoding, scaling, and balancing
     on training, validation, and testing data.
@@ -86,23 +86,66 @@ def apply_preprocessing_without_interaction_terms(X, y, features):
     return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
 
 
-def split_data(df, outcome_series):
+def ap_without_it_genetic(X, y, features):
+    """
+    Applies preprocessing steps including imputation, one-hot encoding, scaling, and balancing
+    on training, validation, and testing data.
+
+    :param X: DataFrame, feature matrix
+    :param y: Series, target variable
+    :param features: list, list of feature names
+    :return: DataFrames, preprocessed training, validation, and testing data
+    """
+    logger.info("Starting preprocessing without interaction terms...\n")
+
+    # Split data
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+
+    # Apply imputation and one-hot encoding
+    impute = imputation_pipeline(features)
+
+    X_train_final = imputation_applier(impute, X_train, features)
+    X_val_final = imputation_applier(impute, X_val, features)
+    X_test_final = imputation_applier(impute, X_test, features)
+
+    # Apply scaling
+    X_train_imputed_scaled, X_val_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_val_final,
+                                                                                          X_test_final)
+
+    # Balance data
+    X_train_resampled, y_train_resampled = X_train_imputed_scaled, y_train
+
+    logger.info("Preprocessing without interaction terms completed successfully...\n")
+    return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
+
+
+def split_data(X, y):
     """
     Splits the data into training, validation, and testing sets.
 
-    :param df: DataFrame, feature matrix
-    :param outcome_series: Series, target variable
+    :param X: DataFrame, feature matrix
+    :param y: Series, target variable
     :return: DataFrames, training, validation, and testing data
     """
     logger.info("Splitting data...\n")
 
-    # First, split into train + validation and test sets
-    sss1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-    for train_val_idx, test_idx in sss1.split(df, outcome_series):
-        X_train_val = df.iloc[train_val_idx].reset_index(drop=True)
-        X_test = df.iloc[test_idx].reset_index(drop=True)
-        y_train_val = outcome_series.iloc[train_val_idx].reset_index(drop=True)
-        y_test = outcome_series.iloc[test_idx].reset_index(drop=True)
+    """
+    try:
+        # First, split into train + validation and test sets using stratification
+        sss1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+        for train_val_idx, test_idx in sss1.split(X, y):
+            X_train_val = X.iloc[train_val_idx].reset_index(drop=True)
+            X_test = X.iloc[test_idx].reset_index(drop=True)
+            y_train_val = y.iloc[train_val_idx].reset_index(drop=True)
+            y_test = y.iloc[test_idx].reset_index(drop=True)
+    except ValueError:
+        # If stratification fails, use a simple shuffle split
+        sss1 = ShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+        for train_val_idx, test_idx in sss1.split(X):
+            X_train_val = X.iloc[train_val_idx].reset_index(drop=True)
+            X_test = X.iloc[test_idx].reset_index(drop=True)
+            y_train_val = y.iloc[train_val_idx].reset_index(drop=True)
+            y_test = y.iloc[test_idx].reset_index(drop=True)
 
     # Then, split train + validation set into train and validation sets
     sss2 = StratifiedShuffleSplit(n_splits=1, test_size=0.25, random_state=42)  # 0.25 x 0.8 = 0.2
@@ -111,6 +154,14 @@ def split_data(df, outcome_series):
         X_val = X_train_val.iloc[val_idx].reset_index(drop=True)
         y_train = y_train_val.iloc[train_idx].reset_index(drop=True)
         y_val = y_train_val.iloc[val_idx].reset_index(drop=True)
+    """
+
+    # First, split into train + validation and test sets
+    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Then, split train + validation set into train and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.25,
+                                                      random_state=42)  # 0.25 x 0.8 = 0.2
 
     logger.info("Data split successfully...\n")
     return (pd.DataFrame(X_train), pd.DataFrame(X_val), pd.DataFrame(X_test), pd.DataFrame(y_train),
@@ -326,9 +377,6 @@ def preprocess_for_genetic_model(X, y):
     :return: Preprocessed features and outcomes
     """
     logger.info("Starting preprocessing for genetic model...\n")
-
-    # Derive Is_Male from Sex
-    y['Is_Male'] = (y['Sex'] == 0.5).astype(int)
 
     # Impute missing values in y with column means
     y = y.apply(lambda col: col.fillna(col.mean()))

@@ -6,8 +6,8 @@ from sklearn.ensemble import RandomForestClassifier
 
 from Phase_1.config import *
 from Phase_1.project_scripts import get_path_from_root
-from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
-    apply_preprocessing_without_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
+from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
+    apply_preprocessing_with_interaction_terms, preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
     ensure_directory_exists, save_results, train_model
@@ -88,7 +88,7 @@ def main(interaction, target):
                     "test_metrics": test_metrics
                 })
         else:
-            X_train, y_train, X_val, y_val, X_test, y_test = apply_preprocessing_without_interaction_terms(
+            X_train, y_train, X_val, y_val, X_test, y_test = ap_without_it(
                 X, y, features)
 
             best_model = train_model(X_train, y_train, model, param_grid)

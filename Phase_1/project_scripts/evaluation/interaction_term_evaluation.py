@@ -6,8 +6,8 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import TARGET_1
-from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_with_interaction_terms, \
-    apply_preprocessing_without_interaction_terms, preprocess_ovr
+from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
+    apply_preprocessing_with_interaction_terms, preprocess_ovr
 from Phase_1.project_scripts.utility.data_loader import *
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, train_model
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
@@ -69,7 +69,7 @@ def run_model_without_interaction_term():
 
         # Further preprocessing
         logger.info("Applying supplementary steps of preprocessing ...\n")
-        X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, key)
+        X_train, y_train, X_test, y_test = ap_without_it(X, y, key)
         logger.info("Supplementary steps completed ...\n")
 
         # Train the model

@@ -1,5 +1,4 @@
 import os
-import os
 import pickle
 
 import matplotlib.pyplot as plt
@@ -166,7 +165,7 @@ def main(target, interaction):
 
         else:
             # Applying additional preprocessing
-            X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, features)
+            X_train, y_train, X_test, y_test = ap_without_it(X, y, features)
 
             model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                        l1_ratio=0.5)

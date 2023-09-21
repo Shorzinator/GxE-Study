@@ -7,7 +7,7 @@ from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
-from Phase_1.project_scripts.preprocessing.preprocessing import apply_preprocessing_without_interaction_terms, \
+from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, \
@@ -101,7 +101,7 @@ def evaluate_with_drop_column(target):
         results = []
 
         # Applying additional preprocessing
-        X_train, y_train, X_test, y_test = apply_preprocessing_without_interaction_terms(X, y, features)
+        X_train, y_train, X_test, y_test = ap_without_it(X, y, features)
 
         # Defining the model to be trained
         model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga", l1_ratio=0.5)

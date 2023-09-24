@@ -29,28 +29,27 @@ def apply_preprocessing_with_interaction_terms(X, y, feature_pair, features):
     logger.info("Starting preprocessing with interaction terms...\n")
 
     # Split data
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_test, y_train, y_test = split_data(X, y)
 
     # Apply imputation and one-hot encoding
     impute = imputation_pipeline(features)
     X_train_imputed = imputation_applier(impute, X_train, features, fit=True)
-    X_val_imputed = imputation_applier(impute, X_val, features)
+    # X_val_imputed = imputation_applier(impute, X_val, features)
     X_test_imputed = imputation_applier(impute, X_test, features)
 
     # Generate interaction terms
     X_train_final = add_interaction_terms(X_train_imputed, feature_pair)
-    X_val_final = add_interaction_terms(X_val_imputed, feature_pair)
+    # X_val_final = add_interaction_terms(X_val_imputed, feature_pair)
     X_test_final = add_interaction_terms(X_test_imputed, feature_pair)
 
     # Apply scaling
-    X_train_imputed_scaled, X_val_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_val_final,
-                                                                                          X_test_final)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_test_final)
 
     # Balance data
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
 
     logger.info("Preprocessing with interaction terms completed successfully.\n")
-    return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
+    return X_train_resampled, y_train_resampled, X_test_final, y_test
 
 
 def ap_without_it(X, y, features):
@@ -66,24 +65,23 @@ def ap_without_it(X, y, features):
     logger.info("Starting preprocessing without interaction terms...\n")
 
     # Split data
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_test, y_train, y_test = split_data(X, y)
 
     # Apply imputation and one-hot encoding
     impute = imputation_pipeline(features)
 
     X_train_final = imputation_applier(impute, X_train, features)
-    X_val_final = imputation_applier(impute, X_val, features)
+    # X_val_final = imputation_applier(impute, X_val, features)
     X_test_final = imputation_applier(impute, X_test, features)
 
     # Apply scaling
-    X_train_imputed_scaled, X_val_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_val_final,
-                                                                                          X_test_final)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_test_final)
 
     # Balance data
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed_scaled, y_train)
 
     logger.info("Preprocessing without interaction terms completed successfully...\n")
-    return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
+    return X_train_resampled, y_train_resampled, X_test_final, y_test
 
 
 def ap_without_it_genetic(X, y, features):
@@ -99,24 +97,22 @@ def ap_without_it_genetic(X, y, features):
     logger.info("Starting preprocessing without interaction terms...\n")
 
     # Split data
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_test, y_train, y_test = split_data(X, y)
 
     # Apply imputation and one-hot encoding
     impute = imputation_pipeline(features)
 
     X_train_final = imputation_applier(impute, X_train, features)
-    X_val_final = imputation_applier(impute, X_val, features)
     X_test_final = imputation_applier(impute, X_test, features)
 
     # Apply scaling
-    X_train_imputed_scaled, X_val_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_val_final,
-                                                                                          X_test_final)
+    X_train_imputed_scaled, X_test_imputed_scaled = scaling_applier(X_train_final, X_test_final)
 
     # Balance data
     X_train_resampled, y_train_resampled = X_train_imputed_scaled, y_train
 
     logger.info("Preprocessing without interaction terms completed successfully...\n")
-    return X_train_resampled, y_train_resampled, X_val_imputed_scaled, y_val, X_test_final, y_test
+    return X_train_resampled, y_train_resampled, X_test_imputed_scaled, y_test
 
 
 def split_data(X, y):
@@ -157,15 +153,15 @@ def split_data(X, y):
     """
 
     # First, split into train + validation and test sets
-    X_train_val, X_test, y_train_val, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     # Then, split train + validation set into train and validation sets
-    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.25,
-                                                      random_state=42)  # 0.25 x 0.8 = 0.2
+    # X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.25,
+    #                                                   random_state=42) # 0.25 x 0.8 = 0.2
 
     logger.info("Data split successfully...\n")
-    return (pd.DataFrame(X_train), pd.DataFrame(X_val), pd.DataFrame(X_test), pd.DataFrame(y_train),
-            pd.DataFrame(y_val), pd.DataFrame(y_test))
+
+    return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
 
 
 def imputation_pipeline(numerical_features):
@@ -210,12 +206,12 @@ def imputation_applier(impute, df, feature_names, fit=True):
     return X_train_imputed
 
 
-def scaling_applier(X_train_imputed, X_val_imputed, X_test_imputed):
+def scaling_applier(X_train_imputed, X_test_imputed):
     """
     Applies scaling on the data.
 
     :param X_train_imputed: DataFrame, imputed training data
-    :param X_val_imputed: DataFrame, imputed validation data
+    # :param X_val_imputed: DataFrame, imputed validation data
     :param X_test_imputed: DataFrame, imputed testing data
     :return: DataFrames, scaled training, validation, and testing data
     """
@@ -226,16 +222,16 @@ def scaling_applier(X_train_imputed, X_val_imputed, X_test_imputed):
 
     # Fit on training data and transform
     X_train_imputed_scaled = scaler.fit_transform(X_train_imputed)
-    X_val_imputed_scaled = scaler.transform(X_val_imputed)
+    # X_val_imputed_scaled = scaler.transform(X_val_imputed)
     X_test_imputed_scaled = scaler.transform(X_test_imputed)
 
     # Convert back to DataFrame and retain column names
     X_train_imputed_scaled = pd.DataFrame(X_train_imputed_scaled, columns=X_train_imputed.columns)
-    X_val_imputed_scaled = pd.DataFrame(X_val_imputed_scaled, columns=X_val_imputed.columns)
+    # X_val_imputed_scaled = pd.DataFrame(X_val_imputed_scaled, columns=X_val_imputed.columns)
     X_test_imputed_scaled = pd.DataFrame(X_test_imputed_scaled, columns=X_test_imputed.columns)
 
     logger.info("Scaling applied successfully...\n")
-    return X_train_imputed_scaled, X_val_imputed_scaled, X_test_imputed_scaled
+    return X_train_imputed_scaled, X_test_imputed_scaled
 
 
 def balance_data(X_train, y_train):
@@ -248,7 +244,6 @@ def balance_data(X_train, y_train):
     """
     logger.info("Balancing data...\n")
 
-    initial_size = len(X_train)
     smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="not majority")
     X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
 
@@ -384,5 +379,3 @@ def preprocess_for_genetic_model(X, y):
     logger.info("Primary preprocessing for Model 3 completed successfully.\n")
 
     return X, y
-
-

@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, precision_score, r2_score, roc_auc_score
@@ -11,11 +12,12 @@ logger = logging.getLogger(__name__)
 
 MODEL_NAME = "cascading"
 RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results")
-ensure_directory_exists(RESULTS_DIR)
 
 # Subdirectories for metrics
 METRICS_DIR = os.path.join(RESULTS_DIR, "metrics")
+GRAPH_DIR = os.path.join(RESULTS_DIR, "graphs")
 ensure_directory_exists(METRICS_DIR)
+ensure_directory_exists(GRAPH_DIR)
 
 
 def save_performance_metrics_csv(metrics, target):
@@ -26,7 +28,7 @@ def save_performance_metrics_csv(metrics, target):
     :param target: str, target variable name
     """
     filename = f"{target}_performance.csv"
-    filepath = os.path.join(RESULTS_DIR, filename)
+    filepath = os.path.join(METRICS_DIR, filename)
 
     # Convert dictionary to DataFrame for easier CSV saving
     metrics_df = pd.DataFrame([metrics])
@@ -102,19 +104,18 @@ def main(target):
         """
         logger.info("Model 1 started...\n")
 
-        X_train_1, y_train_1, X_val_1, y_val_1, X_test_1, y_test_1 = (
-            ap_without_it(X, y, feature_cols)
-        )
+        X_train_1, y_train_1, X_test_1, y_test_1 = ap_without_it(X, y, feature_cols)
 
         model_1 = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                      l1_ratio=0.5, class_weight='balanced')
 
         param_grid_1 = None  # No hyperparameter tuning
 
+        y_train_1 = y_train_1.values.ravel()
         best_model_1 = train_model(X_train_1, y_train_1, model_1, param_grid_1)
-        predictions_1 = best_model_1.predict(X_val_1)
+        predictions_1 = best_model_1.predict(X_test_1)
 
-        metrics_1 = evaluate_model(predictions_1, y_val_1)
+        metrics_1 = evaluate_model(predictions_1, y_test_1)
         save_performance_metrics_csv(metrics_1, f"{target}_{task}_Model1")
 
         logger.info("Model 1 complete...\n")
@@ -128,19 +129,18 @@ def main(target):
         # interactions
         X = X[E_cols]
 
-        X_train_2, y_train_2, X_val_2, y_val_2, X_test_2, y_test_2 = (
-            ap_without_it(X, y, E_cols)
-        )
+        X_train_2, y_train_2, X_test_2, y_test_2 = ap_without_it(X, y, E_cols)
 
         model_2 = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                      l1_ratio=0.5, class_weight='balanced')
 
         param_grid_2 = None  # No hyperparameter tuning
 
+        y_train_2 = y_train_2.values.ravel()
         best_model_2 = train_model(X_train_2, y_train_2, model_2, param_grid_2)
-        predictions_2 = best_model_2.predict(X_val_2)
+        predictions_2 = best_model_2.predict(X_test_2)
 
-        metrics_2 = evaluate_model(predictions_2, y_val_2)
+        metrics_2 = evaluate_model(predictions_2, y_test_2)
         save_performance_metrics_csv(metrics_2, f"{target}_{task}_Model2")
 
         logger.info("Model 2 complete...\n")
@@ -152,12 +152,25 @@ def main(target):
     X = pd.DataFrame(df[["PolygenicScoreEXT"]])
     y = pd.DataFrame(df[E_outcomes])
 
+    """
+    Na values - 
+    Age                  2
+    DelinquentPeer      42
+    SchoolConnect       39
+    NeighborConnect     28
+    ParentalWarmth     214
+    Is_Male              0
+    dtype: int64
+    """
+
     # Primary preprocessing
     y = y.apply(lambda col: col.fillna(col.mean()))
 
     # Secondary Preprocessing
-    X_train, y_train, X_val, y_val, X_test, y_test = ap_without_it_genetic(X, y, ["PolygenicScoreEXT"])
+    # X_train, y_train, X_val, y_val, X_test, y_test = ap_without_it_genetic(X, y, ["PolygenicScoreEXT"])
+    X_train, y_train, X_test, y_test = ap_without_it_genetic(X, y, ["PolygenicScoreEXT"])
 
+    """
     # Initialize KNNImputer
     imputer = KNNImputer(n_neighbors=5)
 
@@ -166,28 +179,24 @@ def main(target):
 
     # Transform (impute) the datasets
     y_train_imputed = imputer.transform(y_train)
-    y_val_imputed = imputer.transform(y_val)
+    # y_val_imputed = imputer.transform(y_val)
     y_test_imputed = imputer.transform(y_test)
-
-    # If needed, convert back to DataFrame
-    y_train = pd.DataFrame(y_train_imputed, columns=y_train.columns)
-    y_val = pd.DataFrame(y_val_imputed, columns=y_val.columns)
-    y_test = pd.DataFrame(y_test_imputed, columns=y_test.columns)
+    """
 
     # Defining the model
     model_3 = RandomForestRegressor(random_state=42)
 
     # Defining parameter grid for hyperparameter tuning; None implies no tuning being done.
-    param_grid_3 = None
+    param_grid = None
 
     # Training the model
-    best_model_3 = train_model(X_train, y_train, model_3, param_grid_3)
+    best_model_3 = train_model(X_train, y_train, model_3, param_grid)
 
     # Making predictions based on the best model received.
-    predictions_3 = best_model_3.predict(X_val)
+    predictions_3 = best_model_3.predict(X_test)
 
     # Calculating metrics to judge model performance.
-    metrics_3 = evaluate_regression_model(predictions_3, y_val)
+    metrics_3 = evaluate_regression_model(predictions_3, y_test)
 
     # Saving model performance for further analysis.
     save_performance_metrics_csv(metrics_3, f"{target}_Model3")

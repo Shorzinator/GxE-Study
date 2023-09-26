@@ -25,38 +25,32 @@ ensure_directory_exists(METRICS_DIR)
 ensure_directory_exists(GRAPH_DIR)
 
 
-def compute_and_plot_shap_values(model, X_train, X_test, features=None, outcome_names=None):
-    """
-    Compute and plot SHAP values for a given model and dataset.
-
-    :param outcome_names:
-    :param model:
-    :param X_train:
-    :param X_test:
-    :param features:
-    :return:
-    """
-
+def compute_and_plot_shap_values(model, X_train, X_test, feature_name=None, outcome_names=None):
     logging.info("Starting SHAP analysis...\n")
+
     try:
         # Initialize the explainer
         logging.info("Initializing the explainer...\n")
-        explainer = shap.KernelExplainer(model.predict, X_train)
+        explainer = shap.KernelExplainer(model.predict, X_train.sample(100))
 
         # Compute SHAP values for the test set
         logging.info("Compute SHAP values for the test set...\n")
         shap_values = explainer.shap_values(X_test)
 
-        # Consolidate SHAP values by averaging across outcomes
-        consolidated_shap_values = np.mean(shap_values, axis=0)
+        # Collect average SHAP values for each outcome
+        avg_shap_values = [np.mean(values) for values in shap_values]
 
-        os.makedirs(GRAPH_DIR, exist_ok=True)
+        # Plotting the consolidated graph
+        plt.figure(figsize=(10, 6))
+        plt.bar(outcome_names, avg_shap_values, color='skyblue')
+        plt.xlabel("Outcomes")
+        plt.ylabel("Average SHAP Value")
+        plt.title(f"Average SHAP Values for Feature: {feature_name}")
+        for i, v in enumerate(avg_shap_values):
+            plt.text(i, v + 0.01, f"{v:.2f}", ha='center', va='bottom', fontsize=10)
+        plt.tight_layout()
 
-        # Plot consolidated SHAP values
-        shap.summary_plot(consolidated_shap_values, X_train, feature_names=features, plot_type="bar", show=False)
-        plt.title("Consolidated SHAP values across all outcomes")
-
-        # Save the plot
+        # Save the consolidated plot
         filename = os.path.join(GRAPH_DIR, f"consolidated_shap_values.png")
         plt.savefig(filename, bbox_inches='tight')
         plt.close()

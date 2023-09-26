@@ -2,7 +2,6 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LogisticRegression
 
 from Phase_1.project_scripts.modeling.cascading_models.cascading_utils import *
-from Phase_1.project_scripts.preprocessing.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data_old
 from Phase_1.project_scripts.utility.model_utils import *
 
@@ -110,7 +109,7 @@ def main(target):
     # Saving model performance for further analysis.
     save_performance_metrics_csv(metrics_3a, f"{target}_Model3(a)")
 
-    compute_and_plot_shap_values(best_model_3a, X_train, X_test, features=["PolygenicScoreEXT"],
+    compute_and_plot_shap_values(best_model_3a, X_train, X_test, feature_name=["PolygenicScoreEXT"],
                                  outcome_names=E_outcomes)
 
     logger.info("Model 3(a) complete...\n")

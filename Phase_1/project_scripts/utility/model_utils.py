@@ -61,6 +61,7 @@ def save_results(target, type_of_classification, results, directory, interaction
     :param type_of_classification: multinomial, binary, etc.
     :param target: Target variable (either "AST" or "SUT")
     :param results: The results data (a dictionary)
+    :param model_name: Name of the model being used.
     """
     if target == "AntisocialTrajectory":
         target = "AST"

@@ -29,6 +29,7 @@ def compute_and_plot_shap_values(model, X_train, X_test, features=None, outcome_
     """
     Compute and plot SHAP values for a given model and dataset.
 
+    :param outcome_names:
     :param model:
     :param X_train:
     :param X_test:
@@ -40,7 +41,7 @@ def compute_and_plot_shap_values(model, X_train, X_test, features=None, outcome_
     try:
         # Initialize the explainer
         logging.info("Initializing the explainer...\n")
-        explainer = shap.KernelExplainer(model.predict, X_train.sample(100))
+        explainer = shap.KernelExplainer(model.predict, X_train)
 
         # Compute SHAP values for the test set
         logging.info("Compute SHAP values for the test set...\n")

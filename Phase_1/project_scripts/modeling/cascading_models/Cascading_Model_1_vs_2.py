@@ -8,7 +8,7 @@ from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 # Paths to the results
 MODEL_NAME = "cascading"
 RESULTS_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results", "metrics")
-GRAPH_OUTPUT_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results", "visualizations")
+GRAPH_OUTPUT_DIR = get_path_from_root("results", "one_vs_all", f"{MODEL_NAME}_results", "graphs")
 
 if not os.path.exists(GRAPH_OUTPUT_DIR):
     os.makedirs(GRAPH_OUTPUT_DIR)

@@ -44,7 +44,7 @@ def main(target):
     # Load the data
     df = load_data_old()
 
-    # Preprocess data
+    # Assigning features based on the outcome.
     if target == "AntisocialTrajectory":
         features_to_use = FEATURES_FOR_AST
     else:

@@ -1,21 +1,25 @@
 import logging
 import os
 import warnings
+from tqdm import tqdm
 
 import networkx as nx
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from pgmpy.factors.discrete import DiscreteFactor
 from pgmpy.inference import BeliefPropagation
 from pgmpy.models import MarkovNetwork
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
-from Phase_1.project_scripts.modeling.MRF.mrf_utils import create_mrf_structure, logistic_regression_pairwise_potential, \
+from Phase_1.project_scripts.modeling.mrf.mrf_utils import create_mrf_structure, logistic_regression_pairwise_potential, \
     unary_potential
 from Phase_1.project_scripts.preprocessing.mrf_preprocessing import primary_preprocessing_mrf, \
     secondary_preprocessing_without_interaction_mrf
 from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, save_results
+
+pd.set_option('display.max_columns', None)
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -57,48 +61,59 @@ def main(target):
     y = pd.DataFrame(data_preprocessed[target])     # outcome dataset
 
     # Applying secondary preprocessing
-    X_train, y_train, X_val, y_val, X_test, y_test = secondary_preprocessing_without_interaction_mrf(X, y, features)
+    X_train, y_train, X_test, y_test = secondary_preprocessing_without_interaction_mrf(X, y, features)
 
     # Combining data to replicate processed 'data_processed'
-    X_combined = pd.concat([X_train, X_val, X_test], axis=0)
-    y_combined = pd.concat([y_train, y_val, y_test], axis=0)
-    data_combined = pd.concat([X_combined, y_combined], axis=1)
+    X_combined = pd.concat([X_train, X_test], axis=0)
+    X_combined.reset_index(drop=True, inplace=True)
 
-    # Check the first few rows of the combined data
-    logger.debug(f"First few rows of combined data:\n{data_combined.head()}")
+    y_combined = pd.concat([y_train, y_test], axis=0)
+    y_combined.reset_index(drop=True, inplace=True)
+
+    data_combined = pd.concat([X_combined, y_combined], axis=1)
 
     # Define the MRF graphical model
     logger.info("Defining the MRF graphical model...\n")
-    outcome_variables = ["AntisocialTrajectory", "SubstanceUseTrajectory"]
+    outcome_variables = [target]
     mrf_graph_list = create_mrf_structure(features, "PolygenicScoreEXT", outcome_variables)
     mrf_graph = nx.Graph(mrf_graph_list)
     model = MarkovNetwork()
     model.add_nodes_from(data_combined.columns)
-    model.add_edges_from(mrf_graph.edges())
+    nx.draw(mrf_graph, with_labels=True)
+
+    # path_for_mrf = get_path_from_root("results", "multi_class", "markov_random_field_results")
+    # plt.savefig(os.path.join(path_for_mrf, 'mrf_graph.png'), dpi=300)
+
+    # Convert the edge list DataFrame
+    # edge_df = pd.DataFrame(list(mrf_graph.edges()), columns=['From', 'To'])
+    # edge_df.to_csv(os.path.join(path_for_mrf, 'graph_edge_list.csv'), index=False)
+
+    # Debugging step 2
+    # Cardinality of a node refers to the number of possible states or values that the variable can take on.
+    for variable in model.nodes():
+        # print(variable, model.get_cardinality(variable))
+        pass
 
     # Set up potential functions
     logger.info("Setting up unary potential functions...\n")
     for node in mrf_graph.nodes():
-        factor = DiscreteFactor([node], [2],
-                                [unary_potential(data_combined, node, 0),
-                                 unary_potential(data_combined, node, 1)])
+        states = len(data_combined[node].unique())
+        factor_values = [unary_potential(data_combined, node, i) for i in range(states)]
+        factor = DiscreteFactor([node], [states], factor_values)
         model.add_factors(factor)
 
     # Pairwise potentials using logistic regression
     logger.info("Setting up pairwise potential functions using logistic regression...\n")
-    for edge in mrf_graph.edges():
+    for edge in tqdm(mrf_graph.edges(), desc="Setting up pairwise potentials"):
         node1, node2 = edge
         potential_function = logistic_regression_pairwise_potential(data_preprocessed, node1, node2)
-
+        states_node1 = len(data_combined[node1].unique())
+        states_node2 = len(data_combined[node2].unique())
         factor_values = [
-            [potential_function(i, j) for j in [0, 1]] for i in [0, 1]
+            [potential_function(i, j) for j in range(states_node2)] for i in range(states_node1)
         ]
-
-        factor = DiscreteFactor([node1, node2], [2, 2], factor_values)
+        factor = DiscreteFactor([node1, node2], [states_node1, states_node2], factor_values)
         model.add_factors(factor)
-
-    for variable in model.nodes():
-        print(variable, model.get_cardinality(variable))
 
     # Inference (as an example)
     logger.info("Performing inference...\n")

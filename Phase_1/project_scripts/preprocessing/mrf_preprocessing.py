@@ -1,6 +1,6 @@
 import logging
 
-from Phase_1.project_scripts.modeling.MRF.mrf_utils import check_nan_values
+from Phase_1.project_scripts.modeling.mrf.mrf_utils import check_nan_values
 from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
     split_data
 
@@ -30,7 +30,7 @@ def primary_preprocessing_mrf(df, features, target):
     initial_rows = len(df)
     df = df.dropna(subset=[target])
     rows_after_dropping = len(df)
-    logger.info(f"\nDropped {initial_rows - rows_after_dropping} rows due to missing target values...")
+    logger.info(f"\nDropped {initial_rows - rows_after_dropping} rows due to missing target values...\n")
 
     # Feature Engineering
     df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
@@ -54,17 +54,18 @@ def secondary_preprocessing_without_interaction_mrf(X, y, features):
     logger.info("Initiating Secondary preprocessing...\n")
 
     # Split data
-    X_train, X_val, X_test, y_train, y_val, y_test = split_data(X, y)
+    X_train, X_test, y_train, y_test = split_data(X, y)
 
     # Apply imputation and one-hot encoding
     impute = imputation_pipeline(features)
     X_train_imputed = imputation_applier(impute, X_train, features, fit=True)
-    X_val_imputed = imputation_applier(impute, X_val, features)
+    # X_val_imputed = imputation_applier(impute, X_val, features)
     X_test_imputed = imputation_applier(impute, X_test, features)
 
     # Check for NaN values post-imputation
+    logger.info("Checking for nan values ...\n")
     check_nan_values(X_train_imputed, "X_train after imputation")
-    check_nan_values(X_val_imputed, "X_val after imputation")
+    # check_nan_values(X_val_imputed, "X_val after imputation")
     check_nan_values(X_test_imputed, "X_test after imputation")
 
     # Balance data
@@ -75,8 +76,8 @@ def secondary_preprocessing_without_interaction_mrf(X, y, features):
 
     # Check the first few rows of the processed datasets
     logger.debug(f"First few rows of X_train after secondary preprocessing:\n{X_train_resampled.head()}")  # ADDED
-    logger.debug(f"First few rows of X_val after secondary preprocessing:\n{X_val_imputed.head()}")  # ADDED
+    # logger.debug(f"First few rows of X_val after secondary preprocessing:\n{X_val_imputed.head()}")  # ADDED
     logger.debug(f"First few rows of X_test after secondary preprocessing:\n{X_test_imputed.head()}")  # ADDED
 
     logger.info("Secondary preprocessing completed successfully...\n")
-    return X_train_resampled, y_train_resampled, X_val_imputed, y_val, X_test_imputed, y_test
+    return X_train_resampled, y_train_resampled, X_test_imputed, y_test

@@ -38,9 +38,6 @@ def primary_preprocessing_mrf(df, features, target):
 
     feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
 
-    # Check for NaN values post-feature engineering
-    check_nan_values(df, "after feature engineering")
-
     logger.debug(f"First few rows after primary preprocessing:\n{df.head()}")  # ADDED
 
     logger.info("Primary preprocessing completed successfully...\n")
@@ -62,22 +59,8 @@ def secondary_preprocessing_without_interaction_mrf(X, y, features):
     # X_val_imputed = imputation_applier(impute, X_val, features)
     X_test_imputed = imputation_applier(impute, X_test, features)
 
-    # Check for NaN values post-imputation
-    logger.info("Checking for nan values ...\n")
-    check_nan_values(X_train_imputed, "X_train after imputation")
-    # check_nan_values(X_val_imputed, "X_val after imputation")
-    check_nan_values(X_test_imputed, "X_test after imputation")
-
     # Balance data
     X_train_resampled, y_train_resampled = balance_data(X_train_imputed, y_train)
-
-    # Check for NaN values post balancing
-    check_nan_values(X_train_resampled, "X_train after balancing")
-
-    # Check the first few rows of the processed datasets
-    logger.debug(f"First few rows of X_train after secondary preprocessing:\n{X_train_resampled.head()}")  # ADDED
-    # logger.debug(f"First few rows of X_val after secondary preprocessing:\n{X_val_imputed.head()}")  # ADDED
-    logger.debug(f"First few rows of X_test after secondary preprocessing:\n{X_test_imputed.head()}")  # ADDED
 
     logger.info("Secondary preprocessing completed successfully...\n")
     return X_train_resampled, y_train_resampled, X_test_imputed, y_test

@@ -2,6 +2,7 @@ import logging
 import os
 import warnings
 from tqdm import tqdm
+import cProfile
 
 import networkx as nx
 import numpy as np
@@ -96,24 +97,31 @@ def main(target):
 
     # Set up potential functions
     logger.info("Setting up unary potential functions...\n")
-    for node in mrf_graph.nodes():
+    for node in tqdm(mrf_graph.nodes(), desc="Setting up unary potentials"):
         states = len(data_combined[node].unique())
         factor_values = [unary_potential(data_combined, node, i) for i in range(states)]
         factor = DiscreteFactor([node], [states], factor_values)
         model.add_factors(factor)
 
+    print()
+
     # Pairwise potentials using logistic regression
     logger.info("Setting up pairwise potential functions using logistic regression...\n")
-    for edge in tqdm(mrf_graph.edges(), desc="Setting up pairwise potentials"):
-        node1, node2 = edge
-        potential_function = logistic_regression_pairwise_potential(data_preprocessed, node1, node2)
-        states_node1 = len(data_combined[node1].unique())
-        states_node2 = len(data_combined[node2].unique())
-        factor_values = [
-            [potential_function(i, j) for j in range(states_node2)] for i in range(states_node1)
-        ]
-        factor = DiscreteFactor([node1, node2], [states_node1, states_node2], factor_values)
-        model.add_factors(factor)
+    edges = list(mrf_graph.edges())
+    batch_size = 100
+
+    for i in tqdm(range(0, len(edges), batch_size), desc="Setting up pairwise potentials"):
+        batch_edges = edges[i:i+batch_size]
+        for edge in batch_edges:
+            node1, node2 = edge
+            potential_function = logistic_regression_pairwise_potential(data_preprocessed, node1, node2)
+            states_node1 = len(data_combined[node1].unique())
+            states_node2 = len(data_combined[node2].unique())
+            factor_values = [
+                [potential_function(i, j) for j in range(states_node2)] for i in range(states_node1)
+            ]
+            factor = DiscreteFactor([node1, node2], [states_node1, states_node2], factor_values)
+            model.add_factors(factor)
 
     # Inference (as an example)
     logger.info("Performing inference...\n")
@@ -176,4 +184,4 @@ if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
 
-    main(target=target_1)
+    cProfile.run(main(target=target_1))

@@ -1,0 +1,12 @@
+Feature,p-value
+ID,0.0
+FamilyID,1.0
+PolygenicScoreEXT,1.0
+Sex,0.0
+Age,1.0
+DelinquentPeer,1.0
+SchoolConnect,1.0
+NeighborConnect,1.0
+ParentalWarmth,1.0
+AntisocialTrajectory,1.0
+SubstanceUseTrajectory,1.0

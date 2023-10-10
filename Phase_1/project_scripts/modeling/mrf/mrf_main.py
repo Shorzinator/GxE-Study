@@ -5,6 +5,8 @@ from tqdm import tqdm
 import cProfile
 
 import networkx as nx
+from scipy.stats import pearsonr
+from sklearn.metrics import mutual_info_score
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -73,10 +75,20 @@ def main(target):
 
     data_combined = pd.concat([X_combined, y_combined], axis=1)
 
+    # Compute the correlation_matrix
+    correlation_matrix = data_combined.corr()
+
+    # Determine which pairs of features have a correlation below a threshold
+    threshold = 0.2
+    weakly_correlated_pairs = [(col1, col2) for col1 in correlation_matrix.columns
+                               for col2 in correlation_matrix.columns
+                               if abs(correlation_matrix.loc[col1, col2]) < threshold]
+
     # Define the MRF graphical model
     logger.info("Defining the MRF graphical model...\n")
     outcome_variables = [target]
     mrf_graph_list = create_mrf_structure(features, "PolygenicScoreEXT", outcome_variables)
+    mrf_graph_list = [edge for edge in mrf_graph_list if edge not in weakly_correlated_pairs]
     mrf_graph = nx.Graph(mrf_graph_list)
     model = MarkovNetwork()
     model.add_nodes_from(data_combined.columns)
@@ -102,6 +114,16 @@ def main(target):
         factor_values = [unary_potential(data_combined, node, i) for i in range(states)]
         factor = DiscreteFactor([node], [states], factor_values)
         model.add_factors(factor)
+    logger.info("Unary potential functions have been set up...\n")
+
+    factor_PGS = model.get_factors(['PolygenicScoreEXT'])
+    factor_Age = model.get_factors(['Age'])
+
+    interaction_factor_values = np.outer(factor_PGS.values, factor_Age.values).flatten()
+    states_PGS = len(data_combined['PolygenicScoreEXT'].unieuq())
+    states_Age = len(data_combined['Age'].unique())
+    interaction_factor = DiscreteFactor(['PolygenicScoreEXT', 'Age'], [states_PGS, states_Age], interaction_factor_values)
+    model.add_factors(interaction_factor)
 
     print()
 
@@ -123,19 +145,30 @@ def main(target):
             factor = DiscreteFactor([node1, node2], [states_node1, states_node2], factor_values)
             model.add_factors(factor)
 
+    logger.info("Pairwise potential functions using logistic regression have been set up...\n")
+
+    # Checking if factors for all variables have been defined or not
+    defined_factors_vars = set(var for factor in model.factors for var in factor.scope())
+    all_vars = set(model.nodes())
+
+    missing_factors_vars = all_vars - defined_factors_vars
+
+    if missing_factors_vars:
+        logger.error(f"Factors not defined for variables: {missing_factors_vars}")
+
     # Inference (as an example)
     logger.info("Performing inference...\n")
     bp = BeliefPropagation(model)
 
     # Define bin edges for discretized features
-    n_bins = 5  # For example, if you want five bins
+    n_bins = 10  # For example, if you want five bins
     features_to_bin = ['DelinquentPeer', 'SchoolConnect', 'NeighborConnect', 'ParentalWarmth', 'PolygenicScoreEXT',
                        'Age']
 
     continuous_feature_bins = {feature: np.histogram_bin_edges(data_combined[feature], bins=n_bins) for feature in
                                features_to_bin}
 
-    logger.debug(f"Bin edges:\n{continuous_feature_bins}")
+    logger.info(f"Bin edges:\n{continuous_feature_bins}")
 
     logger.info("Making predictions...\n")
 
@@ -175,7 +208,7 @@ def main(target):
         results.append({"test_metrics": metrics})
 
     # Save results using the provided save_results function
-    save_results(target, "binary", results, metrics_dir, interaction=False, model_name=MODEL_NAME)
+    save_results(target, "mrf", results, metrics_dir, interaction=False, model_name=MODEL_NAME)
 
     logger.info(f"Markov Random Field modeling for {target} completed.\\n")
 
@@ -184,4 +217,4 @@ if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
 
-    cProfile.run(main(target=target_1))
+    main(target=target_1)

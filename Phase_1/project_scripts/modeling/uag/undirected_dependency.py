@@ -70,69 +70,58 @@ def neighborhood_regression(target):
             if (target_var, predictor) not in graph_edges and (predictor, target_var) not in graph_edges:
                 graph_edges.append((target_var, predictor))
 
-    # Graph Construction
-    graph = nx.Graph()
+    # Define your genetic and environmental features explicitly
+    genetic_feature = 'PolygenicScoreEXT'
+    environmental_features = ['Age', 'Sex', 'PolygenicScoreEXT_x_Age', 'DelinquentPeers', 'SchoolConnect',
+                              'NeighborConnect', 'ParentalWarmth', 'PolygenicScoreEXT_x_Is_Male',
+                              'SubstanceUseTrajectory']
+    outcome_variable = target
+
+    # Graph Construction with updated nodes based on the actual feature names
+    graph = nx.DiGraph()
     graph.add_edges_from(graph_edges)
 
-    # Getting regression coefficients and p-values for edges
-    edge_weights = []
-    edge_colors = []
-    edge_labels = {}
-    for edge in graph_edges:
-        predictors = data_combined.columns.drop(edge[0]).tolist()
-        X = sm.add_constant(data_combined[predictors])
-        model = sm.OLS(data_combined[edge[0]], X).fit()
-        coef = model.params[edge[1]]
-        p_value = model.pvalues[edge[1]]
-
-        edge_weights.append(abs(coef) * 5)  # Scale factor for visualization
-        edge_colors.append(1 - min(p_value, 0.1))  # Makes edges with p-value > 0.1 almost transparent
-
-        # Only annotate edges with p-value < 0.05 for clarity
-        if p_value < 0.05:
-            edge_labels[edge] = f"{coef:.2f}"
-
-    # Dynamic Shell Position Creation based on node prefixes
-    g_nodes = [node for node in graph.nodes() if node.startswith('G')]
-    e_nodes = [node for node in graph.nodes() if node.startswith('E')]
-    o_nodes = [node for node in graph.nodes() if not node.startswith(('G', 'E'))]
-
-    shell_pos = [g_nodes, e_nodes, o_nodes]
+    # Define the shell positions for the graph layout
+    shell_pos = [[genetic_feature], environmental_features, [outcome_variable]]
     pos = nx.shell_layout(graph, shell_pos)
 
-    # Node Customization
+    # Node Customization - Now you need to base this on the actual feature names rather than the prefixes
     node_colors = []
     node_shapes = []
     for node in graph.nodes():
-        if node.startswith('G'):
-            node_colors.append("#1f77b4")
-            node_shapes.append('s')  # square for G
-        elif node.startswith('E'):
-            node_colors.append("#ff7f0e")
-            node_shapes.append('o')  # circle for E
-        else:
-            node_colors.append("#2ca02c")
-            node_shapes.append('d')  # diamond for O
+        if node == genetic_feature:
+            node_colors.append("#1f77b4")  # Blue for Genetic Feature
+            node_shapes.append('s')  # Square for Genetic Feature
+        elif node in environmental_features:
+            node_colors.append("#ff7f0e")  # Orange for Environmental Features
+            node_shapes.append('o')  # Circle for Environmental Features
+        elif node == outcome_variable:
+            node_colors.append("#2ca02c")  # Green for Outcome Variable
+            node_shapes.append('d')  # Diamond for Outcome Variable
 
     # Visualization
     plt.figure(figsize=(12, 12))
 
-    # Drawing nodes based on their shapes
+    # Drawing nodes with a larger size and based on their actual feature categories
     for shape in set(node_shapes):
         nx.draw_networkx_nodes(graph, pos,
-                               nodelist=[node for node, s in zip(graph.nodes(), node_shapes) if s == shape],
-                               node_color=[color for color, s in zip(node_colors, node_shapes) if s == shape],
-                               node_size=1000, node_shape=shape)
+                               nodelist=[node for node in graph.nodes() if graph.nodes[node].get('shape') == shape],
+                               node_color=[node_colors[node_shapes.index(shape)]],
+                               node_size=2500, node_shape=shape)
 
-    # Draw edges and labels
-    nx.draw_networkx_edges(graph, pos, width=2, alpha=0.6)
-    nx.draw_networkx_labels(graph, pos, font_size=15, font_weight="bold")
-    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10, alpha=0.7)
+    # Draw edges with the weights and colors
+    nx.draw_networkx_edges(graph, pos, edgelist=graph_edges,
+                           width=[weight for _, weight in edge_weights],
+                           edge_color=[color for _, color in edge_colors],
+                           arrowstyle='-|>', arrowsize=20)
 
-    # Adding legend
-    legend_elements = [Line2D([0], [0], marker='s', color='w', label='Genetic Variables (G)', markersize=10,
+    # Draw edge labels with the weights
+    nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10)
+
+    # Adding legend for the nodes
+    legend_elements = [Line2D([0], [0], marker='s', color='w', label='Genetic Feature (G)', markersize=10,
                               markerfacecolor="#1f77b4"),
-                       Line2D([0], [0], marker='o', color='w', label='Environmental Variables (E)', markersize=10,
+                       Line2D([0], [0], marker='o', color='w', label='Environmental Features (E)', markersize=10,
                               markerfacecolor="#ff7f0e"),
                        Line2D([0], [0], marker='d', color='w', label='Outcome (O)', markersize=10,
                               markerfacecolor="#2ca02c")]

@@ -1,18 +1,14 @@
 import logging
 import os
 import warnings
-from tqdm import tqdm
-import cProfile
 
 import networkx as nx
-from scipy.stats import pearsonr
-from sklearn.metrics import mutual_info_score
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 from pgmpy.factors.discrete import DiscreteFactor
 from pgmpy.inference import BeliefPropagation
 from pgmpy.models import MarkovNetwork
+from tqdm import tqdm
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
@@ -38,7 +34,7 @@ def get_evidence_bin(value, bin_edges):
     Get the bin index for the given value based on bin edges.
     """
     bin_index = np.digitize(value, bin_edges) - 1
-    return min(bin_index, len(bin_edges)-2)  # ensure the bin_index doesn't exceed the number of bins - 1
+    return min(bin_index, len(bin_edges) - 2)  # ensure the bin_index doesn't exceed the number of bins - 1
 
 
 def main(target):
@@ -60,8 +56,8 @@ def main(target):
     # Applying primary preprocessing
     data_preprocessed, features = primary_preprocessing_mrf(df, features_to_use, target)
 
-    X = pd.DataFrame(data_preprocessed[features])   # feature dataset
-    y = pd.DataFrame(data_preprocessed[target])     # outcome dataset
+    X = pd.DataFrame(data_preprocessed[features])  # feature dataset
+    y = pd.DataFrame(data_preprocessed[target])  # outcome dataset
 
     # Applying secondary preprocessing
     X_train, y_train, X_test, y_test = secondary_preprocessing_without_interaction_mrf(X, y, features)
@@ -114,15 +110,20 @@ def main(target):
         factor_values = [unary_potential(data_combined, node, i) for i in range(states)]
         factor = DiscreteFactor([node], [states], factor_values)
         model.add_factors(factor)
+
     logger.info("Unary potential functions have been set up...\n")
 
-    factor_PGS = model.get_factors(['PolygenicScoreEXT'])
-    factor_Age = model.get_factors(['Age'])
+    factor_PGS = model.get_factors('PolygenicScoreEXT')
+    factor_Age = model.get_factors('Age')
+
+    factor_PGS = factor_PGS[0]
+    factor_Age = factor_Age[0]
 
     interaction_factor_values = np.outer(factor_PGS.values, factor_Age.values).flatten()
-    states_PGS = len(data_combined['PolygenicScoreEXT'].unieuq())
+    states_PGS = len(data_combined['PolygenicScoreEXT'].unique())
     states_Age = len(data_combined['Age'].unique())
-    interaction_factor = DiscreteFactor(['PolygenicScoreEXT', 'Age'], [states_PGS, states_Age], interaction_factor_values)
+    interaction_factor = DiscreteFactor(['PolygenicScoreEXT', 'Age'], [states_PGS, states_Age],
+                                        interaction_factor_values)
     model.add_factors(interaction_factor)
 
     print()
@@ -133,7 +134,7 @@ def main(target):
     batch_size = 100
 
     for i in tqdm(range(0, len(edges), batch_size), desc="Setting up pairwise potentials"):
-        batch_edges = edges[i:i+batch_size]
+        batch_edges = edges[i:i + batch_size]
         for edge in batch_edges:
             node1, node2 = edge
             potential_function = logistic_regression_pairwise_potential(data_preprocessed, node1, node2)

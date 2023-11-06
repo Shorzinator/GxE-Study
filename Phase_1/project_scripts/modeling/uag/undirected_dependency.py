@@ -3,8 +3,10 @@ import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from sklearn.manifold import MDS
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
@@ -53,77 +55,77 @@ def neighborhood_regression(target):
 
     data_combined = pd.concat([X_combined, y_combined], axis=1)
 
-    # Neighborhood Regression
-    graph_edges = []
-    edge_weights = {}
-    edge_labels = {}
+    # Define positions for three groups of variables G, E, and O
+    G_variables = ['PolygenicScoreEXT']  # Assuming this is your genetic variable
+    E_variables = X_combined.drop('PolygenicScoreEXT', axis=1).columns
+    O_variables = [target]  # The target variable you pass to the function
 
-    # Define edge colors base on significance
-    edge_colors = []
+    # Graph Construction
+    graph = nx.Graph()
 
-    # Neighborhood Regression
-    graph_edges = []
+    # Iterate over all columns as potential targets
     for target_var in data_combined.columns:
         predictors = data_combined.columns.drop(target_var).tolist()
         X = sm.add_constant(data_combined[predictors])
         model = sm.OLS(data_combined[target_var], X).fit()
 
-        # Check for significant predictors (p-value threshold: 0.05)
-        significant_predictors = model.pvalues[model.pvalues < 0.05].index
-        if 'const' in significant_predictors:
-            significant_predictors = significant_predictors.drop('const')
-        for predictor in significant_predictors:
-            if (target_var, predictor) not in graph_edges and (predictor, target_var) not in graph_edges:
-                graph_edges.append((target_var, predictor))
+        # Add significant predictors as edges to the graph
+        for predictor in predictors:
+            coef = model.params[predictor]
+            p_value = model.pvalues[predictor]
 
-    # Graph Construction
-    graph = nx.DiGraph()
-    graph.add_edges_from(graph_edges)
+            # Add edge only if significant and not a constant term
+            if p_value < 0.05 and predictor != 'const':
+                graph.add_edge(predictor, target_var, weight=abs(coef) * 5, p_value=p_value, label=f"{coef:.2f}")
 
-    # Getting regression coefficients and p-values for edges
-    edge_weights = []
-    edge_colors = []
-    edge_labels = {}
-    for edge in graph_edges:
-        predictors = data_combined.columns.drop(edge[0]).tolist()
-        X = sm.add_constant(data_combined[predictors])
-        model = sm.OLS(data_combined[edge[0]], X).fit()
-        coef = model.params[edge[1]]
-        p_value = model.pvalues[edge[1]]
-
-        edge_weights.append(abs(coef) * 5)  # Scale factor for visualization
-        edge_colors.append(1 - min(p_value, 0.1))  # Makes edges with p-value > 0.1 almost transparent
-
-        # Only annotate edges with p-value < 0.05 for clarity
-        if p_value < 0.05:
-            edge_labels[edge] = f"{coef:.2f}"
+    # Prepare for visualization
+    edge_weights = [graph[u][v]['weight'] for u, v in graph.edges()]
+    edge_colors = [1 - min(graph[u][v]['p_value'], 0.1) for u, v in
+                   graph.edges()]  # Makes edges with p-value > 0.1 almost transparent
+    edge_labels = {edge: graph.edges[edge]['label'] for edge in graph.edges() if graph.edges[edge]['p_value'] < 0.05}
 
     # Create DataFrame for edge data
-    edges_df = pd.DataFrame(graph_edges, columns=['From', 'To'])
-    edges_df['Weight'] = [edge_labels.get(edge, 'n/s') for edge in graph_edges]
-    edges_df['P-value'] = [model.pvalues[edge[1]] for edge in graph_edges]
+    edges_df = pd.DataFrame(
+        [{'From': u, 'To': v, 'Weight': graph[u][v]['label'], 'P-value': graph[u][v]['p_value']} for u, v in
+         graph.edges()])
 
     # Save to CSV
-    edges_df.to_csv(os.path.join(metrics_dir, 'edges_data.csv'), index=False)
+    edges_df.to_csv(os.path.join(metrics_dir, f'edges_data_{target}.csv'), index=False)
 
-    # Adjusting the Layout
-    pos = nx.kamada_kawai_layout(graph)
+    # Layout 1
+    # pos = nx.kamada_kawai_layout(graph)
+
+    # Layout 2
+    # Assuming E_variables has at least one item
+    min_pos, max_pos = -20, 20
+    step = (max_pos - min_pos) / (len(E_variables) - 1) if len(E_variables) > 1 else 0
+
+    spacing = 5  # This value controls the gap. Increase it to space out nodes more.
+    pos = {node: (0, i + spacing) for i, node in enumerate(G_variables)}
+    pos.update({node: (1, i) for i, node in enumerate(E_variables)})
+    pos.update({node: (2, i + spacing) for i, node in enumerate(O_variables)})
+
+    initial_pos = pos
+
+    # Layout 3
+    # pos = nx.spring_layout(graph, pos=initial_pos, k=2.0 / np.sqrt(graph.number_of_nodes()), iterations=50)
 
     # Visualization
-    node_colors = ["#1f77b4" if node.startswith('G') else "#ff7f0e" if node.startswith('E') else "#2ca02c" for node in
+    node_colors = ["#1f77b4" if node in G_variables else "#ff7f0e" if node in E_variables else "#2ca02c" for node in
                    graph.nodes()]
-    node_sizes = [500 + 2000 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
+    node_sizes = [100 + 5 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
 
     plt.figure(figsize=(12, 12))
     nx.draw(graph, pos, with_labels=True, node_size=node_sizes, node_color=node_colors, font_size=15,
             width=edge_weights, edge_color=edge_colors, edge_cmap=plt.cm.Blues, edge_vmin=0, edge_vmax=1,
             font_weight="bold", alpha=0.9)
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10, alpha=0.7)
-    plt.title("Feature Relationships Graph")
-    plt.savefig("neighbourhood_regression_DiGraph.png")
+    plt.title(f"Feature Relationships Graph for {target}")
+    plt.savefig(f"{target}_neighborhood_regression_layers.png")
     plt.show()
 
 
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
+    target_2 = "SubstanceUseTrajectory"
     neighborhood_regression(target=target_1)

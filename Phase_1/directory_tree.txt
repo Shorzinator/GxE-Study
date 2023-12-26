@@ -1,308 +1,237 @@
-./
-    config.py
-    directory_tree.txt
-    update_directory_tree.py
-    variables.txt
-    __init__.py
-    data/
-        processed/
-            original_preprocessed_data_1_vs_4.csv
-            original_preprocessed_data_2_vs_4.csv
-            original_preprocessed_data_3_vs_4.csv
-            synthetic_data_1_vs_4.csv
-            synthetic_data_2_vs_4.csv
-            synthetic_data_3_vs_4.csv
-        raw/
-            Data_GxE_on_EXT_Trajectories.csv
-            Data_GxE_on_EXT_trajectories_new.csv
-            additional_datasets/
-    documentation/
-        AntisocialTrajectory_Analysis.md
-    notebooks/
-    project_scripts/
-        __init__.py
-        EDA/
-            AST_trajectory_analysis.py
-            basic_statistics_and_missing_values.py
-            boxplot_visualizations.py
-            categorical_feature_analysis.py
-            contingency_tables.py
-            correlation_analysis.py
-            distribution_visualization.py
-            pca.py
-            SUT_trajectory_analysis.py
-            __init__.py
-        evaluation/
-            cluster_analysis.py
-            comparing_results_with_SUT.py
-            evaluation_BinLogReg.py
-            interaction_term_evaluation.py
-            LogReg_comparison.py
-            paired_t_test_accuracy.py
-            paired_t_test_custom_metric.py
-            __init__.py
-            Comparison/
-                AST.py
-                SUT.py
-            drop column analysis/
-                drop_column_analysis.py
-                visualizing_drop_column_analysis.py
-                __init__.py
-            Shapley Analysis/
-                shapley_analysis.py
-                __init__.py
-        modeling/
-            __init__.py
-            cascading_models/
-                cascading_main.py
-                cascading_utils.py
-                __pycache__/
-                    cascading_utils.cpython-39.pyc
-            MRF/
-                mrf_main.py
-                mrf_utils.py
-                __pycache__/
-                    mrf_utils.cpython-39.pyc
-            multi_class/
-                MultLogReg_main.py
-                RFC_main.py
-                __init__.py
-            one_vs_all/
-                BinLogReg_main.py
-                RFC_main.py
-                xgboost_main.py
-                __init__.py
-                __pycache__/
-            __pycache__/
-                __init__.cpython-39.pyc
-        preprocessing/
-            mrf_preprocessing.py
-            preprocessing.py
-            __init__.py
-            __pycache__/
-                mrf_preprocessing.cpython-39.pyc
-                preprocessing.cpython-39.pyc
-                __init__.cpython-39.pyc
-        utility/
-            data_loader.py
-            model_utils.py
-            path_utils.py
-            __init__.py
-            __pycache__/
-                data_loader.cpython-39.pyc
-                model_utils.cpython-39.pyc
-                path_utils.cpython-39.pyc
-                __init__.cpython-39.pyc
-        __pycache__/
-            __init__.cpython-39.pyc
-    results/
-        eda_results/
-            basic_statistics.csv
-            missing_values.csv
-        evaluation/
-            interaction_term_comparison_plot.png
-            joint_plot.png
-            paired_ttest_results.csv
-            spider_chart_change_in_accuracy.png
-            spider_chart_change_in_custom_score.png
-            cluster_analysis/
-                clustering_analysis.csv
-                clusters_PolygenicScoreEXT_x_Age.png
-                clusters_PolygenicScoreEXT_x_DelinquentPeer.png
-                clusters_PolygenicScoreEXT_x_Is_Male.png
-                clusters_PolygenicScoreEXT_x_NeighborConnect.png
-                clusters_PolygenicScoreEXT_x_ParentalWarmth.png
-                clusters_PolygenicScoreEXT_x_SchoolConnect.png
-                clusters_PolygenicScoreEXT_x_SubstanceUseTrajectory.png
-                elbow_plot.png
-            comparison/
-                difference_plot_AST_1_vs_4.png
-                difference_plot_AST_2_vs_4.png
-                difference_plot_AST_3_vs_4.png
-                difference_plot_SUT_1_vs_3.png
-                difference_plot_SUT_2_vs_3.png
-            drop column analysis/
-                accuracy_drop_column_AST_1_vs_4.png
-                accuracy_drop_column_AST_2_vs_4.png
-                accuracy_drop_column_AST_3_vs_4.png
-                accuracy_drop_column_SUT_1_vs_3.png
-                accuracy_drop_column_SUT_2_vs_3.png
-                column_drop_evaluation_AST_1_vs_4.csv
-                column_drop_evaluation_AST_2_vs_4.csv
-                column_drop_evaluation_AST_3_vs_4.csv
-                column_drop_evaluation_AST_AST_1_vs_4.csv
-                column_drop_evaluation_AST_AST_2_vs_4.csv
-                column_drop_evaluation_AST_AST_3_vs_4.csv
-                column_drop_evaluation_AST_SUT_1_vs_3.csv
-                column_drop_evaluation_AST_SUT_2_vs_3.csv
-                custom_score_drop_column_AST_1_vs_4.png
-                custom_score_drop_column_AST_2_vs_4.png
-                custom_score_drop_column_AST_3_vs_4.png
-                custom_score_drop_column_SUT_1_vs_3.png
-                custom_score_drop_column_SUT_2_vs_3.png
-            interaction_term_evaluation/
-                interaction_term_evaluation_results.csv
-                metrics_without_interaction.csv
-                metrics_with_interaction_PolygenicScoreEXT_Age.csv
-                metrics_with_interaction_PolygenicScoreEXT_DelinquentPeer.csv
-                metrics_with_interaction_PolygenicScoreEXT_Is_Male.csv
-                metrics_with_interaction_PolygenicScoreEXT_NeighborConnect.csv
-                metrics_with_interaction_PolygenicScoreEXT_ParentalWarmth.csv
-                metrics_with_interaction_PolygenicScoreEXT_SchoolConnect.csv
-                metrics_with_interaction_PolygenicScoreEXT_SubstanceUseTrajectory.csv
-            shapley_analysis/
-                shap_values_1_vs_4.pkl
-                shap_values_2_vs_4.pkl
-                shap_values_3_vs_4.pkl
-                visualizations/
-                    comparison_plot_PolygenicScoreEXT_Age.png
-                    comparison_plot_PolygenicScoreEXT_DelinquentPeer.png
-                    comparison_plot_PolygenicScoreEXT_Is_Male.png
-                    comparison_plot_PolygenicScoreEXT_NeighborConnect.png
-                    comparison_plot_PolygenicScoreEXT_ParentalWarmth.png
-                    comparison_plot_PolygenicScoreEXT_SchoolConnect.png
-                    comparison_plot_PolygenicScoreEXT_SubstanceUseTrajectory.png
-        figures/
-            eda_plots/
-                AST_trajectory_distribution.png
-                SUT_trajectory_distribution.png
-                AST_trajectory_analysis/
-                    AST_boxplot_Age.png
-                    AST_boxplot_DelinquentPeer.png
-                    AST_boxplot_NeighborConnect.png
-                    AST_boxplot_ParentalWarmth.png
-                    AST_boxplot_PolygenicScoreEXT.png
-                    AST_boxplot_Race.png
-                    AST_boxplot_SchoolConnect.png
-                boxplot_visualization/
-                    Age_boxplot.png
-                    DelinquentPeer_boxplot.png
-                    FamilyID_boxplot.png
-                    ID_boxplot.png
-                    NeighborConnect_boxplot.png
-                    ParentalWarmth_boxplot.png
-                    PolygenicScoreEXT_boxplot.png
-                    Race_boxplot.png
-                    SchoolConnect_boxplot.png
-                    Sex_boxplot.png
-                    SubstanceUseTrajectory_boxplot.png
-                categorical_feature_analysis/
-                    Race_countplot.png
-                contingency_table/
-                    Race_AntisocialTrajectory-contingency_table.png
-                correlation_analysis/
-                    correlation_matrix.png
-                distribution_visualization/
-                    Age_distribution.png
-                    DelinquentPeer_distribution.png
-                    FamilyID_distribution.png
-                    ID_distribution.png
-                    NeighborConnect_distribution.png
-                    ParentalWarmth_distribution.png
-                    PolygenicScoreEXT_distribution.png
-                    Race_distribution.png
-                    SchoolConnect_distribution.png
-                    Sex_distribution.png
-                    SubstanceUseTrajectory_distribution.png
-                pca/
-                    pca_results.png
-                SUT_trajectory_analysis/
-                    SUT_boxplot_Age.png
-                    SUT_boxplot_DelinquentPeer.png
-                    SUT_boxplot_NeighborConnect.png
-                    SUT_boxplot_ParentalWarmth.png
-                    SUT_boxplot_PolygenicScoreEXT.png
-                    SUT_boxplot_Race.png
-                    SUT_boxplot_SchoolConnect.png
-            gxe_comparison_plots/
-                performance_comparison.png
-            gxe_interaction_plots/
-                BinLogReg_plots/
-                    4.0_F1-Score_Ranked Top Interactions for 4.0.png
-                    4.0_Precision_Ranked Top Interactions for 4.0.png
-                    4.0_Recall_Ranked Top Interactions for 4.0.png
-                    Accuracy_Ranked Top Interactions for 4.0.png
-                    macro avg_F1-Score_Ranked Top Interactions for 4.0.png
-                    macro avg_Precision_Ranked Top Interactions for 4.0.png
-                    macro avg_Recall_Ranked Top Interactions for 4.0.png
-                    weighted avg_F1-Score_Ranked Top Interactions for 4.0.png
-                    weighted avg_Precision_Ranked Top Interactions for 4.0.png
-                    weighted avg_Recall_Ranked Top Interactions for 4.0.png
-            model_comparison_plots/
-                Comparing results with and without SUT/
-                    Comparing metrics for AST 1 vs 4 Configuration.png
-                    Comparing metrics for AST 2 vs 4 Configuration.png
-                    Comparing metrics for AST 3 vs 4 Configuration.png
-        multi_class/
-            logistic_regression_results/
-                metrics/
-                    with Race/
-                        AST_multinomial_SMOTE_noGCV_noKF_IT.csv
-                    without Race/
-            markov_random_field_results/
-                mrf_graph.png
-                metrics/
-            random_forest_results/
-                metrics/
-                    AST_multinomial_SMOTE_GCV_KF_IT.csv
-                models/
-        one_vs_all/
-            cascading_results/
-                graphs/
-                    consolidated_shap_values.png
-                    shap_values_Age.png
-                    shap_values_DelinquentPeer.png
-                    shap_values_Is_Male.png
-                    shap_values_NeighborConnect.png
-                    shap_values_ParentalWarmth.png
-                    shap_values_SchoolConnect.png
-                metrics/
-                    AntisocialTrajectory_1_vs_4_Model1_performance.csv
-                    AntisocialTrajectory_1_vs_4_Model2_performance.csv
-                    AntisocialTrajectory_2_vs_4_Model1_performance.csv
-                    AntisocialTrajectory_2_vs_4_Model2_performance.csv
-                    AntisocialTrajectory_3_vs_4_Model1_performance.csv
-                    AntisocialTrajectory_3_vs_4_Model2_performance.csv
-                    AntisocialTrajectory_Age_Model3(b)_performance.csv
-                    AntisocialTrajectory_DelinquentPeer_Model3(b)_performance.csv
-                    AntisocialTrajectory_Is_Male_Model3(b)_performance.csv
-                    AntisocialTrajectory_Model3(a)_performance.csv
-                    AntisocialTrajectory_Model3_performance.csv
-                    AntisocialTrajectory_NeighborConnect_Model3(b)_performance.csv
-                    AntisocialTrajectory_ParentalWarmth_Model3(b)_performance.csv
-                    AntisocialTrajectory_SchoolConnect_Model3(b)_performance.csv
-            logistic_regression_results/
-                metrics/
-                    logistic_regression_AST_1_vs_4.csv
-                    logistic_regression_AST_1_vs_4_noIT.csv
-                    logistic_regression_AST_2_vs_4.csv
-                    logistic_regression_AST_2_vs_4_noIT.csv
-                    logistic_regression_AST_3_vs_4.csv
-                    logistic_regression_AST_3_vs_4_noIT.csv
-                    logistic_regression_SUT_1_vs_3.csv
-                    logistic_regression_SUT_1_vs_3_noIT.csv
-                    logistic_regression_SUT_2_vs_3.csv
-                    logistic_regression_SUT_2_vs_3_noIT.csv
-                processed_data/
-                    SUT_2_vs_3_PolygenicScoreEXT_x_AntisocialTrajectory_IT.csv
-                    SUT_2_vs_3_PolygenicScoreEXT_x_DelinquentPeer_IT.csv
-                    SUT_2_vs_3_PolygenicScoreEXT_x_NeighborConnect_IT.csv
-                    SUT_2_vs_3_PolygenicScoreEXT_x_ParentalWarmth_IT.csv
-                    SUT_2_vs_3_PolygenicScoreEXT_x_SchoolConnect_IT.csv
-            random_forest_results/
-                metrics/
-                    random_forest_AST_1_vs_4.csv
-                    random_forest_AST_2_vs_4.csv
-                    random_forest_AST_3_vs_4.csv
-                    random_forest_SUT_1_vs_3.csv
-                    random_forest_SUT_2_vs_3.csv
-            xgboost_results/
-                metrics/
-                    xgboost_AST_1_vs_4.csv
-                    xgboost_AST_2_vs_4.csv
-                    xgboost_AST_3_vs_4.csv
-                    xgboost_SUT_1_vs_3.csv
-                    xgboost_SUT_2_vs_3.csv
-    __pycache__/
-        config.cpython-39.pyc
-        __init__.cpython-39.pyc
+project_scripts\__init__.py
+project_scripts\EDA\AST_trajectory_analysis.py
+project_scripts\EDA\basic_statistics_and_missing_values.py
+project_scripts\EDA\boxplot_visualizations.py
+project_scripts\EDA\categorical_feature_analysis.py
+project_scripts\EDA\contingency_tables.py
+project_scripts\EDA\correlation_analysis.py
+project_scripts\EDA\distribution_visualization.py
+project_scripts\EDA\pca.py
+project_scripts\EDA\SUT_trajectory_analysis.py
+project_scripts\EDA\__init__.py
+project_scripts\evaluation\cluster_analysis.py
+project_scripts\evaluation\comparing_results_with_SUT.py
+project_scripts\evaluation\evaluation_BinLogReg.py
+project_scripts\evaluation\interaction_term_evaluation.py
+project_scripts\evaluation\LogReg_comparison.py
+project_scripts\evaluation\paired_t_test_accuracy.py
+project_scripts\evaluation\paired_t_test_custom_metric.py
+project_scripts\evaluation\__init__.py
+project_scripts\evaluation\Comparison\AST.py
+project_scripts\evaluation\Comparison\SUT.py
+project_scripts\evaluation\drop column analysis\drop_column_analysis.py
+project_scripts\evaluation\drop column analysis\visualizing_drop_column_analysis.py
+project_scripts\evaluation\drop column analysis\__init__.py
+project_scripts\evaluation\Shapley Analysis\shapley_analysis.py
+project_scripts\evaluation\Shapley Analysis\__init__.py
+project_scripts\modeling\__init__.py
+project_scripts\modeling\cascading_models\cascading_main.py
+project_scripts\modeling\cascading_models\Cascading_Model_1_vs_2.py
+project_scripts\modeling\cascading_models\cascading_StatSig.py
+project_scripts\modeling\cascading_models\cascading_utils.py
+project_scripts\modeling\mrf\mrf_main.py
+project_scripts\modeling\mrf\mrf_utils.py
+project_scripts\modeling\multi_class\MultLogReg_main.py
+project_scripts\modeling\multi_class\RFC_main.py
+project_scripts\modeling\multi_class\__init__.py
+project_scripts\modeling\one_vs_all\BinLogReg_main.py
+project_scripts\modeling\one_vs_all\RFC_main.py
+project_scripts\modeling\one_vs_all\xgboost_main.py
+project_scripts\modeling\one_vs_all\__init__.py
+project_scripts\modeling\uag\AntisocialTrajectory_neighborhood_regression_kamada.png
+project_scripts\modeling\uag\AntisocialTrajectory_neighborhood_regression_layers.png
+project_scripts\modeling\uag\AntisocialTrajectory_neighborhood_regression_spring.png
+project_scripts\modeling\uag\neighbourhood_regression.png
+project_scripts\modeling\uag\neighbourhood_regression_DiGraph.png
+project_scripts\modeling\uag\neighbourhood_regression_Graph.png
+project_scripts\modeling\uag\SubstanceUseTrajectory_neighborhood_regression_layers.png
+project_scripts\modeling\uag\uag_utils.py
+project_scripts\modeling\uag\undirected_dependency.py
+project_scripts\preprocessing\mrf_preprocessing.py
+project_scripts\preprocessing\preprocessing.py
+project_scripts\preprocessing\__init__.py
+project_scripts\utility\data_loader.py
+project_scripts\utility\model_utils.py
+project_scripts\utility\path_utils.py
+project_scripts\utility\__init__.py
+results\eda_results\basic_statistics.csv
+results\eda_results\missing_values.csv
+results\evaluation\interaction_term_comparison_plot.png
+results\evaluation\joint_plot.png
+results\evaluation\paired_ttest_results.csv
+results\evaluation\spider_chart_change_in_accuracy.png
+results\evaluation\spider_chart_change_in_custom_score.png
+results\evaluation\cluster_analysis\clustering_analysis.csv
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_Age.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_DelinquentPeer.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_Is_Male.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_NeighborConnect.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_ParentalWarmth.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_SchoolConnect.png
+results\evaluation\cluster_analysis\clusters_PolygenicScoreEXT_x_SubstanceUseTrajectory.png
+results\evaluation\cluster_analysis\elbow_plot.png
+results\evaluation\comparison\difference_plot_AST_1_vs_4.png
+results\evaluation\comparison\difference_plot_AST_2_vs_4.png
+results\evaluation\comparison\difference_plot_AST_3_vs_4.png
+results\evaluation\comparison\difference_plot_SUT_1_vs_3.png
+results\evaluation\comparison\difference_plot_SUT_2_vs_3.png
+results\evaluation\drop column analysis\accuracy_drop_column_AST_1_vs_4.png
+results\evaluation\drop column analysis\accuracy_drop_column_AST_2_vs_4.png
+results\evaluation\drop column analysis\accuracy_drop_column_AST_3_vs_4.png
+results\evaluation\drop column analysis\accuracy_drop_column_SUT_1_vs_3.png
+results\evaluation\drop column analysis\accuracy_drop_column_SUT_2_vs_3.png
+results\evaluation\drop column analysis\column_drop_evaluation_AST_1_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_2_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_3_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_AST_1_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_AST_2_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_AST_3_vs_4.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_SUT_1_vs_3.csv
+results\evaluation\drop column analysis\column_drop_evaluation_AST_SUT_2_vs_3.csv
+results\evaluation\drop column analysis\custom_score_drop_column_AST_1_vs_4.png
+results\evaluation\drop column analysis\custom_score_drop_column_AST_2_vs_4.png
+results\evaluation\drop column analysis\custom_score_drop_column_AST_3_vs_4.png
+results\evaluation\drop column analysis\custom_score_drop_column_SUT_1_vs_3.png
+results\evaluation\drop column analysis\custom_score_drop_column_SUT_2_vs_3.png
+results\evaluation\interaction_term_evaluation\interaction_term_evaluation_results.csv
+results\evaluation\interaction_term_evaluation\metrics_without_interaction.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_Age.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_DelinquentPeer.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_Is_Male.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_NeighborConnect.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_ParentalWarmth.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_SchoolConnect.csv
+results\evaluation\interaction_term_evaluation\metrics_with_interaction_PolygenicScoreEXT_SubstanceUseTrajectory.csv
+results\evaluation\shapley_analysis\shap_values_1_vs_4.pkl
+results\evaluation\shapley_analysis\shap_values_2_vs_4.pkl
+results\evaluation\shapley_analysis\shap_values_3_vs_4.pkl
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_Age.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_DelinquentPeer.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_Is_Male.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_NeighborConnect.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_ParentalWarmth.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_SchoolConnect.png
+results\evaluation\shapley_analysis\visualizations\comparison_plot_PolygenicScoreEXT_SubstanceUseTrajectory.png
+results\figures\eda_plots\AST_trajectory_distribution.png
+results\figures\eda_plots\SUT_trajectory_distribution.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_Age.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_DelinquentPeer.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_NeighborConnect.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_ParentalWarmth.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_PolygenicScoreEXT.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_Race.png
+results\figures\eda_plots\AST_trajectory_analysis\AST_boxplot_SchoolConnect.png
+results\figures\eda_plots\boxplot_visualization\Age_boxplot.png
+results\figures\eda_plots\boxplot_visualization\DelinquentPeer_boxplot.png
+results\figures\eda_plots\boxplot_visualization\FamilyID_boxplot.png
+results\figures\eda_plots\boxplot_visualization\ID_boxplot.png
+results\figures\eda_plots\boxplot_visualization\NeighborConnect_boxplot.png
+results\figures\eda_plots\boxplot_visualization\ParentalWarmth_boxplot.png
+results\figures\eda_plots\boxplot_visualization\PolygenicScoreEXT_boxplot.png
+results\figures\eda_plots\boxplot_visualization\Race_boxplot.png
+results\figures\eda_plots\boxplot_visualization\SchoolConnect_boxplot.png
+results\figures\eda_plots\boxplot_visualization\Sex_boxplot.png
+results\figures\eda_plots\boxplot_visualization\SubstanceUseTrajectory_boxplot.png
+results\figures\eda_plots\categorical_feature_analysis\Race_countplot.png
+results\figures\eda_plots\contingency_table\Race_AntisocialTrajectory-contingency_table.png
+results\figures\eda_plots\correlation_analysis\correlation_matrix.png
+results\figures\eda_plots\distribution_visualization\Age_distribution.png
+results\figures\eda_plots\distribution_visualization\DelinquentPeer_distribution.png
+results\figures\eda_plots\distribution_visualization\FamilyID_distribution.png
+results\figures\eda_plots\distribution_visualization\ID_distribution.png
+results\figures\eda_plots\distribution_visualization\NeighborConnect_distribution.png
+results\figures\eda_plots\distribution_visualization\ParentalWarmth_distribution.png
+results\figures\eda_plots\distribution_visualization\PolygenicScoreEXT_distribution.png
+results\figures\eda_plots\distribution_visualization\Race_distribution.png
+results\figures\eda_plots\distribution_visualization\SchoolConnect_distribution.png
+results\figures\eda_plots\distribution_visualization\Sex_distribution.png
+results\figures\eda_plots\distribution_visualization\SubstanceUseTrajectory_distribution.png
+results\figures\eda_plots\Normality Check\Age_qq_plot.png
+results\figures\eda_plots\Normality Check\AntisocialTrajectory_qq_plot.png
+results\figures\eda_plots\Normality Check\DelinquentPeer_qq_plot.png
+results\figures\eda_plots\Normality Check\FamilyID_qq_plot.png
+results\figures\eda_plots\Normality Check\ID_qq_plot.png
+results\figures\eda_plots\Normality Check\NeighborConnect_qq_plot.png
+results\figures\eda_plots\Normality Check\ParentalWarmth_qq_plot.png
+results\figures\eda_plots\Normality Check\PolygenicScoreEXT_qq_plot.png
+results\figures\eda_plots\Normality Check\SchoolConnect_qq_plot.png
+results\figures\eda_plots\Normality Check\Sex_qq_plot.png
+results\figures\eda_plots\Normality Check\shapiro_test_results.csv
+results\figures\eda_plots\Normality Check\SubstanceUseTrajectory_qq_plot.png
+results\figures\eda_plots\pca\pca_results.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_Age.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_DelinquentPeer.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_NeighborConnect.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_ParentalWarmth.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_PolygenicScoreEXT.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_Race.png
+results\figures\eda_plots\SUT_trajectory_analysis\SUT_boxplot_SchoolConnect.png
+results\figures\gxe_comparison_plots\performance_comparison.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\4.0_F1-Score_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\4.0_Precision_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\4.0_Recall_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\Accuracy_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\macro avg_F1-Score_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\macro avg_Precision_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\macro avg_Recall_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\weighted avg_F1-Score_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\weighted avg_Precision_Ranked Top Interactions for 4.0.png
+results\figures\gxe_interaction_plots\BinLogReg_plots\weighted avg_Recall_Ranked Top Interactions for 4.0.png
+results\figures\model_comparison_plots\Comparing results with and without SUT\Comparing metrics for AST 1 vs 4 Configuration.png
+results\figures\model_comparison_plots\Comparing results with and without SUT\Comparing metrics for AST 2 vs 4 Configuration.png
+results\figures\model_comparison_plots\Comparing results with and without SUT\Comparing metrics for AST 3 vs 4 Configuration.png
+results\multi_class\logistic_regression_results\metrics\with Race\AST_multinomial_SMOTE_noGCV_noKF_IT.csv
+results\multi_class\markov_random_field_results\graph_edge_list.csv
+results\multi_class\markov_random_field_results\mrf_graph.png
+results\multi_class\neighborhood_regression_results\metrics\edges_data_AntisocialTrajectory.csv
+results\multi_class\neighborhood_regression_results\metrics\edges_data_SubstanceUseTrajectory.csv
+results\multi_class\random_forest_results\metrics\AST_multinomial_SMOTE_GCV_KF_IT.csv
+results\one_vs_all\cascading_results\graphs\consolidated_shap_values.png
+results\one_vs_all\cascading_results\graphs\difference_performance_AntisocialTrajectory_1_vs_4_Model1_vs_AntisocialTrajectory_1_vs_4_Model2.png
+results\one_vs_all\cascading_results\graphs\difference_performance_AntisocialTrajectory_2_vs_4_Model1_vs_AntisocialTrajectory_2_vs_4_Model2.png
+results\one_vs_all\cascading_results\graphs\difference_performance_AntisocialTrajectory_3_vs_4_Model1_vs_AntisocialTrajectory_3_vs_4_Model2.png
+results\one_vs_all\cascading_results\graphs\shap_values_Age.png
+results\one_vs_all\cascading_results\graphs\shap_values_DelinquentPeer.png
+results\one_vs_all\cascading_results\graphs\shap_values_Is_Male.png
+results\one_vs_all\cascading_results\graphs\shap_values_NeighborConnect.png
+results\one_vs_all\cascading_results\graphs\shap_values_ParentalWarmth.png
+results\one_vs_all\cascading_results\graphs\shap_values_SchoolConnect.png
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_1_vs_4_Model1_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_1_vs_4_Model2_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_2_vs_4_Model1_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_2_vs_4_Model2_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_3_vs_4_Model1_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_3_vs_4_Model2_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_Age_Model3(b)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_DelinquentPeer_Model3(b)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_Is_Male_Model3(b)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_Model3(a)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_Model3_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_NeighborConnect_Model3(b)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_ParentalWarmth_Model3(b)_performance.csv
+results\one_vs_all\cascading_results\metrics\AntisocialTrajectory_SchoolConnect_Model3(b)_performance.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_1_vs_4.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_1_vs_4_noIT.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_2_vs_4.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_2_vs_4_noIT.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_3_vs_4.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_AST_3_vs_4_noIT.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_SUT_1_vs_3.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_SUT_1_vs_3_noIT.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_SUT_2_vs_3.csv
+results\one_vs_all\logistic_regression_results\metrics\logistic_regression_SUT_2_vs_3_noIT.csv
+results\one_vs_all\logistic_regression_results\processed_data\SUT_2_vs_3_PolygenicScoreEXT_x_AntisocialTrajectory_IT.csv
+results\one_vs_all\logistic_regression_results\processed_data\SUT_2_vs_3_PolygenicScoreEXT_x_DelinquentPeer_IT.csv
+results\one_vs_all\logistic_regression_results\processed_data\SUT_2_vs_3_PolygenicScoreEXT_x_NeighborConnect_IT.csv
+results\one_vs_all\logistic_regression_results\processed_data\SUT_2_vs_3_PolygenicScoreEXT_x_ParentalWarmth_IT.csv
+results\one_vs_all\logistic_regression_results\processed_data\SUT_2_vs_3_PolygenicScoreEXT_x_SchoolConnect_IT.csv
+results\one_vs_all\random_forest_results\metrics\random_forest_AST_1_vs_4.csv
+results\one_vs_all\random_forest_results\metrics\random_forest_AST_2_vs_4.csv
+results\one_vs_all\random_forest_results\metrics\random_forest_AST_3_vs_4.csv
+results\one_vs_all\random_forest_results\metrics\random_forest_SUT_1_vs_3.csv
+results\one_vs_all\random_forest_results\metrics\random_forest_SUT_2_vs_3.csv
+results\one_vs_all\xgboost_results\metrics\xgboost_AST_1_vs_4.csv
+results\one_vs_all\xgboost_results\metrics\xgboost_AST_2_vs_4.csv
+results\one_vs_all\xgboost_results\metrics\xgboost_AST_3_vs_4.csv
+results\one_vs_all\xgboost_results\metrics\xgboost_SUT_1_vs_3.csv
+results\one_vs_all\xgboost_results\metrics\xgboost_SUT_2_vs_3.csv

@@ -145,8 +145,7 @@ def main(target, interaction):
             for feature_pair in feature_pairs:
 
                 # Applying additional preprocessing
-                X_train, y_train, X_test, y_test = apply_preprocessing_with_interaction_terms(X, y, feature_pair, key,
-                                                                                              features)
+                X_train, y_train, X_test, y_test = ap_with_it(X, y, feature_pair, key)
 
                 model = LogisticRegression(max_iter=10000, multi_class='ovr', penalty="elasticnet", solver="saga",
                                            l1_ratio=0.5)

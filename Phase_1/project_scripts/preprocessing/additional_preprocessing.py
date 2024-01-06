@@ -1,6 +1,5 @@
 import logging
 
-from Phase_1.project_scripts.modeling.mrf.mrf_utils import check_nan_values
 from Phase_1.project_scripts.preprocessing.preprocessing import balance_data, imputation_applier, imputation_pipeline, \
     split_data
 
@@ -44,7 +43,7 @@ def primary_preprocessing_mrf(df, features, target):
     return df, feature_cols
 
 
-def secondary_preprocessing_without_interaction_mrf(X, y, features):
+def secondary_preprocessing(X, y, features):
     """
     Applies preprocessing steps on training, validation, and testing data.
     """

@@ -15,7 +15,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def apply_preprocessing_with_interaction_terms(X, y, feature_pair, features):
+def ap_with_it(X, y, feature_pair, features):
     """
     Applies preprocessing steps including imputation, one-hot encoding, interaction terms, scaling, and balancing
     on training, validation, and testing data.
@@ -125,39 +125,8 @@ def split_data(X, y):
     """
     logger.info("Splitting data...\n")
 
-    """
-    try:
-        # First, split into train + validation and test sets using stratification
-        sss1 = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-        for train_val_idx, test_idx in sss1.split(X, y):
-            X_train_val = X.iloc[train_val_idx].reset_index(drop=True)
-            X_test = X.iloc[test_idx].reset_index(drop=True)
-            y_train_val = y.iloc[train_val_idx].reset_index(drop=True)
-            y_test = y.iloc[test_idx].reset_index(drop=True)
-    except ValueError:
-        # If stratification fails, use a simple shuffle split
-        sss1 = ShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
-        for train_val_idx, test_idx in sss1.split(X):
-            X_train_val = X.iloc[train_val_idx].reset_index(drop=True)
-            X_test = X.iloc[test_idx].reset_index(drop=True)
-            y_train_val = y.iloc[train_val_idx].reset_index(drop=True)
-            y_test = y.iloc[test_idx].reset_index(drop=True)
-
-    # Then, split train + validation set into train and validation sets
-    sss2 = StratifiedShuffleSplit(n_splits=1, test_size=0.25, random_state=42)  # 0.25 x 0.8 = 0.2
-    for train_idx, val_idx in sss2.split(X_train_val, y_train_val):
-        X_train = X_train_val.iloc[train_idx].reset_index(drop=True)
-        X_val = X_train_val.iloc[val_idx].reset_index(drop=True)
-        y_train = y_train_val.iloc[train_idx].reset_index(drop=True)
-        y_val = y_train_val.iloc[val_idx].reset_index(drop=True)
-    """
-
     # First, split into train + validation and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Then, split train + validation set into train and validation sets
-    # X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.25,
-    #                                                   random_state=42) # 0.25 x 0.8 = 0.2
 
     logger.info("Data split successfully...\n")
 
@@ -185,7 +154,7 @@ def imputation_pipeline(numerical_features):
 
 def imputation_applier(impute, df, feature_names, fit=True):
     """
-    Applies imputation on the data.
+    Creates an imputation pipeline and applies imputation on the data.
 
     :param df: Dataframe
     :param impute: ColumnTransformer, imputation transformer
@@ -193,6 +162,7 @@ def imputation_applier(impute, df, feature_names, fit=True):
     :param fit: bool, whether to fit the transformer
     :return: DataFrame, imputed data
     """
+
     logger.info("Applying imputation...\n")
 
     if fit:

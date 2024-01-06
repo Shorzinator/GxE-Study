@@ -10,8 +10,8 @@ from sklearn.manifold import MDS
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
-from Phase_1.project_scripts.preprocessing.mrf_preprocessing import primary_preprocessing_mrf, \
-    secondary_preprocessing_without_interaction_mrf
+from Phase_1.project_scripts.preprocessing.additional_preprocessing import primary_preprocessing_mrf, \
+    secondary_preprocessing
 from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists
 
 logging.basicConfig(level=logging.DEBUG)
@@ -44,7 +44,7 @@ def neighborhood_regression(target):
     y = pd.DataFrame(data_preprocessed[target])  # outcome dataset
 
     # Applying secondary preprocessing
-    X_train, y_train, X_test, y_test = secondary_preprocessing_without_interaction_mrf(X, y, features)
+    X_train, y_train, X_test, y_test = secondary_preprocessing(X, y, features)
 
     # Combining data to replicate processed 'data_processed'
     X_combined = pd.concat([X_train, X_test], axis=0)

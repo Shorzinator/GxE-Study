@@ -7,12 +7,12 @@ from Phase_1.project_scripts.utility.path_utils import get_data_path
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-DATA_PATH = get_data_path("Data_GxE_on_EXT_trajectories_new.csv")
-DATA_PATH_old = get_data_path("Data_GxE_on_EXT_trajectories.csv")
+DATA_PATH_new = get_data_path("Data_GxE_on_EXT_trajectories_new.csv")
+DATA_PATH_old = get_data_path("Data_GxE_on_EXT_trajectories_old.csv")
 
 
 def load_data():
-    df = pd.read_csv(DATA_PATH)
+    df = pd.read_csv(DATA_PATH_new)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")
     logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")

@@ -3,10 +3,8 @@ import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
 import pandas as pd
 import statsmodels.api as sm
-from sklearn.manifold import MDS
 
 from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old

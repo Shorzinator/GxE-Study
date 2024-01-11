@@ -1,0 +1,18 @@
+Variable list:
+
+ID: Participant ID
+FamilyID: Family ID of participant. Participants in AddHealth may be siblings etc. and clustered within family. Non-independence needs to be adjusted for.
+Race: 1 = white; 2 = black/african; 3 = native; 4 = asian; 5 = other.
+
+PolygenicScoreEXT: Polygenic score for externalizing behaviors basing on doi.org/10.1038/s41593-021-00908-3. FOCAL G.
+
+Sex: Biological sex. -0.5 = male, 0.5 = female. COVARIATE.
+Age: Standardized age. COVARIATE.
+
+DelinquentPeer: Affiliation with delinquent peer. FOCAL E.
+SchoolConnect: School connectedness. FOCAL E.
+NeighborConnect: Neighborhood connectedness. FOCAL E.
+ParentalWarmth: Parental Warmth. FOCAL E.
+
+AntisocialTrajectory: Trajectories of Antisocial Behaviors. DV1. 1 = High Decline. 2 = Moderate. 3 = Adolescence-Peak. 4 = Low.
+SubstanceUseTrajectory: Trajectories of Substance Use Behaviors. DV2. 1 = High Use. 2 = Low Use. 3 = Typical Use.

@@ -3,7 +3,6 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 
-from Phase_1.config import FEATURES
 from Phase_1.project_scripts.utility.data_loader import *
 from Phase_1.project_scripts.utility.model_utils import *
 

@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
-from Phase_1.config import *
+from config import *
 from Phase_1.project_scripts.utility.model_utils import add_interaction_terms
 
 logging.basicConfig(level=logging.INFO)

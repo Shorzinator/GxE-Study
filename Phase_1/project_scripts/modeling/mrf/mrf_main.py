@@ -10,7 +10,7 @@ from pgmpy.inference import BeliefPropagation
 from pgmpy.models import MarkovNetwork
 from tqdm import tqdm
 
-from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
+from config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
 from Phase_1.project_scripts.modeling.mrf.mrf_utils import create_mrf_structure, logistic_regression_pairwise_potential, \
     unary_potential

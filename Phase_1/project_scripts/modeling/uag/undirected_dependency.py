@@ -6,7 +6,7 @@ import networkx as nx
 import pandas as pd
 import statsmodels.api as sm
 
-from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
+from config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
 from Phase_1.project_scripts.preprocessing.additional_preprocessing import primary_preprocessing_mrf, \
     secondary_preprocessing

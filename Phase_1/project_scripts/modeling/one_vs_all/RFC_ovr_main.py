@@ -4,7 +4,7 @@ import warnings
 
 from sklearn.ensemble import RandomForestClassifier
 
-from Phase_1.config import *
+from config import *
 from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     ap_with_it, preprocess_ast_ovr, preprocess_sut_ovr

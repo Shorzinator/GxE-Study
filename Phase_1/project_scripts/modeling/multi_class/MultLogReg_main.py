@@ -7,7 +7,7 @@ import warnings
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import COMBINED, FEATURES as allFeatures, TARGET_1
+from config import COMBINED, FEATURES as allFeatures, TARGET_1
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data

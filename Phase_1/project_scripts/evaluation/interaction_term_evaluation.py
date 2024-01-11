@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import TARGET_1
+from config import TARGET_1
 from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     ap_with_it, preprocess_ovr
 from Phase_1.project_scripts.utility.data_loader import *

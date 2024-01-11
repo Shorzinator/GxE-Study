@@ -1,10 +1,10 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
+from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
-from scipy import stats
 import logging
+from scipy.stats import yeojohnson, stats
 
 from config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from project_scripts import get_data_path
@@ -13,20 +13,12 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 DATA_PATH_new = get_data_path("Data_GxE_on_EXT_trajectories_new.csv")
-DATA_PATH_old = get_data_path("Data_GxE_on_EXT_trajectories_old.csv")
+FEATURES_FOR_AST = FEATURES_FOR_AST + ["Race"]
+FEATURES_FOR_SUT = FEATURES_FOR_SUT + ["Race"]
 
 
 def load_new_data():
     df = pd.read_csv(DATA_PATH_new)
-    if df.empty:
-        raise ValueError("Data is empty or not loaded properly.")
-    logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")
-
-    return df
-
-
-def load_old_data():
-    df = pd.read_csv(DATA_PATH_old)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")
     logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")
@@ -51,25 +43,76 @@ def apply_boxcox_transformation(df, features):
     return transformed_df
 
 
+def remove_outliers(df, feature):
+    Q1 = df[feature].quantile(0.25)
+    Q3 = df[feature].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    df = df[(df[feature] >= lower_bound) & (df[feature] <= upper_bound)]
+    return df
+
+
+def apply_yeojohnson_transformation(df, features):
+    # Handle outliers
+    # df = remove_outliers(df, features)
+
+    transformed_df = df.copy()
+    for feature in features:
+        try:
+            transformed, _ = yeojohnson(transformed_df[feature])
+            transformed_df[feature] = transformed
+        except Exception as e:
+            logger.error(f"Error in Yeo-Johnson transformation for {feature}: {e}")
+    return transformed_df
+
+
+def scale_features(df, features):
+    scaler = MinMaxScaler()
+    df[features] = scaler.fit_transform(df[features])
+    return df
+
+
 def handle_categorical_variables(df):
     categorical_features = ['Race']  # Update this list as per your actual columns
     existing_features = [col for col in categorical_features if col in df.columns]
     if not existing_features:
         logger.warning("No categorical features found for one-hot encoding.")
         return df
-    categorical_transformer = OneHotEncoder(drop='first')
+
+    df = df.dropna(subset=['Race'])
+
+    categorical_transformer = OneHotEncoder()
     preprocessor = ColumnTransformer(
         transformers=[
             ('cat', categorical_transformer, existing_features)
         ],
         remainder='passthrough'
     )
-    return pd.DataFrame(preprocessor.fit_transform(df), columns=preprocessor.get_feature_names_out())
+
+    # Apply the ColumnTransformer
+    transformed_data = preprocessor.fit_transform(df)
+
+    # Create a new DataFrame with transformed data and updated column names
+    transformed_df = pd.DataFrame(transformed_data, columns=preprocessor.get_feature_names_out(), index=df.index)
+
+    # Remove prefixes from column names
+    transformed_df.columns = [col.split('__')[-1] for col in transformed_df.columns]
+
+    return transformed_df
 
 
-def normalize_continuous_variables(df, features):
+def normalize_continuous_variables(df, feature_cols):
+
+    feature_cols.remove("Is_Male")
+    # Add a check to ensure all columns are present
+    missing_cols = [col for col in feature_cols if col not in df.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in dataframe for normalization: {missing_cols}")
+        return df  # or handle the missing columns as appropriate
+
     scaler = StandardScaler()
-    df[features] = scaler.fit_transform(df[features])
+    df[feature_cols] = scaler.fit_transform(df[feature_cols])
     return df
 
 
@@ -87,12 +130,13 @@ def handle_family_clusters(df):
 def initial_cleaning(df, features, target):
     logger.info("Initiating Primary preprocessing...\n")
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+    df.drop("Sex", inplace=True, axis=1)
 
-    # Handling outliers for PGS using IQR
-    Q1 = df['PolygenicScoreEXT'].quantile(0.25)
-    Q3 = df['PolygenicScoreEXT'].quantile(0.75)
-    IQR = Q3 - Q1
-    df = df[~((df['PolygenicScoreEXT'] < (Q1 - 1.5 * IQR)) | (df['PolygenicScoreEXT'] > (Q3 + 1.5 * IQR)))]
+    # Handling outliers
+    features_to_handle_outliers = ['PolygenicScoreEXT', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect',
+                                   'ParentalWarmth', 'Age']  # Adjust as needed
+    for feature in features_to_handle_outliers:  # Define this list based on your dataset
+        df = remove_outliers(df, feature)
 
     # Drop rows where the target variable is missing
     initial_rows = len(df)
@@ -124,7 +168,7 @@ def save_preprocessed_data(df, file_path, target):
         df.to_csv(file_path, index=False)
 
 
-def preprocessing_pipeline(data_path, features, target, file_path_to_save):
+def preprocessing_pipeline(features, target, file_path_to_save):
     """
     Applies the entire preprocessing pipeline to a dataset and saves the preprocessed data.
 
@@ -138,7 +182,7 @@ def preprocessing_pipeline(data_path, features, target, file_path_to_save):
     None: The function saves the preprocessed data to the specified file path.
     """
     # Load data
-    df = pd.read_csv(data_path)
+    df = load_new_data()
     logger.info("Data loaded successfully.")
     df.drop("ID", axis=1, inplace=True)
 
@@ -151,10 +195,17 @@ def preprocessing_pipeline(data_path, features, target, file_path_to_save):
     logger.info("Family clusters handled.")
     df.drop("FamilyID", axis=1, inplace=True)
 
-    # Apply Box-Cox transformation
+    # Apply transformation
     continuous_features = ["DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth"]
-    df = apply_boxcox_transformation(df, continuous_features)  # specify the continuous features needing transformation
-    logger.info("Box-Cox transformation applied.")
+
+    # df = apply_boxcox_transformation(df, continuous_features)
+    # logger.info("Box-Cox transformation applied.")
+
+    df = apply_yeojohnson_transformation(df, continuous_features)
+    logger.info("Yeo-Johnson transformation applied.")
+
+    # df = scale_features(df, continuous_features)
+    # logger.info("MinMaxScalar applied.")
 
     # Handle categorical variables
     df = handle_categorical_variables(df)
@@ -165,8 +216,8 @@ def preprocessing_pipeline(data_path, features, target, file_path_to_save):
     logger.info("Continuous variables normalized.")
 
     # Impute missing values
-    df = impute_missing_values(df)
-    logger.info("Missing values imputed.")
+    # df = impute_missing_values(df)
+    # logger.info("Missing values imputed.")
 
     # Save the preprocessed data
     save_preprocessed_data(df, file_path_to_save, target)
@@ -177,15 +228,15 @@ def main(TARGET):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST
-        SAVE_PATH = 'preprocessed_data_old_AST.csv'
+        SAVE_PATH = 'preprocessed_data/preprocessed_data_new_AST.csv'
     else:
         FEATURES = FEATURES_FOR_SUT
-        SAVE_PATH = 'preprocessed_data_old_SUT.csv'
+        SAVE_PATH = 'preprocessed_data/preprocessed_data_new_SUT.csv'
 
-    preprocessing_pipeline(DATA_PATH_old, FEATURES, TARGET, SAVE_PATH)
+    preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH)
 
 
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
-    main(target_2)
+    main(target_1)

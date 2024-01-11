@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.linear_model import LogisticRegression
 
-from Phase_1.config import FEATURES_FOR_AST, FEATURES_FOR_SUT
+from config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old

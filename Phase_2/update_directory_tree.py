@@ -13,7 +13,7 @@ def save_directory_tree(parent_dirs, ignore_dirs, output_file):
 
 
 # Specify the parent directories
-parent_dirs = ['project_scripts', 'results']
+parent_dirs = ['Phase_2']
 
 # Specify the directories to ignore
 ignore_dirs = ['.idea', '__pycache__', '.ipynb_checkpoints']

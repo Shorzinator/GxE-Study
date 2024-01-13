@@ -277,10 +277,10 @@ def main(TARGET):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST
-        SAVE_PATH = 'preprocessed_data/preprocessed_data_new_AST.csv'
+        SAVE_PATH = '../preprocessed_data/preprocessed_data_new_AST.csv'
     else:
         FEATURES = FEATURES_FOR_SUT
-        SAVE_PATH = 'preprocessed_data/preprocessed_data_new_SUT.csv'
+        SAVE_PATH = '../preprocessed_data/preprocessed_data_new_SUT.csv'
 
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH)
 

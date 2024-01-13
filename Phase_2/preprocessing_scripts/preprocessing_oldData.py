@@ -167,6 +167,10 @@ def plot_feature_distribution(df, feature):
     # plt.show()
 
 
+def split_data(X, y):
+    return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
 def save_preprocessed_data(df, file_path, target):
     if target == "AntisocialTrajectory":
         df.to_csv(file_path, index=False)
@@ -199,6 +203,9 @@ def preprocessing_pipeline(features, target, file_path_to_save):
     df = handle_family_clusters(df)
     logger.info("Family clusters handled.")
     df.drop("FamilyID", axis=1, inplace=True)
+
+    # Splitting the datasets to prevent data/information leakage
+
 
     # Apply transformation
     continuous_features = ["DelinquentPeer", "SchoolConnect", "NeighborConnect", "ParentalWarmth"]
@@ -240,10 +247,10 @@ def main(TARGET):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST
-        SAVE_PATH = 'preprocessed_data/preprocessed_data_old_AST.csv'
+        SAVE_PATH = '../preprocessed_data/preprocessed_data_old_AST.csv'
     else:
         FEATURES = FEATURES_FOR_SUT
-        SAVE_PATH = 'preprocessed_data/preprocessed_data_old_SUT.csv'
+        SAVE_PATH = '../preprocessed_data/preprocessed_data_old_SUT.csv'
 
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH)
 

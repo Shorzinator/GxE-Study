@@ -9,7 +9,7 @@ from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     ap_with_it, preprocess_ast_ovr, preprocess_sut_ovr
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import add_squared_terms, calculate_metrics, \
+from utility.model_utils import add_squared_terms, calculate_metrics, \
     ensure_directory_exists, save_results, train_model
 
 logging.basicConfig(level=logging.INFO)

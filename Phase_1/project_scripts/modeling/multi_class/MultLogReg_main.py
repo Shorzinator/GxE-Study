@@ -11,7 +11,7 @@ from config import COMBINED, FEATURES as allFeatures, TARGET_1
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data
-from Phase_1.project_scripts.utility.model_utils import add_interaction_terms, \
+from utility.model_utils import add_interaction_terms, \
     calculate_metrics, ensure_directory_exists, save_results, train_model
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 

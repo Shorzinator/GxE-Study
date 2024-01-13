@@ -10,7 +10,7 @@ from config import FEATURES_FOR_AST, FEATURES_FOR_SUT
 from Phase_1.project_scripts import get_path_from_root, load_data_old
 from Phase_1.project_scripts.preprocessing.additional_preprocessing import primary_preprocessing_mrf, \
     secondary_preprocessing
-from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists
+from utility.model_utils import ensure_directory_exists
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

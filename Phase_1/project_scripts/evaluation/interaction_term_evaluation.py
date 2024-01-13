@@ -9,7 +9,7 @@ from config import TARGET_1
 from Phase_1.project_scripts.preprocessing.preprocessing import ap_without_it, \
     ap_with_it, preprocess_ovr
 from Phase_1.project_scripts.utility.data_loader import *
-from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, train_model
+from utility.model_utils import calculate_metrics, ensure_directory_exists, train_model
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 MODEL_NAME = "logistic_regression"

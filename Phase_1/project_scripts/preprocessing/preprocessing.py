@@ -9,7 +9,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from config import *
-from Phase_1.project_scripts.utility.model_utils import add_interaction_terms
+from utility.model_utils import add_interaction_terms
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

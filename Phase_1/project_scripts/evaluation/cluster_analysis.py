@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 from sklearn.metrics import silhouette_score
 
 from Phase_1.project_scripts.utility.data_loader import *
-from Phase_1.project_scripts.utility.model_utils import *
+from utility.model_utils import *
 
 RESULTS_DIR = get_path_from_root("results", "evaluation", "cluster_analysis")
 ensure_directory_exists(RESULTS_DIR)

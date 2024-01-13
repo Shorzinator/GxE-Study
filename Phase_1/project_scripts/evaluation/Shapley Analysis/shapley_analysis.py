@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from Phase_1.project_scripts import get_path_from_root
 from Phase_1.project_scripts.preprocessing.preprocessing import *
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists, train_model
+from utility.model_utils import ensure_directory_exists, train_model
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

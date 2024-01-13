@@ -3,7 +3,7 @@ from sklearn.linear_model import LogisticRegression
 
 from Phase_1.project_scripts.modeling.cascading_models.cascading_utils import *
 from Phase_1.project_scripts.utility.data_loader import load_data_old
-from Phase_1.project_scripts.utility.model_utils import *
+from utility.model_utils import *
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

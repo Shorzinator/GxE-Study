@@ -3,7 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists
+from utility.model_utils import ensure_directory_exists
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 MODEL_NAME = "logistic_regression"

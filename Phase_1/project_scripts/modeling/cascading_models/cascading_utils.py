@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, precision_score, r2_score, \
     roc_auc_score
 
-from Phase_1.project_scripts.utility.model_utils import ensure_directory_exists
+from utility.model_utils import ensure_directory_exists
 from Phase_1.project_scripts.utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.DEBUG)

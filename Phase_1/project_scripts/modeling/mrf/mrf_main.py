@@ -16,7 +16,7 @@ from Phase_1.project_scripts.modeling.mrf.mrf_utils import create_mrf_structure,
     unary_potential
 from Phase_1.project_scripts.preprocessing.additional_preprocessing import primary_preprocessing_mrf, \
     secondary_preprocessing
-from Phase_1.project_scripts.utility.model_utils import calculate_metrics, ensure_directory_exists, save_results
+from utility.model_utils import calculate_metrics, ensure_directory_exists, save_results
 
 pd.set_option('display.max_columns', None)
 

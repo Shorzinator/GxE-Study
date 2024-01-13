@@ -1,8 +1,10 @@
+import numpy as np
 import pandas as pd
+import scipy
+from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, MinMaxScaler
 from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
 from scipy import stats
 from scipy.stats import yeojohnson
 import logging
@@ -20,26 +22,9 @@ def load_old_data():
     df = pd.read_csv(DATA_PATH_old)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")
-    logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.\n")
+    logger.info(f"Data loaded successfully with {df.shape[0]} rows and {df.shape[1]} columns.")
 
     return df
-
-
-def apply_boxcox_transformation(df, features):
-    transformed_df = df.copy()
-    for feature in features:
-        min_value = transformed_df[feature].min()
-        offset = (-min_value + 1) if min_value <= 0 else 0
-        # Ensure all values are positive
-        if (transformed_df[feature] + offset).min() <= 0:
-            logger.error(f"Non-positive values found in {feature} after offset.")
-            continue
-        try:
-            transformed, _ = stats.boxcox(transformed_df[feature] + offset)
-            transformed_df[feature] = transformed
-        except Exception as e:
-            logger.error(f"Error in Box-Cox transformation for {feature}: {e}")
-    return transformed_df
 
 
 def remove_outliers(df, feature):
@@ -66,13 +51,13 @@ def apply_yeojohnson_transformation(df, features):
     return transformed_df
 
 
-def scale_features(df, features):
+def min_max_scaling_continuous_features(df, features):
     scaler = MinMaxScaler()
     df[features] = scaler.fit_transform(df[features])
     return df
 
 
-def encode_categorical_variable(df, column, baseline):
+def encode_ast_sut_variable(df, column, baseline):
     """
     Encodes a categorical variable using one-hot encoding, excluding the baseline category.
     :param df: DataFrame
@@ -96,14 +81,24 @@ def encode_categorical_variable(df, column, baseline):
         # Create DataFrame with new encoded features
         encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out())
 
+        # Convert these representations to NaN
+        missing_value_representations = ['<null>', '-', '']
+        for representation in missing_value_representations:
+            df.replace(representation, np.nan, inplace=True)
+
+        # Manually set null values to 0 in the new columns
+        for col in encoded_df.columns:
+            encoded_df[col].fillna(0, inplace=True)
+
         # Drop the original column and join the new features
         return df.drop(column, axis=1).join(encoded_df)
+
     else:
         logger.warning(f"{column} not found in DataFrame.")
         return df
 
 
-def normalize_continuous_variables(df, feature_cols, target):
+def standard_scaling_continuous_variables(df, feature_cols, target):
     f = feature_cols.copy()
     f.remove("Is_Male")
     if target == "AntisocialTrajectory":
@@ -134,7 +129,6 @@ def handle_family_clusters(df):
 
 
 def initial_cleaning(df, features, target):
-    logger.info("Initiating Primary preprocessing...\n")
     df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
     df.drop("Sex", inplace=True, axis=1)
 
@@ -148,23 +142,29 @@ def initial_cleaning(df, features, target):
     initial_rows = len(df)
     df = df.dropna(subset=[target])
     rows_after_dropping = len(df)
-    logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values...\n")
+    logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values...")
 
     # Feature Engineering
     df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
     df['PolygenicScoreEXT_x_Age'] = df['PolygenicScoreEXT'] * df['Age']
     feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
 
-    logger.info("Data Cleaning completed successfully...\n")
-
     return df, feature_cols
 
 
-def split_data(X, y):
-    logger.info("Splitting data...\n")
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    logger.info("Data split successfully...\n")
-    return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
+def plot_feature_distribution(df, feature):
+    # Histogram
+    plt.figure(figsize=(12, 6))
+    plt.subplot(1, 2, 1)
+    df[feature].hist(bins=30, alpha=0.5)
+    plt.title(f'Histogram of {feature}')
+
+    # QQ-Plot
+    plt.subplot(1, 2, 2)
+    scipy.stats.probplot(df[feature], dist="norm", plot=plt)
+    plt.title(f"QQ Plot of {feature}")
+    plt.savefig(f"results/old_data/QQ Plot of {feature} after YJ Transformation")
+    # plt.show()
 
 
 def save_preprocessed_data(df, file_path, target):
@@ -189,7 +189,6 @@ def preprocessing_pipeline(features, target, file_path_to_save):
     """
     # Load data
     df = load_old_data()
-    logger.info("Data loaded successfully.")
     df.drop("ID", axis=1, inplace=True)
 
     # Initial cleaning and feature engineering
@@ -207,25 +206,30 @@ def preprocessing_pipeline(features, target, file_path_to_save):
     df = apply_yeojohnson_transformation(df, continuous_features)
     logger.info("Yeo-Johnson transformation applied.")
 
+    # for col in continuous_features:
+    #     plot_feature_distribution(df, col)
+
     # df = scale_features(df, continuous_features)
     # logger.info("MinMaxScalar applied.")
+
+    # Apply StandardScalar to continuous variables
+    df = standard_scaling_continuous_variables(df, feature_cols, target)
+    logger.info("Continuous variables normalized.")
 
     # Conditional encoding based on target
     if target == 'AntisocialTrajectory':
         logger.info("Applying encoding on AST.")
-        df = encode_categorical_variable(df, 'SubstanceUseTrajectory', baseline=3)
+        df = encode_ast_sut_variable(df, 'SubstanceUseTrajectory', baseline=3)
     elif target == 'SubstanceUseTrajectory':
         logger.info("Applying encoding on SUT.")
-        df = encode_categorical_variable(df, 'AntisocialTrajectory', baseline=4)
+        df = encode_ast_sut_variable(df, 'AntisocialTrajectory', baseline=4)
     logger.info("Categorical variables handled.")
-
-    # Normalize continuous variables
-    df = normalize_continuous_variables(df, feature_cols, target)
-    logger.info("Continuous variables normalized.")
 
     # Impute missing values
     # df = impute_missing_values(df)
     # logger.info("Missing values imputed.")
+
+    df.fillna(0, inplace=True)
 
     # Save the preprocessed data
     save_preprocessed_data(df, file_path_to_save, target)
@@ -247,4 +251,4 @@ def main(TARGET):
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
-    main(target_1)
+    main(target_2)

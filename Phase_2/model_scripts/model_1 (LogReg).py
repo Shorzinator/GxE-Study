@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 
 # Load the old and new datasets
-file_old = "preprocessed_data/preprocessed_data_old_AST.csv"
-file_new = "preprocessed_data/preprocessed_data_new_AST.csv"
+file_old = "../preprocessed_data/preprocessed_data_old_AST.csv"
+file_new = "../preprocessed_data/preprocessed_data_new_AST.csv"
 
 df_old = pd.read_csv(file_old)
 df_new = pd.read_csv(file_new)

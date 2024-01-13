@@ -2,7 +2,7 @@ import logging
 
 import pandas as pd
 
-from Phase_1.project_scripts.utility.path_utils import get_data_path
+from utility.path_utils import get_data_path
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

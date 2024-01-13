@@ -1,7 +1,7 @@
 import os
 
 # Navigate two directories up to get the directory containing 'Phase_1'
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def get_path_from_root(*subdirs):

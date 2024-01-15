@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.linear_model import Ridge
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 
+from Phase_2.model_scripts.model_utils import split_data, evaluate_model
 from utility.path_utils import get_path_from_root
 
 file_path_old_ast = get_path_from_root("Phase_2", "preprocessed_data", "preprocessed_data_old_AST.csv")
@@ -28,22 +28,11 @@ def prepare_data(df, target_variable, exclude_columns=None):
     return X, y
 
 
-# Function to split data
-def split_data(X, y):
-    return train_test_split(X, y, test_size=0.2, random_state=42)
-
-
 # Function to train model
 def train_model(X_train, y_train):
     model = Ridge(alpha=1.0)
     model.fit(X_train, y_train)
     return model
-
-
-# Function to evaluate model
-def evaluate_model(model, X_test, y_test):
-    predictions = model.predict(X_test)
-    return r2_score(y_test, predictions)
 
 
 # Main function to run the model training and evaluation

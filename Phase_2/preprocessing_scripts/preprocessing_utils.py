@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 import scipy
+from sklearn.preprocessing import PowerTransformer
 from imblearn.over_sampling import ADASYN
 from matplotlib import pyplot as plt
 from scipy.stats import yeojohnson
@@ -70,34 +71,34 @@ def is_continuous_feature(df, feature, unique_threshold=10, skewness_threshold=0
     return False
 
 
-def apply_yeojohnson_transformation(df):
+def apply_yeojohnson_transformation(X_train, X_test):
     """
-    Apply the Yeo-Johnson transformation to continuous features in the dataframe.
-    The function uses multiple criteria to identify continuous features.
+    Apply the Yeo-Johnson transformation to continuous features in the train and test dataframes.
+    The function uses sklearn's PowerTransformer for consistency in transformations.
 
     Parameters:
-    - df (DataFrame): The dataframe to transform.
+    - X_train (DataFrame): The training dataframe to fit and transform.
+    - X_test (DataFrame): The testing dataframe to transform based on training data.
 
     Returns:
-    - DataFrame: The dataframe with transformed features.
+    - DataFrame, DataFrame: The transformed training and testing dataframes.
     """
-    transformed_df = df.copy()
+    transformed_X_train = X_train.copy()
+    transformed_X_test = X_test.copy()
 
-    for feature in df.columns:
-        if is_continuous_feature(df, feature):
-            try:
-                # Only apply transformation if the feature has more than one unique value
-                if len(df[feature].unique()) > 1:
-                    transformed, _ = yeojohnson(transformed_df[feature])
-                    transformed_df[feature] = transformed
-                else:
-                    logger.info(f"No transformation applied for {feature} as it has a single unique value.")
-            except Exception as e:
-                logger.error(f"Error in Yeo-Johnson transformation for {feature}: {e}")
+    # Identifying continuous features - adjust this based on your definition of continuous features
+    continuous_features = [col for col in X_train.columns if is_continuous_feature(X_train, col)]
 
-    logger.info("Yeo-Johnson transformation applied.")
+    # Initialize PowerTransformer
+    pt = PowerTransformer(method='yeo-johnson')
 
-    return transformed_df
+    # Fit and transform the training data
+    transformed_X_train[continuous_features] = pt.fit_transform(X_train[continuous_features])
+
+    # Transform the test data using the same transformer
+    transformed_X_test[continuous_features] = pt.transform(X_test[continuous_features])
+
+    return transformed_X_train, transformed_X_test
 
 
 def min_max_scaling_continuous_features(df, features):
@@ -112,8 +113,6 @@ def handle_categorical_variables(df):
     if not existing_features:
         logger.warning("No categorical features found for one-hot encoding.")
         return df
-
-    df = df.dropna(subset=['Race'])
 
     categorical_transformer = OneHotEncoder()
     preprocessor = ColumnTransformer(
@@ -135,55 +134,94 @@ def handle_categorical_variables(df):
     return transformed_df
 
 
-def encode_ast_sut_variable(df, target, column, baseline):
+def encode_categorical_variables(X_train, X_test, categorical_features):
+    """
+    Encode categorical features using OneHotEncoder for both training and testing data.
+
+    Parameters:
+    - X_train (DataFrame): The training dataframe.
+    - X_test (DataFrame): The testing dataframe.
+    - categorical_features (list): List of categorical feature names to encode.
+
+    Returns:
+    - DataFrame, DataFrame: The transformed training and testing dataframes.
+    """
+
+    # Initialize OneHotEncoder and ColumnTransformer
+    categorical_transformer = OneHotEncoder(handle_unknown='ignore')
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('cat', categorical_transformer, categorical_features)
+        ],
+        remainder='passthrough'
+    )
+
+    # Fit the ColumnTransformer on the training data and transform both training and testing data
+    X_train_transformed = preprocessor.fit_transform(X_train)
+    X_test_transformed = preprocessor.transform(X_test)
+
+    # Get transformed column names for the categorical features
+    transformed_columns = preprocessor.named_transformers_['cat'].get_feature_names_out(categorical_features)
+    remaining_columns = [col for col in X_train.columns if col not in categorical_features]
+
+    # Combine all column names
+    all_columns = list(transformed_columns) + remaining_columns
+
+    # Create new DataFrames with transformed data and updated column names
+    X_train_transformed_df = pd.DataFrame(X_train_transformed, columns=all_columns, index=X_train.index)
+    X_test_transformed_df = pd.DataFrame(X_test_transformed, columns=all_columns, index=X_test.index)
+
+    return X_train_transformed_df, X_test_transformed_df
+
+
+def encode_ast_sut_variable(X_train, X_test, target, column, baseline):
     """
     Encodes a categorical variable using one-hot encoding, excluding the baseline category.
-    :param df: DataFrame
-    :param target: The target variable (AST or SUT)
+    This function fits the encoder on the training data and applies it to both training and test data.
+    :param X_train: Training DataFrame
+    :param X_test: Test DataFrame
     :param column: Column to be encoded
     :param baseline: Baseline category to be excluded
-    :return: DataFrame with encoded column
+    :return: Transformed Training and Test DataFrames
     """
-    if column in df.columns:
+    if column in X_train.columns:
         # Convert column to float for consistency
-        df[column] = df[column].astype(float)
+        X_train[column] = X_train[column].astype(float)
+        X_test[column] = X_test[column].astype(float)
 
         # Check if baseline exists
-        if baseline not in df[column].unique():
+        if baseline not in X_train[column].unique():
             logger.warning(f"Baseline category {baseline} not found in {column}. Skipping encoding.")
-            return df
+            return X_train, X_test
 
         # Use OneHotEncoder without explicitly defining categories
         encoder = OneHotEncoder(drop=[baseline], sparse_output=False)
-        encoded_features = encoder.fit_transform(df[[column]])
+        encoder.fit(X_train[[column]])  # Fit encoder on training data
 
-        # Create DataFrame with new encoded features
-        encoded_df = pd.DataFrame(encoded_features, columns=encoder.get_feature_names_out())
+        # Transform both training and test data
+        encoded_train = pd.DataFrame(encoder.transform(X_train[[column]]), columns=encoder.get_feature_names_out())
+        encoded_test = pd.DataFrame(encoder.transform(X_test[[column]]), columns=encoder.get_feature_names_out())
+
+        # Drop the original column and join the new features
+        X_train = X_train.drop(column, axis=1).join(encoded_train)
+        X_test = X_test.drop(column, axis=1).join(encoded_test)
 
         # Convert these representations to NaN
         missing_value_representations = ['<null>', '-', '']
         for representation in missing_value_representations:
-            df.replace(representation, np.nan, inplace=True)
+            X_train.replace(representation, np.nan, inplace=True)
+            X_test.replace(representation, np.nan, inplace=True)
 
-        if target == "AntisocialTrajectory":
-            logger.info("Applied encoding on SUT.")
-        else:
-            logger.info("Applied encoding on AST.")
+        logger.info(f"Applied encoding on {target}.")
 
-        logger.info("Categorical variables handled.")
-
-        # Drop the original column and join the new features
-        # temp = df.drop(column, axis=1).join(encoded_df)
-
-        return df.drop(column, axis=1).join(encoded_df)
+        return X_train, X_test
 
     else:
         logger.warning(f"{column} not found in DataFrame.")
-        return df
+        return X_train, X_test
 
 
-def standard_scaling_continuous_variables_old(df, feature_cols, target):
-
+def standard_scaling_continuous_variables_old(X_train, X_test, feature_cols, target):
     f = feature_cols.copy()
     f.remove("Is_Male")
     f.remove("PolygenicScoreEXT_x_Is_Male")
@@ -194,41 +232,56 @@ def standard_scaling_continuous_variables_old(df, feature_cols, target):
         f.remove("AntisocialTrajectory")
 
     # Add a check to ensure all columns are present
-    missing_cols = [col for col in f if col not in df.columns]
+    missing_cols = [col for col in f if col not in X_train.columns]
     if missing_cols:
-        logger.error(f"Missing columns in dataframe for normalization: {missing_cols}")
-        return df  # or handle the missing columns as appropriate
+        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
+        return X_train  # or handle the missing columns as appropriate
+
+    missing_cols = [col for col in f if col not in X_test.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
+        return X_test  # or handle the missing columns as appropriate
 
     scaler = StandardScaler()
-    df[f] = scaler.fit_transform(df[f])
+    X_train[f] = scaler.fit_transform(X_train[f])
+    X_test[f] = scaler.transform(X_test[f])
 
-    logger.info("Continuous variables normalized.")
+    logger.info("Continuous variables normalized in both training and test set.")
 
-    return df
+    return X_train, X_test
 
 
-def standard_scaling_continuous_variables_new(df, feature_cols, target):
-
+def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, target):
     f = feature_cols.copy()
 
     f.remove("Is_Male")
+    f.remove("PolygenicScoreEXT_x_Is_Male")
     f.remove("Race")
-    f.remove("PolygenicScoreEXT_x_Age")
 
     if target == "AntisocialTrajectory":
         f.remove("SubstanceUseTrajectory")
     else:
         f.remove("AntisocialTrajectory")
 
-    # Add a check to ensure all columns are present
-    missing_cols = [col for col in f if col not in df.columns]
+    # Add a check to ensure all columns are present in X_train
+    missing_cols = [col for col in f if col not in X_train.columns]
     if missing_cols:
-        logger.error(f"Missing columns in dataframe for normalization: {missing_cols}")
-        return df  # or handle the missing columns as appropriate
+        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
+        return X_train  # or handle the missing columns as appropriate
+
+    # Add a check to ensure all columns are present in X_test
+    missing_cols = [col for col in f if col not in X_test.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
+        return X_test  # or handle the missing columns as appropriate
 
     scaler = StandardScaler()
-    df[f] = scaler.fit_transform(df[f])
-    return df
+    X_train[f] = scaler.fit_transform(X_train[f])
+    X_test[f] = scaler.transform(X_test[f])
+
+    logger.info("Continuous variables normalized in both training and test set.")
+
+    return X_train, X_test
 
 
 def impute_missing_values(df, strategy='mean'):
@@ -243,10 +296,7 @@ def apply_adasyn(X_train, y_train, strategy="auto"):
     # Rounding off binary columns to the nearest integers (0 or 1)
     binary_columns = [col for col in X_resampled.columns if X_resampled[col].nunique() == 2]
     X_resampled[binary_columns] = np.round(X_resampled[binary_columns])
-    unique_values_1 = X_resampled['SubstanceUseTrajectory_1.0'].unique()
-    unique_values_2 = X_resampled['SubstanceUseTrajectory_2.0'].unique()
-    # print(unique_values_1, unique_values_2)
-    # exit()
+
     return X_resampled, y_resampled
 
 

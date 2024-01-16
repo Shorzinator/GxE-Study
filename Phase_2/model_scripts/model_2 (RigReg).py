@@ -38,11 +38,16 @@ def train_model(X_train, y_train):
 # Main function to run the model training and evaluation
 def main(target_variable):
     if target_variable == "AntisocialTrajectory":
-        file_path_old = file_path_old_ast
-        file_path_new = file_path_new_ast
+        X_train = load_data("../preprocessed_data/AST_old/X_train_old_AST.csv")
+        X_test = load_data("../preprocessed_data/AST_old/X_test_old_AST.csv")
+        y_train = load_data("../preprocessed_data/AST_old/y_train_old_AST.csv")
+        y_test = load_data("../preprocessed_data/AST_old/y_test_old_AST.csv")
+
     else:
-        file_path_old = file_path_old_sut
-        file_path_new = file_path_new_sut
+        X_train = load_data("../preprocessed_data/SUT_old/X_train_old_.csv")
+        X_test = load_data("../preprocessed_data/SUT_old/X_test_old_AST.csv")
+        y_train = load_data("../preprocessed_data/SUT_old/y_train_old_AST.csv")
+        y_test = load_data("../preprocessed_data/SUT_old/y_test_old_AST.csv")
 
     # Load the data
     df_old = load_data(file_path_old)

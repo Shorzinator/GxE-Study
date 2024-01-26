@@ -6,7 +6,7 @@ from Phase_2.preprocessing_scripts.preprocessing_utils import (initial_cleaning,
                                                                save_preprocessed_data, apply_smote_nc,
                                                                standard_scaling_continuous_variables_new, load_new_data,
                                                                handle_categorical_variables,
-                                                               encode_categorical_variables)
+                                                               encode_categorical_variables, apply_smote)
 
 from config import FEATURES_FOR_AST_new, FEATURES_FOR_SUT_new
 
@@ -42,7 +42,7 @@ def preprocessing_pipeline(features, target, file_path_to_save):
     X_train, X_test, y_train, y_test = split_data(df, target)
 
     # Apply Yeo-Johnson transformations
-    X_train, X_test = apply_yeojohnson_transformation(X_train, X_test)
+    # X_train, X_test = apply_yeojohnson_transformation(X_train, X_test)
 
     # Apply StandardScaler
     X_train, X_test = standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, target)
@@ -53,28 +53,36 @@ def preprocessing_pipeline(features, target, file_path_to_save):
 
     # Apply encoding
     if target == 'AntisocialTrajectory':
-        X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'SubstanceUseTrajectory', baseline=3)
+        # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'SubstanceUseTrajectory', baseline=3)
+        # X_train.fillna(0, inplace=True)
+        # X_test.fillna(0, inplace=True)
+        # categorical_indices = [X_train.columns.get_loc(col) for col in
+        #                        ['SubstanceUseTrajectory_1.0', 'SubstanceUseTrajectory_2.0']]
+
+        # categorical_indices = [X_train.columns.get_loc(col) for col in
+        #                        ["SubstanceUseTrajectory_1.0", "SubstanceUseTrajectory_2.0", "Race_1.0", "Race_2.0",
+        #                         "Race_3.0", "Race_4.0", "Race_5.0"]]
+
+        categorical_indices = [X_train.columns.get_loc(col) for col in
+                               ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
+        X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
+        # X_train, y_train = apply_smote(X_train, y_train)
 
     elif target == 'SubstanceUseTrajectory':
-        X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'AntisocialTrajectory', baseline=4)
+        # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'AntisocialTrajectory', baseline=4)
+        # X_train.fillna(0, inplace=True)
+        # X_test.fillna(0, inplace=True)
+        # categorical_indices = [X_train.columns.get_loc(col) for col in
+        #                        ["AntisocialTrajectory_1.0", "AntisocialTrajectory_2.0", "AntisocialTrajectory_3.0"]]
 
-    X_train.fillna(0, inplace=True)
-    X_test.fillna(0, inplace=True)
+        # categorical_indices = [X_train.columns.get_loc(col) for col in
+        #                        ["AntisocialTrajectory_1.0", "AntisocialTrajectory_2.0", "AntisocialTrajectory_3.0",
+        #                         "Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0", "Race_5.0"]]
 
-    # Now access the training data that was preprocessed and saved, to resample
-    if target == "AntisocialTrajectory":
         categorical_indices = [X_train.columns.get_loc(col) for col in
-                               ["SubstanceUseTrajectory_1.0", "SubstanceUseTrajectory_2.0", "Race_1.0", "Race_2.0",
-                                "Race_3.0", "Race_4.0", "Race_5.0"]]
+                               ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
         X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
-
-    else:
-        categorical_indices = [X_train.columns.get_loc(col) for col in
-                               ["AntisocialTrajectory_1.0", "AntisocialTrajectory_2.0", "AntisocialTrajectory_3.0",
-                                "Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0", "Race_5.0"]]
-        X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
-
-    # print("after:", y_train.value_counts())
+        # X_train, y_train = apply_smote(X_train, y_train)
 
     # Saving the splits
     if target == "AntisocialTrajectory":
@@ -107,4 +115,4 @@ if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
 
-    main(target_2)
+    main(target_1)

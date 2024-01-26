@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import scipy
 from sklearn.preprocessing import PowerTransformer
-from imblearn.over_sampling import ADASYN
+from imblearn.over_sampling import ADASYN, SMOTE
 from matplotlib import pyplot as plt
 from scipy.stats import yeojohnson
 from sklearn.compose import ColumnTransformer
@@ -171,6 +171,9 @@ def encode_categorical_variables(X_train, X_test, categorical_features):
     X_train_transformed_df = pd.DataFrame(X_train_transformed, columns=all_columns, index=X_train.index)
     X_test_transformed_df = pd.DataFrame(X_test_transformed, columns=all_columns, index=X_test.index)
 
+    X_test_transformed_df.drop("Race_5.0", axis=1, inplace=True)
+    X_train_transformed_df.drop("Race_5.0", axis=1, inplace=True)
+
     return X_train_transformed_df, X_test_transformed_df
 
 
@@ -180,6 +183,7 @@ def encode_ast_sut_variable(X_train, X_test, target, column, baseline):
     This function fits the encoder on the training data and applies it to both training and test data.
     :param X_train: Training DataFrame
     :param X_test: Test DataFrame
+    :param target: AST or SUT
     :param column: Column to be encoded
     :param baseline: Baseline category to be excluded
     :return: Transformed Training and Test DataFrames
@@ -224,7 +228,8 @@ def encode_ast_sut_variable(X_train, X_test, target, column, baseline):
 def standard_scaling_continuous_variables_old(X_train, X_test, feature_cols, target):
     f = feature_cols.copy()
     f.remove("Is_Male")
-    f.remove("PolygenicScoreEXT_x_Is_Male")
+    f.remove("PolygenicScoreEXT")
+    # f.remove("PolygenicScoreEXT_x_Is_Male")
 
     if target == "AntisocialTrajectory":
         f.remove("SubstanceUseTrajectory")
@@ -255,8 +260,9 @@ def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, tar
     f = feature_cols.copy()
 
     f.remove("Is_Male")
-    f.remove("PolygenicScoreEXT_x_Is_Male")
     f.remove("Race")
+    # f.remove("PolygenicScoreEXT_x_Is_Male")
+    f.remove("PolygenicScoreEXT")
 
     if target == "AntisocialTrajectory":
         f.remove("SubstanceUseTrajectory")
@@ -300,11 +306,33 @@ def apply_adasyn(X_train, y_train, strategy="auto"):
     return X_resampled, y_resampled
 
 
-def apply_smote_nc(X_train, y_train, categorical_features_indices):
+def apply_smote(X_train, y_train):
+    """
+    Balances the data using SMOTE.
+
+    :param X_train: DataFrame, training data
+    :param y_train: Series, training target variable
+    :return: DataFrames, resampled training data and target variable
+    """
+    logger.info("Balancing data.")
+
+    smote = SMOTE(random_state=0, k_neighbors=10, sampling_strategy="minority")
+    X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+
+    if y_train.columns == "AntisocialTrajectory":
+        X_resampled["SubstanceUseTrajectory"] = X_resampled["SubstanceUseTrajectory"].round(0)
+    else:
+        X_resampled["AntisocialTrajectory"] = X_resampled["AntisocialTrajectory"].round(0)
+
+    return X_resampled, y_resampled
+
+
+def apply_smote_nc(X_train, y_train, categorical_features_indices=None):
     from imblearn.over_sampling import SMOTENC
 
     smote_nc = SMOTENC(categorical_features=categorical_features_indices, random_state=42)
     X_resampled, y_resampled = smote_nc.fit_resample(X_train, y_train)
+
     return X_resampled, y_resampled
 
 
@@ -348,6 +376,34 @@ def initial_cleaning(df, features, target):
     logger.info("Initial cleaning and feature engineering completed.")
 
     return df, feature_cols
+
+
+def initial_cleaning_without_genetics(df, target):
+    df.drop("ID", axis=1, inplace=True)
+    df.drop("PolygenicScoreEXT", axis=1, inplace=True)
+
+    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+    df.drop("Sex", inplace=True, axis=1)
+
+    # Handling outliers
+    features_to_handle_outliers = ['DelinquentPeer', 'SchoolConnect', 'NeighborConnect',
+                                   'ParentalWarmth', 'Age']  # Adjust as needed
+
+    for feature in features_to_handle_outliers:  # Define this list based on the dataset
+        df = remove_outliers(df, feature)
+
+    # Drop rows where the target variable is missing
+    initial_rows = len(df)
+    df = df.dropna(subset=[target])
+    rows_after_dropping = len(df)
+    logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values...")
+
+    # Replace -0 with 0 in the DataFrame
+    df = df.replace(-0, 0)
+
+    logger.info("Initial cleaning completed.")
+
+    return df
 
 
 def plot_feature_distribution(df, feature):

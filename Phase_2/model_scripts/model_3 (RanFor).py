@@ -66,13 +66,13 @@ def plot_feature_importance(model, feature_names, X_train, name="new_train"):
     plt.ylabel("Importance", fontsize=14)
     plt.xlim([-1, X_train.shape[1]])
     plt.tight_layout()  # Adjust layout
-    plt.savefig(f"../results/modeling/{name}_learning_curve")
+    plt.savefig(f"../results/modeling/{name}_feature_importance")
     plt.show()
 
 
 # Function to train Random Forest model
 def train_model(X_train, y_train):
-    model = RandomForestRegressor(n_estimators=1000, random_state=42)
+    model = RandomForestRegressor(n_estimators=500, random_state=42)
     model.fit(X_train, y_train)
     return model
 
@@ -121,14 +121,14 @@ def main(target_variable):
     model_new = deepcopy(model_old)
     model_new.fit(X_train_new, y_train_new)  # Continue training on the new dataset
 
+    # Evaluate the transferred model on the new test set
+    r2_new = evaluate_model(model_new, X_test_new, y_test_new)
+    print(f'R-squared on New Dataset for {target_variable}: {r2_new}')
+
     # Plot learning curve for the new data model
     # plot_learning_curve(model_new, f"Learning Curve for {target_variable} (New Data)", X_train_new, y_train_new,
     #                     cv=5)
     # plot_feature_importance(model_new, X_train_new.columns, X_train_new)
-
-    # Evaluate the transferred model on the new test set
-    r2_new = evaluate_model(model_new, X_test_new, y_test_new)
-    print(f'R-squared on New Dataset for {target_variable}: {r2_new}')
 
 
 if __name__ == "__main__":

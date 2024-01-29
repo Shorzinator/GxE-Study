@@ -14,10 +14,11 @@ def run_preprocessing(target):
 
     for script in scripts:
         subprocess.call([python_exe, script, target])
+        print()
 
 
 if __name__ == "__main__":
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
 
-    run_preprocessing(target_1)
+    run_preprocessing(target_2)

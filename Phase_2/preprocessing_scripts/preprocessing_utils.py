@@ -3,7 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 import scipy
-from sklearn.preprocessing import PowerTransformer
+from sklearn.preprocessing import PowerTransformer, RobustScaler
 from imblearn.over_sampling import ADASYN, SMOTE
 from matplotlib import pyplot as plt
 from scipy.stats import yeojohnson
@@ -256,6 +256,37 @@ def standard_scaling_continuous_variables_old(X_train, X_test, feature_cols, tar
     return X_train, X_test
 
 
+def robust_scaling_continuous_variables_old(X_train, X_test, feature_cols, target):
+    f = feature_cols.copy()
+    f.remove("Is_Male")
+    f.remove("PolygenicScoreEXT")
+    # f.remove("PolygenicScoreEXT_x_Is_Male")
+
+    if target == "AntisocialTrajectory":
+        f.remove("SubstanceUseTrajectory")
+    else:
+        f.remove("AntisocialTrajectory")
+
+    # Add a check to ensure all columns are present
+    missing_cols = [col for col in f if col not in X_train.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
+        return X_train  # or handle the missing columns as appropriate
+
+    missing_cols = [col for col in f if col not in X_test.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
+        return X_test  # or handle the missing columns as appropriate
+
+    scaler = RobustScaler()
+    X_train[f] = scaler.fit_transform(X_train[f])
+    X_test[f] = scaler.transform(X_test[f])
+
+    logger.info("Continuous variables normalized in both training and test set.")
+
+    return X_train, X_test
+
+
 def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, target):
     f = feature_cols.copy()
 
@@ -282,6 +313,40 @@ def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, tar
         return X_test  # or handle the missing columns as appropriate
 
     scaler = StandardScaler()
+    X_train[f] = scaler.fit_transform(X_train[f])
+    X_test[f] = scaler.transform(X_test[f])
+
+    logger.info("Continuous variables normalized in both training and test set.")
+
+    return X_train, X_test
+
+
+def robust_scaling_continuous_variables_new(X_train, X_test, feature_cols, target):
+    f = feature_cols.copy()
+
+    f.remove("Is_Male")
+    f.remove("Race")
+    # f.remove("PolygenicScoreEXT_x_Is_Male")
+    f.remove("PolygenicScoreEXT")
+
+    if target == "AntisocialTrajectory":
+        f.remove("SubstanceUseTrajectory")
+    else:
+        f.remove("AntisocialTrajectory")
+
+    # Add a check to ensure all columns are present in X_train
+    missing_cols = [col for col in f if col not in X_train.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
+        return X_train  # or handle the missing columns as appropriate
+
+    # Add a check to ensure all columns are present in X_test
+    missing_cols = [col for col in f if col not in X_test.columns]
+    if missing_cols:
+        logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
+        return X_test  # or handle the missing columns as appropriate
+
+    scaler = RobustScaler()
     X_train[f] = scaler.fit_transform(X_train[f])
     X_test[f] = scaler.transform(X_test[f])
 
@@ -356,7 +421,7 @@ def initial_cleaning(df, features, target):
     # Handling outliers
     features_to_handle_outliers = ['PolygenicScoreEXT', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect',
                                    'ParentalWarmth', 'Age']  # Adjust as needed
-    for feature in features_to_handle_outliers:  # Define this list based on your dataset
+    for feature in features_to_handle_outliers:  # Define this list based on the dataset
         df = remove_outliers(df, feature)
 
     # Drop rows where the target variable is missing

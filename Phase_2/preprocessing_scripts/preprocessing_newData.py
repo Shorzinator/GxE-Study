@@ -1,13 +1,11 @@
 import logging
 
 from Phase_2.model_scripts.model_utils import split_data
-from Phase_2.preprocessing_scripts.preprocessing_utils import (initial_cleaning, handle_family_clusters, \
-                                                               apply_yeojohnson_transformation, encode_ast_sut_variable,
-                                                               save_preprocessed_data, apply_smote_nc,
-                                                               standard_scaling_continuous_variables_new, load_new_data,
-                                                               handle_categorical_variables,
-                                                               encode_categorical_variables, apply_smote)
-
+from Phase_2.preprocessing_scripts.preprocessing_utils import (apply_smote, apply_smote_nc,
+                                                               encode_categorical_variables,
+                                                               handle_family_clusters, initial_cleaning, load_new_data,
+                                                               robust_scaling_continuous_variables_new,
+                                                               save_preprocessed_data)
 from config import FEATURES_FOR_AST_new, FEATURES_FOR_SUT_new
 
 logging.basicConfig(level=logging.DEBUG)
@@ -30,7 +28,8 @@ def preprocessing_pipeline(features, target, file_path_to_save):
 
     # Load data
     df = load_new_data()
-    df = df.dropna(subset=['Race'])
+    df = df.dropna(subset=["Race"])
+    df = df.drop(df[df["Race"] == 5].index)
 
     # Initial cleaning and feature engineering
     df, feature_cols = initial_cleaning(df, features, target)
@@ -41,15 +40,12 @@ def preprocessing_pipeline(features, target, file_path_to_save):
     # Splitting the datasets to prevent data/information leakage
     X_train, X_test, y_train, y_test = split_data(df, target)
 
-    # Apply Yeo-Johnson transformations
-    # X_train, X_test = apply_yeojohnson_transformation(X_train, X_test)
-
-    # Apply StandardScaler
-    X_train, X_test = standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, target)
+    # Apply Scaling
+    X_train, X_test = robust_scaling_continuous_variables_new(X_train, X_test, feature_cols, target)
 
     # Encoding the Race feature
-    categorical_features = ["Race"]
-    X_train, X_test = encode_categorical_variables(X_train, X_test, categorical_features)
+    # categorical_features = ["Race"]
+    # X_train, X_test = encode_categorical_variables(X_train, X_test, categorical_features)
 
     # Apply encoding
     if target == 'AntisocialTrajectory':
@@ -60,11 +56,10 @@ def preprocessing_pipeline(features, target, file_path_to_save):
         #                        ['SubstanceUseTrajectory_1.0', 'SubstanceUseTrajectory_2.0']]
 
         # categorical_indices = [X_train.columns.get_loc(col) for col in
-        #                        ["SubstanceUseTrajectory_1.0", "SubstanceUseTrajectory_2.0", "Race_1.0", "Race_2.0",
-        #                         "Race_3.0", "Race_4.0", "Race_5.0"]]
+        #                        ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
 
         categorical_indices = [X_train.columns.get_loc(col) for col in
-                               ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
+                               ["Race", "SubstanceUseTrajectory"]]
         X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
         # X_train, y_train = apply_smote(X_train, y_train)
 
@@ -76,11 +71,10 @@ def preprocessing_pipeline(features, target, file_path_to_save):
         #                        ["AntisocialTrajectory_1.0", "AntisocialTrajectory_2.0", "AntisocialTrajectory_3.0"]]
 
         # categorical_indices = [X_train.columns.get_loc(col) for col in
-        #                        ["AntisocialTrajectory_1.0", "AntisocialTrajectory_2.0", "AntisocialTrajectory_3.0",
-        #                         "Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0", "Race_5.0"]]
+        #                        ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
 
         categorical_indices = [X_train.columns.get_loc(col) for col in
-                               ["Race_1.0", "Race_2.0", "Race_3.0", "Race_4.0"]]
+                               ["Race", "AntisocialTrajectory"]]
         X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
         # X_train, y_train = apply_smote(X_train, y_train)
 
@@ -103,10 +97,10 @@ def main(TARGET):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST_new
-        SAVE_PATH = "../preprocessed_data/AST_new/"
+        SAVE_PATH = "../preprocessed_data/with_PGS/AST_new/"
     else:
         FEATURES = FEATURES_FOR_SUT_new
-        SAVE_PATH = "../preprocessed_data/SUT_new/"
+        SAVE_PATH = "../preprocessed_data/with_PGS/SUT_new/"
 
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH)
 
@@ -115,4 +109,4 @@ if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
 
-    main(target_1)
+    main(target_2)

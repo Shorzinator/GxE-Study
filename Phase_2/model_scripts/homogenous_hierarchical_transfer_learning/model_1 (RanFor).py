@@ -42,6 +42,8 @@ def load_data_splits(target_variable, pgs_1="with", pgs_2="without"):
 
 # Function to train a Random Forest model
 def train_model(X_train, y_train):
+    # Tuned parameters: n_estimators=650, max_depth=30, bootstrap=False, max_features='log2',
+    #                                       min_samples_split=8, random_state=42
     model = RandomForestRegressor(n_estimators=650, random_state=42, max_depth=30, bootstrap=False, max_features="log2",
                                   min_samples_split=8)
     model.fit(X_train, y_train)
@@ -107,7 +109,7 @@ def main(target_variable, race_column="Race"):
     X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old = (
         load_data_splits(target_variable))
 
-    # Flatten y_train_new and y_test_new if they are not already 1-dimensional
+    # Flatten y_train and y_test if they are not already 1-dimensional
     y_train_new = y_train_new.values.ravel()
     y_test_new = y_test_new.values.ravel()
     y_train_old = y_train_old.values.ravel()

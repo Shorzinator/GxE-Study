@@ -7,13 +7,13 @@ import warnings
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from config import COMBINED, FEATURES as allFeatures, TARGET_1
+from Phase_1.project_scripts import balance_data, preprocess_multinomial, scaling_applier
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import *
-from Phase_1.project_scripts.utility.data_loader import load_data
+from utility.data_loader import load_data
 from utility.model_utils import add_interaction_terms, \
     calculate_metrics, ensure_directory_exists, save_results, train_model
-from Phase_1.project_scripts.utility.path_utils import get_path_from_root
+from utility.path_utils import get_path_from_root
 
 warnings.simplefilter("ignore", category=FutureWarning)
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -28,12 +28,12 @@ RESULTS_DIR = get_path_from_root("results", "multi_class", f"{MODEL_NAME}_result
 TYPE_OF_CLASSIFICATION = "multinomial"
 
 
-def main():
+def main(target):
     logging.info(f"Starting multinomial logistic regression ...")
 
     ensure_directory_exists(RESULTS_DIR)
 
-    # Subdirectories for model and metrics
+    # Subdirectories for a model and metrics
     model_dir = os.path.join(RESULTS_DIR, "models")
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
 
@@ -114,36 +114,8 @@ def main():
         logger.info("Calculating Metrics...\n")
 
         # Calculate metrics
-        train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, TARGET_1, "train")
-        test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, TARGET_1, "test")
-
-        # Saving the model
-        # joblib.dump(grid_search, os.path.join(model_dir, f"multinomial_logistic_regression_{COMBINED}.pkl"))
-
-        # If the param_grid is not commented out, grid search would run and hence this would run as well
-        if param_grid:
-
-            # Saving the best parameters
-            best_parameters = best_model.best_params_
-            results_path = os.path.join(model_dir, f"best_parameters_{COMBINED}.json")
-
-            # Check if the file exists
-            if os.path.exists(results_path):
-                # Read the current content of the JSON file
-                with open(results_path, 'r') as f:
-                    data = json.load(f)
-            else:
-                data = {}
-
-            # Append new results to the data
-            data['run_{}'.format(len(data) + 1)] = best_parameters
-
-            # Write the updated data back to the JSON file
-            with open(results_path, 'w') as f:
-                json.dump(data, f, indent=4)
-
-            # Saving the best estimator
-            best_model.dump(best_model, os.path.join(model_dir, f"best_estimator_{COMBINED}.pkl"))
+        train_metrics = calculate_metrics(y_train_resampled, y_train_pred, MODEL_NAME, target, "train")
+        test_metrics = calculate_metrics(y_test, y_test_pred, MODEL_NAME, target, "test")
 
         # Append the results
         results.append({
@@ -152,9 +124,11 @@ def main():
             "test_metrics": test_metrics
         })
 
-    logging.info(f"Saving results ...")
-    save_results(TARGET_1, TYPE_OF_CLASSIFICATION, results, metrics_dir)
+    # logging.info(f"Saving results ...")
+    # save_results(target, TYPE_OF_CLASSIFICATION, results, metrics_dir)
 
 
 if __name__ == "__main__":
-    main()
+    target_1 = "AntisocialTrajectory"
+    target_2 = "SubstanceUseTrajectory"
+    main(target_1)

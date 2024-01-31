@@ -3,7 +3,6 @@ import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from sklearn.metrics import r2_score, mean_squared_error
@@ -89,12 +88,6 @@ def neighborhood_regression(target):
         X = sm.add_constant(data_combined[predictors])
         model = sm.OLS(data_combined[target_var], X).fit()
 
-        # y_pred = model.predict(X)
-
-        # Evaluate the model
-        # evaluation_results = evaluate_model(y, y_pred, model_type='regression')
-        # print(f"Evaluation results for target {target_var}:", evaluation_results)
-
         # Add significant predictors as edges to the graph
         for predictor in predictors:
             coef = model.params[predictor]
@@ -118,37 +111,28 @@ def neighborhood_regression(target):
     # Save to CSV
     edges_df.to_csv(os.path.join(metrics_dir, f'edges_data_{target}.csv'), index=False)
 
-    # Layout 2
     # Assuming E_variables has at least one item
-    min_pos, max_pos = -20, 20
-    step = (max_pos - min_pos) / (len(E_variables) - 1) if len(E_variables) > 1 else 0
-
     spacing = 5  # This value controls the gap. Increase it to space out nodes more.
     pos = {node: (0, i + spacing) for i, node in enumerate(G_variables)}
     pos.update({node: (1, i) for i, node in enumerate(E_variables)})
     pos.update({node: (2, i + spacing) for i, node in enumerate(O_variables)})
 
-    initial_pos = pos
-
-    # Layout 3
-    pos = nx.spring_layout(graph, pos=initial_pos, k=2.0 / np.sqrt(graph.number_of_nodes()), iterations=50)
-
     # Visualization
     node_colors = ["#1f77b4" if node in G_variables else "#ff7f0e" if node in E_variables else "#2ca02c" for node in
                    graph.nodes()]
-    node_sizes = [100 + 5 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
+    node_sizes = [500 + 10 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
 
     plt.figure(figsize=(12, 12))
-    nx.draw(graph, pos, with_labels=True, node_size=node_sizes, node_color=node_colors, font_size=15,
+    nx.draw(graph, pos, with_labels=True, node_size=600, node_color=node_colors, font_size=20,
             width=edge_weights, edge_color=edge_colors, edge_cmap=plt.cm.Blues, edge_vmin=0, edge_vmax=1,
             font_weight="bold", alpha=0.9)
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10, alpha=0.7)
     plt.title(f"Feature Relationships Graph for {target}")
-    # plt.savefig(f"{target}_neighborhood_regression_layers.png")
+    plt.savefig(f"{target}_neighborhood_regression_layers.png")
     plt.show()
 
 
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
-    neighborhood_regression(target=target_1)
+    neighborhood_regression(target_1)

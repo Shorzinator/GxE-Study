@@ -72,7 +72,7 @@ def plot_feature_importance(model, feature_names, X_train, name="new_train"):
 
 # Function to train a Random Forest model
 def train_model(X_train, y_train):
-    model = RandomForestRegressor(n_estimators=200, random_state=42)
+    model = RandomForestRegressor(n_estimators=650, random_state=42)
     model.fit(X_train, y_train)
     return model
 
@@ -82,10 +82,10 @@ def main(target_variable):
     pgs_1 = "with"
     pgs_2 = "without"
     if target_variable == "AntisocialTrajectory":
-        X_train_old = load_data(f"../preprocessed_data/{pgs_2}_PGS/AST_old/X_train_old_AST.csv")
-        X_test_old = load_data(f"../preprocessed_data/{pgs_2}_PGS/AST_old/X_test_old_AST.csv")
-        y_train_old = load_data(f"../preprocessed_data/{pgs_2}_PGS/AST_old/y_train_old_AST.csv")
-        y_test_old = load_data(f"../preprocessed_data/{pgs_2}_PGS/AST_old/y_test_old_AST.csv")
+        X_train_old = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_old/X_train_old_AST.csv")
+        X_test_old = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_old/X_test_old_AST.csv")
+        y_train_old = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_old/y_train_old_AST.csv")
+        y_test_old = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_old/y_test_old_AST.csv")
 
         X_train_new = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_new/X_train_new_AST.csv")
         X_test_new = load_data(f"../preprocessed_data/{pgs_1}_PGS/AST_new/X_test_new_AST.csv")
@@ -138,4 +138,4 @@ if __name__ == "__main__":
     target_2 = "SubstanceUseTrajectory"
 
     # Run the main function
-    main(target_2)
+    main(target_1)

@@ -44,7 +44,7 @@ def load_data_splits(target_variable, pgs_1="with", pgs_2="without"):
 def train_model(X_train, y_train):
     # Tuned parameters: n_estimators=650, max_depth=30, bootstrap=False, max_features='log2',
     #                                       min_samples_split=8, random_state=42
-    model = RandomForestRegressor(n_estimators=650, random_state=42, max_depth=30, bootstrap=False, max_features="log2",
+    model = RandomForestRegressor(n_estimators=100, random_state=42, max_depth=30, bootstrap=False, max_features="log2",
                                   min_samples_split=8)
     model.fit(X_train, y_train)
     return model
@@ -124,16 +124,16 @@ def main(target_variable, race_column="Race"):
     # print("Best base model parameters found:", base_model.get_params())
 
     # Evaluate the base model
-    r2_base = evaluate_model(base_model, X_test_old, y_test_old)
-    print(f"R-squared for base model: {r2_base}")
+    acc_base = evaluate_model(base_model, X_test_old, y_test_old)
+    print(f"R-squared for base model: {acc_base}")
 
     # Step 2: Apply transfer learning with new data (excluding race)
     intermediate_model = deepcopy(base_model)
     intermediate_model.fit(X_train_new.drop(columns=race_column), y_train_new)
 
     # Evaluate intermediate model on the new test set (excluding race)
-    r2_intermediate = evaluate_model(intermediate_model, X_test_new.drop(columns=race_column), y_test_new)
-    print(f"R-squared for intermediate model (excluding race): {r2_intermediate}")
+    acc_interim = evaluate_model(intermediate_model, X_test_new.drop(columns=race_column), y_test_new)
+    print(f"R-squared for intermediate model (excluding race): {acc_interim}")
 
     # Step 3: Train final models for each race using new data
     final_models = {}
@@ -149,8 +149,8 @@ def main(target_variable, race_column="Race"):
         # Evaluate the final model for this race on new test set
         race_X_test = X_test_new[X_test_new[race_column] == race].drop(columns=race_column)
         race_y_test = y_test_new[X_test_new[race_column] == race]
-        r2_final = evaluate_model(final_model, race_X_test, race_y_test)
-        print(f"R-squared for final model (race {race}): {r2_final}")
+        acc_final = evaluate_model(final_model, race_X_test, race_y_test)
+        print(f"R-squared for final model (race {race}): {acc_final}")
 
 
 if __name__ == "__main__":

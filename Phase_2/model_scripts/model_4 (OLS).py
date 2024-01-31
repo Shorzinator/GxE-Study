@@ -3,7 +3,6 @@ import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
-import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from sklearn.metrics import r2_score, mean_squared_error
@@ -22,13 +21,12 @@ def load_data(file_path):
     return pd.read_csv(file_path)
 
 
-def evaluate_model(y_true, y_pred, model_type='regression'):
+def evaluate_model(y_true, y_pred):
     """
     Evaluate the model on various metrics.
 
     :param y_true: True target values.
     :param y_pred: Predicted target values.
-    :param model_type: Type of the model - 'regression' or 'classification'.
     :return: Dictionary of various evaluation metrics.
     """
     return {
@@ -74,8 +72,8 @@ def ols(target):
         y_true = data_combined[target_var]
 
         # Evaluate the model
-        evaluation_results = evaluate_model(y_true, y_pred, model_type='regression')
-        # print(f"Evaluation results for target {target_var}:", evaluation_results)
+        evaluation_results = evaluate_model(y_true, y_pred)
+        print(f"Evaluation results for target {target_var}:", evaluation_results)
 
         # Add significant predictors as edges to the graph
         for predictor in predictors:
@@ -85,6 +83,7 @@ def ols(target):
             # Add edge only if significant and not a constant term
             if p_value < 0.05 and predictor != 'const':
                 graph.add_edge(predictor, target_var, weight=abs(coef) * 5, p_value=p_value, label=f"{coef:.2f}")
+
     logger.info("Prediction Done.\n")
 
     # Prepare for visualization
@@ -98,27 +97,30 @@ def ols(target):
         [{'From': u, 'To': v, 'Weight': graph[u][v]['label'], 'P-value': graph[u][v]['p_value']} for u, v in
          graph.edges()])
 
-    spacing = 10  # This value controls the gap. Increase it to space out nodes more.
+    # Save to CSV
+    edges_df.to_csv(os.path.join(metrics_dir, f'edges_data_{target}.csv'), index=False)
+
+    # Assuming E_variables has at least one item
+    spacing = 5  # This value controls the gap. Increase it to space out nodes more.
     pos = {node: (0, i + spacing) for i, node in enumerate(G_variables)}
     pos.update({node: (1, i) for i, node in enumerate(E_variables)})
     pos.update({node: (2, i + spacing) for i, node in enumerate(O_variables)})
 
-    # Layout 3
-    pos = nx.spring_layout(graph, pos=pos, k=2.0 / np.sqrt(graph.number_of_nodes()), iterations=50)
-
     # Visualization
     node_colors = ["#1f77b4" if node in G_variables else "#ff7f0e" if node in E_variables else "#2ca02c" for node in
                    graph.nodes()]
-    node_sizes = [100 + 5 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
 
     plt.figure(figsize=(12, 12))
-    nx.draw(graph, pos, with_labels=True, node_size=node_sizes, node_color=node_colors, font_size=15,
+    nx.draw(graph, pos, with_labels=True, node_size=600, node_color=node_colors, font_size=20,
             width=edge_weights, edge_color=edge_colors, edge_cmap=plt.cm.Blues, edge_vmin=0, edge_vmax=1,
             font_weight="bold", alpha=0.9)
+
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10, alpha=0.7)
+
     plt.title(f"Feature Relationships Graph for {target}")
-    logger.info("Saving graph.\n")
-    plt.savefig(f"../results/modeling/{target}_neighborhood_regression_layers.png")
+    plt.axis('off')  # Turn off the axis
+    plt.tight_layout()  # Adjust the layout
+    # plt.savefig(f"../results/modeling/{target}_neighborhood_regression_layers.jpg", dpi=600)
     plt.show()
 
 

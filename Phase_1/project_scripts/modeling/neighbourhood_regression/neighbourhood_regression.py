@@ -109,7 +109,7 @@ def neighborhood_regression(target):
          graph.edges()])
 
     # Save to CSV
-    edges_df.to_csv(os.path.join(metrics_dir, f'edges_data_{target}.csv'), index=False)
+    # edges_df.to_csv(os.path.join(metrics_dir, f'edges_data_{target}.csv'), index=False)
 
     # Assuming E_variables has at least one item
     spacing = 5  # This value controls the gap. Increase it to space out nodes more.

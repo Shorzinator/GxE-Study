@@ -2,7 +2,7 @@ import os
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import r2_score
+from sklearn.metrics import r2_score, accuracy_score
 from sklearn.model_selection import RandomizedSearchCV, train_test_split
 
 
@@ -20,9 +20,17 @@ def split_data(df, target):
 
 
 # Function to evaluate model
+# def evaluate_model(model, X_test, y_test):
+#     predictions = model.predict(X_test)
+#     return r2_score(y_test, predictions)
+
+
 def evaluate_model(model, X_test, y_test):
+    # Get the predicted probabilities for each class
     predictions = model.predict(X_test)
-    return r2_score(y_test, predictions)
+    rounded_predictions = np.round(predictions)
+
+    return accuracy_score(y_test, rounded_predictions)
 
 
 # Function to perform randomized search on RandomForestRegressor

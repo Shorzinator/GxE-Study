@@ -35,7 +35,7 @@ def evaluate_model(model, X_test, y_test, algo_type="classification"):
 def tune_random_forest(model, X_train, y_train):
     # Define the parameter space to explore
     param_distributions = {
-        'n_estimators': np.arange(100, 1001, 50),
+        'n_estimators': np.arange(300, 1001, 50),
         'max_depth': [None] + list(np.arange(10, 101, 10)),
         'min_samples_split': np.arange(2, 21, 2),
         'min_samples_leaf': np.arange(1, 21, 2),
@@ -48,7 +48,7 @@ def tune_random_forest(model, X_train, y_train):
 
     # Initialize RandomizedSearchCV
     rf_random = RandomizedSearchCV(estimator=rf, param_distributions=param_distributions,
-                                   n_iter=100, cv=3, verbose=0, random_state=42, n_jobs=-1)
+                                   n_iter=100, cv=3, verbose=2, random_state=42, n_jobs=-1)
 
     # Fit RandomizedSearchCV to the data
     rf_random.fit(X_train, y_train)

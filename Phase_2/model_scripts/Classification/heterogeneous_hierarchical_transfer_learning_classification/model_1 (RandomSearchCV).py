@@ -7,7 +7,6 @@ from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
-from tqdm import tqdm
 from xgboost import XGBClassifier
 
 from Phase_2.model_scripts.model_utils import evaluate_model, random_search_tuning
@@ -62,9 +61,9 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'bootstrap': [True, False],
         },
         'SVC': {
-            'C': [10**i for i in range(-6, 7)],
+            'C': [10 ** i for i in range(-6, 7)],
             'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-            'gamma': ['scale', 'auto'] + [10**i for i in range(-9, 4)],
+            'gamma': ['scale', 'auto'] + [10 ** i for i in range(-9, 4)],
         },
         'GBM': {
             'n_estimators': [10, 50, 100, 200, 500, 1000],
@@ -84,12 +83,6 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'colsample_bytree': [0.5, 0.75, 1.0],
             'reg_alpha': [0, 1e-5, 1e-2, 0.1, 1, 100],
             'reg_lambda': [0, 1e-5, 1e-2, 0.1, 1, 100],
-        },
-        'DecisionTree': {
-            'criterion': ['gini', 'entropy'],
-            'max_depth': [None] + list(range(1, 21)),
-            'min_samples_split': range(2, 21),
-            'min_samples_leaf': range(1, 21),
         },
         'CatBoost': {
             'iterations': [100, 500, 1000],
@@ -124,24 +117,24 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         models = {
             # 'RandomForest': RandomForestClassifier(),
             # 'GBM': GradientBoostingClassifier(),
-            'XGBoost': XGBClassifier(eval_metric='logloss'),
-            'DecisionTree': DecisionTreeClassifier(),
-            'CatBoost': CatBoostClassifier(verbose=False),  # verbose=False to prevent lots of output during training
+            # 'XGBoost': XGBClassifier(eval_metric='logloss'),
+            'CatBoost': CatBoostClassifier(verbose=False, one_hot_max_size=4),
         }
 
         # Iterate through models and search spaces
         for model_name, model in models.items():
-            print(f"Training {model_name} for race {race}")
-            print()
-            # best_model, best_params = random_search_tuning(model, model_name, search_spaces, race_X_train,
-            # race_y_train)
-            # best_model.fit(race_X_train, race_y_train)
+            print(f"Training {model_name} for race {race}\n")
 
-            model.fit(race_X_train, race_y_train_mapped)
-            predictions_mapped = model.predict(race_X_test)
+            # Without Tuning
+            # predictions = model.predict(race_X_test)
+
+            # With Tuning
+            best_model, best_params = random_search_tuning(model, model_name, search_spaces, race_X_train,
+                                                           race_y_train)
+            predictions = best_model.predict(race_X_test)
 
             # Map predictions back to original labels
-            predictions = np.vectorize(inv_label_mapping.get)(predictions_mapped)
+            predictions = np.vectorize(inv_label_mapping.get)(predictions)
             performance = accuracy_score(race_y_test, predictions)
 
             # Evaluate the best model
@@ -149,9 +142,9 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             print(f'Performance: {performance}')
 
             # Store the best model, parameters, and performance
-            # race_models[(race, model_name)] = best_model
-            # race_best_params[(race, model_name)] = best_params
-            race_models[(race, model_name)] = model
+            # race_models[(race, model_name)] = model
+            race_models[(race, model_name)] = best_model
+            race_best_params[(race, model_name)] = best_params
             performance_metrics[(race, model_name)] = performance
 
     return race_models, race_best_params, performance_metrics

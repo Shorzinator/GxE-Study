@@ -126,7 +126,7 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         }
 
         # Iterate through models and search spaces
-        for model_name, model in models.items():
+        for model_name, model in tqdm(models.items(), desc=f"Training {model_name} for {race}"):
             print(f"Training {model_name} for race {race}")
             # Define the study for Optuna
             study = optuna.create_study(direction='maximize')

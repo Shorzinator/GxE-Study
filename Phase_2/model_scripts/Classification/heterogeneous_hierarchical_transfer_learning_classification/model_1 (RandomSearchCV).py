@@ -1,16 +1,15 @@
 from copy import deepcopy
 
 import pandas as pd
+from catboost import CatBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from tqdm import tqdm
 from xgboost import XGBClassifier
-from skopt import BayesSearchCV
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model, tune_random_forest
+from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
 
 
 # Function to load data
@@ -61,9 +60,6 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'max_features': ['sqrt', 'log2', None],
             'bootstrap': [True, False],
         },
-        'LogisticRegression': {
-            'C': [10**i for i in range(-6, 7)],
-        },
         'SVC': {
             'C': [10**i for i in range(-6, 7)],
             'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
@@ -93,10 +89,21 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'max_depth': [None] + list(range(1, 21)),
             'min_samples_split': range(2, 21),
             'min_samples_leaf': range(1, 21),
+        },
+        'CatBoost': {
+            'iterations': [100, 500, 1000],
+            'learning_rate': [0.01, 0.05, 0.1],
+            'depth': [4, 6, 10],
+            'l2_leaf_reg': [1, 3, 5, 7, 9],
+            'border_count': [32, 64, 128, 254],
+            'bootstrap_type': ['Bayesian', 'Bernoulli', 'MVS'],
         }
     }
 
     for race in tqdm(X_train_new[race_column].unique(), desc="Training and evaluating race-specific models"):
+
+        print()
+
         if race == 5:  # Skip the 'Other' category
             continue
 
@@ -108,11 +115,11 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         # Define models to be used
         models = {
             'RandomForest': RandomForestClassifier(),
-            'LogisticRegression': LogisticRegression(max_iter=10000),
             'SVC': SVC(probability=True),
             'GBM': GradientBoostingClassifier(),
             'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
-            'DecisionTree': DecisionTreeClassifier()
+            'DecisionTree': DecisionTreeClassifier(),
+            'CatBoost': CatBoostClassifier(verbose=False),  # verbose=False to prevent lots of output during training
         }
 
         # Iterate through models and search spaces
@@ -126,14 +133,6 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
                 n_jobs=-1,
                 random_state=42
             )
-
-            # opt = BayesSearchCV(
-            #     model,
-            #     search_spaces[model_name],
-            #     n_iter=30,  # Number of parameter settings sampled
-            #     cv=StratifiedKFold(3),
-            #     n_jobs=-1
-            # )
 
             # Fit the model
             random_search.fit(race_X_train, race_y_train)

@@ -3,8 +3,9 @@ from copy import deepcopy
 import pandas as pd
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
 from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
 from tqdm import tqdm
 from xgboost import XGBClassifier
 from skopt import BayesSearchCV
@@ -53,42 +54,46 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
     # Define search spaces for each model
     search_spaces = {
         'RandomForest': {
-            'n_estimators': (10, 1000),
-            'max_depth': (1, 100),
-            'min_samples_split': (2, 10),
-            'min_samples_leaf': (1, 10),
+            'n_estimators': range(200, 1000, 50),
+            'max_depth': [None] + list(range(1, 101, 10)),
+            'min_samples_split': range(2, 11, 2),
+            'min_samples_leaf': range(1, 11, 2),
             'max_features': ['sqrt', 'log2', None],
             'bootstrap': [True, False],
         },
         'LogisticRegression': {
-            'C': (1e-6, 1e+6, 'log-uniform'),
+            'C': [10**i for i in range(-6, 7)],
         },
         'SVC': {
-            'C': (1e-6, 1e+6, 'log-uniform'),
+            'C': [10**i for i in range(-6, 7)],
             'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
-            'gamma': (1e-6, 1e+1, 'log-uniform'),
+            'gamma': ['scale', 'auto'] + [10**i for i in range(-9, 4)],
         },
         'GBM': {
-            'n_estimators': (10, 1000),
-            'learning_rate': (0.001, 1.0, 'log-uniform'),
-            'max_depth': (3, 50),
-            'min_samples_split': (2, 10),
-            'min_samples_leaf': (1, 10),
-            'subsample': (0.5, 1.0),
+            'n_estimators': [10, 50, 100, 200, 500, 1000],
+            'learning_rate': [0.001, 0.01, 0.1, 0.2, 0.5, 1.0],
+            'max_depth': [3, 5, 10, 20, 50],
+            'min_samples_split': range(2, 11, 2),
+            'min_samples_leaf': range(1, 11, 2),
+            'subsample': [0.5, 0.75, 1.0],
             'max_features': ['sqrt', 'log2', None],
         },
         'XGBoost': {
-            'n_estimators': (10, 1000),
-            'learning_rate': (0.001, 1.0, 'log-uniform'),
-            'max_depth': (3, 50),
-            'min_child_weight': (1, 10),
-            'subsample': (0.5, 1.0),
-            'colsample_bytree': (0.5, 1.0),
-            'colsample_bylevel': (0.5, 1.0),
-            'colsample_bynode': (0.5, 1.0),
-            'reg_alpha': (0, 1.0),
-            'reg_lambda': (1e-9, 100.0, 'log-uniform'),
+            'n_estimators': [10, 50, 100, 200, 500, 1000],
+            'learning_rate': [0.001, 0.01, 0.1, 0.2, 0.5, 1.0],
+            'max_depth': [3, 5, 10, 20, 50],
+            'min_child_weight': range(1, 11, 2),
+            'subsample': [0.5, 0.75, 1.0],
+            'colsample_bytree': [0.5, 0.75, 1.0],
+            'reg_alpha': [0, 1e-5, 1e-2, 0.1, 1, 100],
+            'reg_lambda': [0, 1e-5, 1e-2, 0.1, 1, 100],
         },
+        'DecisionTree': {
+            'criterion': ['gini', 'entropy'],
+            'max_depth': [None] + list(range(1, 21)),
+            'min_samples_split': range(2, 21),
+            'min_samples_leaf': range(1, 21),
+        }
     }
 
     for race in tqdm(X_train_new[race_column].unique(), desc="Training and evaluating race-specific models"):
@@ -103,29 +108,39 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         # Define models to be used
         models = {
             'RandomForest': RandomForestClassifier(),
-            'LogisticRegression': LogisticRegression(max_iter=1000),
+            'LogisticRegression': LogisticRegression(max_iter=10000),
             'SVC': SVC(probability=True),
             'GBM': GradientBoostingClassifier(),
             'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
+            'DecisionTree': DecisionTreeClassifier()
         }
 
         # Iterate through models and search spaces
         for model_name, model in models.items():
             print(f"Training {model_name} for race {race}")
-            opt = BayesSearchCV(
+            random_search = RandomizedSearchCV(
                 model,
                 search_spaces[model_name],
                 n_iter=30,  # Number of parameter settings sampled
                 cv=StratifiedKFold(3),
-                n_jobs=-1
+                n_jobs=-1,
+                random_state=42
             )
 
+            # opt = BayesSearchCV(
+            #     model,
+            #     search_spaces[model_name],
+            #     n_iter=30,  # Number of parameter settings sampled
+            #     cv=StratifiedKFold(3),
+            #     n_jobs=-1
+            # )
+
             # Fit the model
-            opt.fit(race_X_train, race_y_train)
+            random_search.fit(race_X_train, race_y_train)
 
             # Best model and parameters
-            best_model = opt.best_estimator_
-            best_params = opt.best_params_
+            best_model = random_search.best_estimator_
+            best_params = random_search.best_params_
 
             # Evaluate the best model
             performance = evaluate_model(best_model, race_X_test, race_y_test)
@@ -158,9 +173,9 @@ def main(target_variable, race_column="Race"):
     ]
 
     # Step 1: Train base model on old data
-    base_model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
-                                        min_samples_split=8, random_state=42)
-    base_model_tuned = tune_random_forest(base_model, X_train_old, y_train_old)
+    base_model_tuned = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
+                                              min_samples_split=8, random_state=42)
+    # base_model_tuned = tune_random_forest(base_model, X_train_old, y_train_old)
     base_model_tuned.fit(X_train_old, y_train_old)
 
     base_model_accuracy = evaluate_model(base_model_tuned, X_test_old, y_test_old)

@@ -7,7 +7,7 @@ from sklearn.svm import SVR
 from tqdm import tqdm
 import xgboost as xgb
 
-from Phase_2.model_scripts.model_utils import evaluate_model
+from Phase_2.model_scripts.Regression.model_utils import evaluate_model
 
 
 # Function to load data

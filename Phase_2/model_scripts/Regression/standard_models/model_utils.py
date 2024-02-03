@@ -20,17 +20,15 @@ def split_data(df, target):
 
 
 # Function to evaluate model
-# def evaluate_model(model, X_test, y_test):
+# def evaluate_model(model, X_test, y_test, algo_type="regression"):
 #     predictions = model.predict(X_test)
 #     return r2_score(y_test, predictions)
 
 
-def evaluate_model(model, X_test, y_test):
+def evaluate_model(model, X_test, y_test, algo_type="classification"):
     # Get the predicted probabilities for each class
     predictions = model.predict(X_test)
-    rounded_predictions = np.round(predictions)
-
-    return accuracy_score(y_test, rounded_predictions)
+    return accuracy_score(y_test, predictions)
 
 
 # Function to perform randomized search on RandomForestRegressor

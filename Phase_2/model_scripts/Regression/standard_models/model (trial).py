@@ -43,10 +43,10 @@ def ols(target):
     metrics_dir = os.path.join(RESULTS_DIR, "metrics")
     ensure_directory_exists(metrics_dir)
 
-    X_train = load_data("../../preprocessed_data/with_PGS/AST_old/X_train_old_AST.csv")
-    X_test = load_data("../../preprocessed_data/with_PGS/AST_old/X_test_old_AST.csv")
-    y_train = load_data("../../preprocessed_data/with_PGS/AST_old/y_train_old_AST.csv")
-    y_test = load_data("../../preprocessed_data/with_PGS/AST_old/y_test_old_AST.csv")
+    X_train = load_data("../../../preprocessed_data/with_PGS/AST_old/X_train_old_AST.csv")
+    X_test = load_data("../../../preprocessed_data/with_PGS/AST_old/X_test_old_AST.csv")
+    y_train = load_data("../../../preprocessed_data/with_PGS/AST_old/y_train_old_AST.csv")
+    y_test = load_data("../../../preprocessed_data/with_PGS/AST_old/y_test_old_AST.csv")
 
     # Combine the data
     X_combined = pd.concat([X_train, X_test]).fillna(0).reset_index(drop=True)

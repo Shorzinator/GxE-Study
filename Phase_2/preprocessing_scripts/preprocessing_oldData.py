@@ -1,6 +1,6 @@
 import logging
 
-from Phase_2.model_scripts.Regression.model_utils import split_data
+from Phase_2.model_scripts.Regression.standard_models.model_utils import split_data
 from Phase_2.preprocessing_scripts.preprocessing_utils import apply_smote_nc, handle_family_clusters, \
     initial_cleaning, \
     load_old_data, robust_scaling_continuous_variables_old, save_preprocessed_data

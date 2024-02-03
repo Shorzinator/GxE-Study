@@ -4,7 +4,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from tqdm import tqdm
 
-from Phase_2.model_scripts.Regression.model_utils import evaluate_model
+from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
 
 
 # Function to load data

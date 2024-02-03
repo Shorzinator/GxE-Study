@@ -1,3 +1,5 @@
+import os
+import pickle
 from copy import deepcopy
 
 import numpy as np
@@ -5,7 +7,6 @@ import pandas as pd
 from catboost import CatBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
@@ -157,10 +158,49 @@ def train_base_model(X_train, y_train):
 
     return model
 
+#
+# def main(target_variable, race_column="Race"):
+#     X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old = (
+#         load_data_splits(target_variable))
+#
+#     # Flatten y_train and y_test
+#     y_train_new, y_test_new, y_train_old, y_test_old = [
+#         y.values.ravel() for y in (y_train_new, y_test_new, y_train_old, y_test_old)
+#     ]
+#
+#     # Step 1: Train base model on old data
+#     base_model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
+#                                         min_samples_split=8, random_state=42)
+#     # With Tuning
+#     base_model_tuned, best_params = tune_random_forest(base_model, X_train_old, y_train_old)
+#
+#     # Without Tuning
+#     # base_model.fit(X_train_old, y_train_old)
+#
+#     base_model_accuracy = evaluate_model(base_model_tuned, X_test_old, y_test_old)
+#     print(f"Accuracy for base model: {base_model_accuracy}")
+#     print(f"Best Parameters for base model: {best_params}\n")
+#
+#     # Step 2: Retrain base model on new data (excluding race) as an intermediate model
+#     intermediate_model = deepcopy(base_model_tuned)
+#     intermediate_model.fit(X_train_new.drop(columns=[race_column]), y_train_new)
+#     intermediate_accuracy = evaluate_model(intermediate_model, X_test_new.drop(columns=[race_column]), y_test_new)
+#     print(f"Accuracy for intermediate model (excluding race): {intermediate_accuracy}")
+#
+#     # Step 3: Train and evaluate race-specific models
+#     final_models, race_best_params, performance_metrics = train_and_evaluate_race_specific_models(
+#         X_train_new, y_train_new, X_test_new, y_test_new, race_column)
+#     print(f"Performance metrics for final models: {performance_metrics}")
+#     print(f"Best Parameters for final models: {race_best_params}")
+
 
 def main(target_variable, race_column="Race"):
     X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old = (
         load_data_splits(target_variable))
+
+    # Ensure directories exist
+    os.makedirs("../../../results/models/classification/HetHieTL", exist_ok=True)
+    os.makedirs("../../../results/metrics/classification/HomHieTL", exist_ok=True)
 
     # Flatten y_train and y_test
     y_train_new, y_test_new, y_train_old, y_test_old = [
@@ -168,17 +208,16 @@ def main(target_variable, race_column="Race"):
     ]
 
     # Step 1: Train base model on old data
-    base_model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
-                                        min_samples_split=8, random_state=42)
-    # With Tuning
-    base_model_tuned, best_params = tune_random_forest(base_model, X_train_old, y_train_old)
-
-    # Without Tuning
-    # base_model.fit(X_train_old, y_train_old)
+    base_model_tuned, best_params_base = tune_random_forest(RandomForestClassifier(), X_train_old, y_train_old)
+    base_model_tuned.fit(X_train_old, y_train_old)
 
     base_model_accuracy = evaluate_model(base_model_tuned, X_test_old, y_test_old)
     print(f"Accuracy for base model: {base_model_accuracy}")
-    print(f"Best Parameters for base model: {best_params}\n")
+    print(f"Best Parameters for base model: {best_params_base}")
+
+    # Save base model and its metrics
+    pickle.dump(base_model_tuned, open(f"base_model.pkl", "wb"))
+    pd.DataFrame({'Model': ['Base Model'], 'Accuracy': [base_model_accuracy], 'Best Params': [str(best_params_base)]}).to_csv("base_model_metrics.csv", index=False)
 
     # Step 2: Retrain base model on new data (excluding race) as an intermediate model
     intermediate_model = deepcopy(base_model_tuned)
@@ -186,9 +225,26 @@ def main(target_variable, race_column="Race"):
     intermediate_accuracy = evaluate_model(intermediate_model, X_test_new.drop(columns=[race_column]), y_test_new)
     print(f"Accuracy for intermediate model (excluding race): {intermediate_accuracy}")
 
+    # Save intermediate model and its metrics
+    pickle.dump(intermediate_model, open(f"intermediate_model.pkl", "wb"))
+    pd.DataFrame({'Model': ['Intermediate Model'], 'Accuracy': [intermediate_accuracy]}).to_csv(
+        "intermediate_model_metrics.csv", index=False
+    )
+
     # Step 3: Train and evaluate race-specific models
     final_models, race_best_params, performance_metrics = train_and_evaluate_race_specific_models(
         X_train_new, y_train_new, X_test_new, y_test_new, race_column)
+
+    # Save race-specific models, their best parameters, and performance metrics
+    for (race, model_name), model in final_models.items():
+        pickle.dump(model, open(f"{model_name}_race_{race}.pkl", "wb"))
+        pd.DataFrame({
+            'Race': [race],
+            'Model': [model_name],
+            'Accuracy': [performance_metrics[(race, model_name)]],
+            'Best Params': [str(race_best_params[(race, model_name)])]
+        }).to_csv(f"{model_name}_race_{race}_metrics.csv", index=False)
+
     print(f"Performance metrics for final models: {performance_metrics}")
     print(f"Best Parameters for final models: {race_best_params}")
 

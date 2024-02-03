@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
 from tqdm import tqdm
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
+from Phase_2.model_scripts.model_utils import evaluate_model
 
 pd.set_option("display.max_columns", 20)
 

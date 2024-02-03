@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.metrics import r2_score, accuracy_score
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
+from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split
 
 
 # Function to split the data into training and testing sets
@@ -55,3 +55,23 @@ def tune_random_forest(model, X_train, y_train):
 
     # Return the best estimator
     return rf_random.best_estimator_
+
+
+def random_search_tuning(model, model_name, search_spaces, race_X_train, race_y_train):
+    random_search = RandomizedSearchCV(
+        model,
+        search_spaces[model_name],
+        n_iter=30,  # Number of parameter settings sampled
+        cv=StratifiedKFold(3),
+        n_jobs=-1,
+        random_state=42
+    )
+
+    # Fit the model
+    random_search.fit(race_X_train, race_y_train)
+
+    # Best model and parameters
+    best_model = random_search.best_estimator_
+    best_params = random_search.best_params_
+
+    return best_model, best_params

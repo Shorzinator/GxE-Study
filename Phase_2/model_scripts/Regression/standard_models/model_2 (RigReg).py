@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.linear_model import Ridge
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import split_data, evaluate_model
+from Phase_2.model_scripts.model_utils import split_data, evaluate_model
 from utility.path_utils import get_path_from_root
 
 file_path_old_ast = get_path_from_root("Phase_2", "preprocessed_data", "preprocessed_data_old_AST.csv")

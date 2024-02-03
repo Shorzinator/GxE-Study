@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import learning_curve
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
+from Phase_2.model_scripts.model_utils import evaluate_model
 
 
 # Function to load data

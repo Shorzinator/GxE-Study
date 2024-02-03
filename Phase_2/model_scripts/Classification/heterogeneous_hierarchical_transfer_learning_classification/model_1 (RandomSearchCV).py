@@ -1,15 +1,16 @@
 from copy import deepcopy
 
+import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
+from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from tqdm import tqdm
 from xgboost import XGBClassifier
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
+from Phase_2.model_scripts.model_utils import evaluate_model, random_search_tuning
 
 
 # Function to load data
@@ -100,7 +101,7 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         }
     }
 
-    for race in tqdm(X_train_new[race_column].unique(), desc="Training and evaluating race-specific models"):
+    for race in X_train_new[race_column].unique():
 
         print()
 
@@ -112,12 +113,18 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         race_X_test = X_test_new[X_test_new[race_column] == race].drop(columns=[race_column])
         race_y_test = y_test_new[X_test_new[race_column] == race]
 
+        # Map labels to start from 0 if necessary
+        unique_labels = np.unique(race_y_train)
+        label_mapping = {label: i for i, label in enumerate(unique_labels)}
+        inv_label_mapping = {i: label for label, i in label_mapping.items()}  # For inverse mapping after prediction
+
+        race_y_train_mapped = np.vectorize(label_mapping.get)(race_y_train)
+
         # Define models to be used
         models = {
-            'RandomForest': RandomForestClassifier(),
-            'SVC': SVC(probability=True),
-            'GBM': GradientBoostingClassifier(),
-            'XGBoost': XGBClassifier(use_label_encoder=False, eval_metric='logloss'),
+            # 'RandomForest': RandomForestClassifier(),
+            # 'GBM': GradientBoostingClassifier(),
+            'XGBoost': XGBClassifier(eval_metric='logloss'),
             'DecisionTree': DecisionTreeClassifier(),
             'CatBoost': CatBoostClassifier(verbose=False),  # verbose=False to prevent lots of output during training
         }
@@ -125,30 +132,26 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         # Iterate through models and search spaces
         for model_name, model in models.items():
             print(f"Training {model_name} for race {race}")
-            random_search = RandomizedSearchCV(
-                model,
-                search_spaces[model_name],
-                n_iter=30,  # Number of parameter settings sampled
-                cv=StratifiedKFold(3),
-                n_jobs=-1,
-                random_state=42
-            )
+            print()
+            # best_model, best_params = random_search_tuning(model, model_name, search_spaces, race_X_train,
+            # race_y_train)
+            # best_model.fit(race_X_train, race_y_train)
 
-            # Fit the model
-            random_search.fit(race_X_train, race_y_train)
+            model.fit(race_X_train, race_y_train_mapped)
+            predictions_mapped = model.predict(race_X_test)
 
-            # Best model and parameters
-            best_model = random_search.best_estimator_
-            best_params = random_search.best_params_
+            # Map predictions back to original labels
+            predictions = np.vectorize(inv_label_mapping.get)(predictions_mapped)
+            performance = accuracy_score(race_y_test, predictions)
 
             # Evaluate the best model
-            performance = evaluate_model(best_model, race_X_test, race_y_test)
-            print(f'Best {model_name} for race {race}: {best_model}')
+            print(f'Best {model_name} for race {race}: {model}')
             print(f'Performance: {performance}')
 
             # Store the best model, parameters, and performance
-            race_models[(race, model_name)] = best_model
-            race_best_params[(race, model_name)] = best_params
+            # race_models[(race, model_name)] = best_model
+            # race_best_params[(race, model_name)] = best_params
+            race_models[(race, model_name)] = model
             performance_metrics[(race, model_name)] = performance
 
     return race_models, race_best_params, performance_metrics

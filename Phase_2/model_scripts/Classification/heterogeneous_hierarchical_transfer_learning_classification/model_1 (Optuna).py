@@ -1,5 +1,6 @@
 from copy import deepcopy
 
+import numpy as np
 import optuna
 import pandas as pd
 from catboost import CatBoostClassifier
@@ -11,7 +12,7 @@ from sklearn.tree import DecisionTreeClassifier
 from tqdm import tqdm
 from xgboost import XGBClassifier
 
-from Phase_2.model_scripts.Regression.standard_models.model_utils import evaluate_model
+from Phase_2.model_scripts.model_utils import evaluate_model
 
 
 # Function to load data
@@ -57,8 +58,8 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         'RandomForest': {
             'n_estimators': range(200, 1000, 50),
             'max_depth': [None] + list(range(1, 101, 10)),
-            'min_samples_split': range(2, 11, 2),
-            'min_samples_leaf': range(1, 11, 2),
+            'min_samples_split': [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21],
+            'min_samples_leaf': [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21],
             'max_features': ['sqrt', 'log2', None],
             'bootstrap': [True, False],
         },
@@ -71,8 +72,8 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'n_estimators': [10, 50, 100, 200, 500, 1000],
             'learning_rate': [0.001, 0.01, 0.1, 0.2, 0.5, 1.0],
             'max_depth': [3, 5, 10, 20, 50],
-            'min_samples_split': range(2, 11, 2),
-            'min_samples_leaf': range(1, 11, 2),
+            'min_samples_split': np.arange(2, 11, 2),
+            'min_samples_leaf': np.arange(1, 21, 2),
             'subsample': [0.5, 0.75, 1.0],
             'max_features': ['sqrt', 'log2', None],
         },
@@ -90,7 +91,7 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             'criterion': ['gini', 'entropy'],
             'max_depth': [None] + list(range(1, 21)),
             'min_samples_split': range(2, 21),
-            'min_samples_leaf': range(1, 21),
+            'min_samples_leaf': np.arange(1, 21, 2),
         },
         'CatBoost': {
             'iterations': [100, 500, 1000],
@@ -157,10 +158,12 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
 # Function to define the objective for Optuna
 def objective(trial, X, y, model, param_distributions):
     # Suggest hyperparameters from the distributions specified in param_distributions
-    params = {k: trial.suggest_categorical(k, v) if isinstance(v, list) else
-    trial.suggest_int(k, v[0], v[1]) if isinstance(v, tuple) and len(v) == 2 else
-    trial.suggest_float(k, v[0], v[1], log=True) if isinstance(v, tuple) and 'log-uniform' in v else
-    None for k, v in param_distributions.items()}
+    params = {
+        k: trial.suggest_categorical(k, v) if isinstance(v, list) else
+        trial.suggest_int(k, v[0], v[1]) if isinstance(v, tuple) and len(v) == 2 else
+        trial.suggest_float(k, v[0], v[1], log=True) if isinstance(v, tuple) and 'log-uniform' in v else
+        None for k, v in param_distributions.items()
+    }
 
     model.set_params(**params)
 

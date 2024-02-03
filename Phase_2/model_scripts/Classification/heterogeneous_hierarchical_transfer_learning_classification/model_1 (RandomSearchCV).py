@@ -9,7 +9,7 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
-from Phase_2.model_scripts.model_utils import evaluate_model, random_search_tuning
+from Phase_2.model_scripts.model_utils import evaluate_model, random_search_tuning, tune_random_forest
 
 
 # Function to load data
@@ -116,9 +116,9 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         # Define models to be used
         models = {
             # 'RandomForest': RandomForestClassifier(),
-            # 'GBM': GradientBoostingClassifier(),
+            'GBC': GradientBoostingClassifier(),
             # 'XGBoost': XGBClassifier(eval_metric='logloss'),
-            'CatBoost': CatBoostClassifier(verbose=False, one_hot_max_size=4),
+            # 'CatBoost': CatBoostClassifier(verbose=False, one_hot_max_size=4, loss_function="MultiClass"),
         }
 
         # Iterate through models and search spaces
@@ -130,7 +130,7 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
 
             # With Tuning
             best_model, best_params = random_search_tuning(model, model_name, search_spaces, race_X_train,
-                                                           race_y_train)
+                                                           race_y_train_mapped)
             predictions = best_model.predict(race_X_test)
 
             # Map predictions back to original labels
@@ -138,7 +138,7 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             performance = accuracy_score(race_y_test, predictions)
 
             # Evaluate the best model
-            print(f'Best {model_name} for race {race}: {model}')
+            print(f'Best Model for race {race}: {model_name}')
             print(f'Performance: {performance}')
 
             # Store the best model, parameters, and performance
@@ -168,13 +168,17 @@ def main(target_variable, race_column="Race"):
     ]
 
     # Step 1: Train base model on old data
-    base_model_tuned = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
-                                              min_samples_split=8, random_state=42)
-    # base_model_tuned = tune_random_forest(base_model, X_train_old, y_train_old)
-    base_model_tuned.fit(X_train_old, y_train_old)
+    base_model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
+                                        min_samples_split=8, random_state=42)
+    # With Tuning
+    base_model_tuned, best_params = tune_random_forest(base_model, X_train_old, y_train_old)
+
+    # Without Tuning
+    # base_model.fit(X_train_old, y_train_old)
 
     base_model_accuracy = evaluate_model(base_model_tuned, X_test_old, y_test_old)
     print(f"Accuracy for base model: {base_model_accuracy}")
+    print(f"Best Parameters for base model: {best_params}\n")
 
     # Step 2: Retrain base model on new data (excluding race) as an intermediate model
     intermediate_model = deepcopy(base_model_tuned)
@@ -186,6 +190,7 @@ def main(target_variable, race_column="Race"):
     final_models, race_best_params, performance_metrics = train_and_evaluate_race_specific_models(
         X_train_new, y_train_new, X_test_new, y_test_new, race_column)
     print(f"Performance metrics for final models: {performance_metrics}")
+    print(f"Best Parameters for final models: {race_best_params}")
 
 
 if __name__ == "__main__":

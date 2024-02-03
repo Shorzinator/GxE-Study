@@ -48,13 +48,16 @@ def tune_random_forest(model, X_train, y_train):
 
     # Initialize RandomizedSearchCV
     rf_random = RandomizedSearchCV(estimator=rf, param_distributions=param_distributions,
-                                   n_iter=100, cv=3, verbose=2, random_state=42, n_jobs=-1)
+                                   n_iter=100, cv=3, verbose=0, random_state=42, n_jobs=-1)
 
     # Fit RandomizedSearchCV to the data
     rf_random.fit(X_train, y_train)
 
+    best_model = rf_random.best_estimator_
+    best_params = rf_random.best_params_
+
     # Return the best estimator
-    return rf_random.best_estimator_
+    return best_model, best_params
 
 
 def random_search_tuning(model, model_name, search_spaces, race_X_train, race_y_train):

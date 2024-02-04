@@ -54,19 +54,19 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
     # Define search spaces for each model
     search_spaces = {
         'RandomForest': {
-            'n_estimators': range(200, 1000, 50),
-            'max_depth': [None] + list(range(1, 101, 10)),
-            'min_samples_split': range(2, 11, 2),
-            'min_samples_leaf': range(1, 11, 2),
+            'n_estimators': np.arange(300, 1001, 50),
+            'max_depth': [None] + list(np.arange(10, 101, 10)),
+            'min_samples_split': np.arange(2, 21, 2),
+            'min_samples_leaf': np.arange(1, 21, 2),
             'max_features': ['sqrt', 'log2', None],
-            'bootstrap': [True, False],
+            'bootstrap': [True, False]
         },
         'SVC': {
             'C': [10 ** i for i in range(-6, 7)],
             'kernel': ['linear', 'poly', 'rbf', 'sigmoid'],
             'gamma': ['scale', 'auto'] + [10 ** i for i in range(-9, 4)],
         },
-        'GBM': {
+        'GBC': {
             'n_estimators': [10, 50, 100, 200, 500, 1000],
             'learning_rate': [0.001, 0.01, 0.1, 0.2, 0.5, 1.0],
             'max_depth': [3, 5, 10, 20, 50],
@@ -117,9 +117,9 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
         # Define models to be used
         models = {
             # 'RandomForest': RandomForestClassifier(),
-            # 'GBC': GradientBoostingClassifier(),
+            'GBC': GradientBoostingClassifier(),
             # 'XGBoost': XGBClassifier(eval_metric='logloss'),
-            'CatBoost': CatBoostClassifier(verbose=False, one_hot_max_size=4, loss_function="MultiClass"),
+            # 'CatBoost': CatBoostClassifier(verbose=False, one_hot_max_size=4, loss_function="MultiClass"),
         }
 
         # Iterate through models and search spaces
@@ -139,24 +139,17 @@ def train_and_evaluate_race_specific_models(X_train_new, y_train_new, X_test_new
             performance = accuracy_score(race_y_test, predictions)
 
             # Evaluate the best model
-            # print(f'Best Model for race {race}: {model_name}')
-            # print(f'Performance: {performance}')
+            print(f'Best Model for race {race}: {model_name}')
+            print(f'Performance: {performance}')
 
             # Store the best model, parameters, and performance
-            # race_models[(race, model_name)] = model
+            race_models[(race, model_name)] = model
             race_models[(race, model_name)] = best_model
             race_best_params[(race, model_name)] = best_params
             performance_metrics[(race, model_name)] = performance
 
     return race_models, race_best_params, performance_metrics
 
-
-def train_base_model(X_train, y_train):
-    model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
-                                   min_samples_split=8, random_state=42)
-    model.fit(X_train, y_train)
-
-    return model
 
 #
 # def main(target_variable, race_column="Race"):
@@ -195,6 +188,11 @@ def train_base_model(X_train, y_train):
 
 
 def main(target_variable, race_column="Race"):
+    if target_variable == "AntisocialTrajectory":
+        tag = "AST"
+    else:
+        tag = "SUT"
+
     X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old = (
         load_data_splits(target_variable))
 
@@ -208,26 +206,24 @@ def main(target_variable, race_column="Race"):
     ]
 
     # Step 1: Train base model on old data
-    base_model = RandomForestClassifier(n_estimators=100, max_depth=30, bootstrap=False, max_features='log2',
-                                        min_samples_split=8, random_state=42)
+    base_model = RandomForestClassifier(n_estimators=650, max_depth=60, bootstrap=False, max_features='sqrt',
+                                        min_samples_split=8, random_state=42, min_samples_leaf=1)
     # With Tuning
-    base_model, best_params = tune_random_forest(base_model, X_train_old, y_train_old)
+    # base_model, best_params = tune_random_forest(base_model, X_train_old, y_train_old)
 
     # Without Tuning
-    # base_model.fit(X_train_old, y_train_old)
+    base_model.fit(X_train_old, y_train_old)
 
     base_model_accuracy = evaluate_model(base_model, X_test_old, y_test_old)
     print(f"Accuracy for base model: {base_model_accuracy}")
 
     # With Tuning
-    print(f"Best Parameters for base model: {best_params}")
+    # print(f"Best Parameters for base model: {best_params}")
 
-    # Save base model and its metrics
-    pickle.dump(base_model, open(f"base_model.pkl", "wb"))
-    pd.DataFrame(
-        {'Model': ['Base Model'],
-         'Accuracy': [base_model_accuracy],
-         'Best Params': [str(best_params)]}).to_csv( "base_model_metrics.csv", index=False)
+    # Save base model and its metrics pickle.dump(base_model,
+    # open(f"../../../results/models/classification/HetHieTL/{tag}/BaseModel - RanFor/base_model.pkl",
+    # "wb")) pd.DataFrame( {'Model': ['Base Model'], 'Accuracy': [base_model_accuracy], 'Best Params': [str(
+    # best_params)]}).to_csv( "base_model_metrics.csv", index=False)
 
     # Step 2: Retrain base model on new data (excluding race) as an intermediate model
     intermediate_model = deepcopy(base_model)
@@ -235,11 +231,10 @@ def main(target_variable, race_column="Race"):
     intermediate_accuracy = evaluate_model(intermediate_model, X_test_new.drop(columns=[race_column]), y_test_new)
     print(f"Accuracy for intermediate model (excluding race): {intermediate_accuracy}")
 
-    # Save intermediate model and its metrics
-    pickle.dump(intermediate_model, open(f"intermediate_model.pkl", "wb"))
-    pd.DataFrame({'Model': ['Intermediate Model'], 'Accuracy': [intermediate_accuracy]}).to_csv(
-        "intermediate_model_metrics.csv", index=False
-    )
+    # Save intermediate model and its metrics pickle.dump(intermediate_model,
+    # open(f"../../../results/models/classification/HetHieTL/{tag}/intermediate_model.pkl", "wb")) pd.DataFrame({
+    # 'Model': ['Intermediate Model'], 'Accuracy': [intermediate_accuracy]}).to_csv(
+    # f"../../../results/metrics/classification/HetHieTL/{tag}/intermediate_model_metrics.csv", index=False)
 
     # Step 3: Train and evaluate race-specific models
     final_models, race_best_params, performance_metrics = train_and_evaluate_race_specific_models(
@@ -247,7 +242,8 @@ def main(target_variable, race_column="Race"):
 
     # Save race-specific models, their best parameters, and performance metrics
     for (race, model_name), model in final_models.items():
-        pickle.dump(model, open(f"{model_name}_race_{race}.pkl", "wb"))
+        pickle.dump(model, open(
+            f"../../../results/models/classification/HetHieTL/{tag}/{model_name}/{model_name}_race_{race}.pkl", "wb"))
         pd.DataFrame({
             'Race': [race],
             'Model': [model_name],

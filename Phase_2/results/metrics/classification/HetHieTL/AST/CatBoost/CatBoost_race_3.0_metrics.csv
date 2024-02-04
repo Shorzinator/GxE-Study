@@ -1,0 +1,2 @@
+Race,Model,Accuracy,Best Params
+3.0,CatBoost,0.7633587786259542,"{'learning_rate': 0.05, 'l2_leaf_reg': 3, 'iterations': 1000, 'depth': 4, 'border_count': 128, 'bootstrap_type': 'Bernoulli'}"

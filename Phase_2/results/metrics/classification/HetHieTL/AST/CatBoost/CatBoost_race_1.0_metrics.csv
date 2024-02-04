@@ -1,0 +1,2 @@
+Race,Model,Accuracy,Best Params
+1.0,CatBoost,0.7177272727272728,"{'learning_rate': 0.1, 'l2_leaf_reg': 1, 'iterations': 1000, 'depth': 6, 'border_count': 254, 'bootstrap_type': 'Bayesian'}"

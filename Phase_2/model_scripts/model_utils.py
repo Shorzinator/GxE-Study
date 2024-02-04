@@ -47,8 +47,15 @@ def tune_random_forest(model, X_train, y_train):
     rf = model
 
     # Initialize RandomizedSearchCV
-    rf_random = RandomizedSearchCV(estimator=rf, param_distributions=param_distributions,
-                                   n_iter=100, cv=3, verbose=2, random_state=42, n_jobs=-1)
+    rf_random = RandomizedSearchCV(
+        estimator=rf,
+        param_distributions=param_distributions,
+        n_iter=100,
+        cv=3,
+        verbose=2,
+        random_state=42,
+        n_jobs=-1
+    )
 
     # Fit RandomizedSearchCV to the data
     rf_random.fit(X_train, y_train)
@@ -62,12 +69,13 @@ def tune_random_forest(model, X_train, y_train):
 
 def random_search_tuning(model, model_name, search_spaces, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
-        model,
-        search_spaces[model_name],
-        n_iter=30,  # Number of parameter settings sampled
-        cv=StratifiedKFold(3),
-        n_jobs=-1,
-        random_state=42
+        estimator=model,
+        param_distributions=search_spaces[model_name],
+        n_iter=100,
+        cv=3,
+        verbose=2,
+        random_state=42,
+        n_jobs=-1
     )
 
     # Fit the model

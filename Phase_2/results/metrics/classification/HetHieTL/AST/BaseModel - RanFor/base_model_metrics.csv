@@ -1,0 +1,2 @@
+Model,Accuracy,Best Params
+Base Model,0.7459807073954984,"{'n_estimators': 650, 'min_samples_split': 8, 'min_samples_leaf': 1, 'max_features': 'sqrt', 'max_depth': 60, 'bootstrap': False}"

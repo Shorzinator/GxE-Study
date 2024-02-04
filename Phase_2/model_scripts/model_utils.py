@@ -67,10 +67,10 @@ def tune_random_forest(model, X_train, y_train):
     return best_model, best_params
 
 
-def random_search_tuning(model, model_name, search_spaces, race_X_train, race_y_train):
+def random_search_tuning(model, model_name, params, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
         estimator=model,
-        param_distributions=search_spaces[model_name],
+        param_distributions=params[model_name],
         n_iter=100,
         cv=3,
         verbose=2,
@@ -86,3 +86,109 @@ def random_search_tuning(model, model_name, search_spaces, race_X_train, race_y_
     best_params = random_search.best_params_
 
     return best_model, best_params
+
+
+def random_search_tuning_intermediate(model, model_name, params, race_X_train, race_y_train):
+    random_search = RandomizedSearchCV(
+        estimator=model,
+        param_distributions=params[model_name],
+        n_iter=100,
+        cv=3,
+        verbose=2,
+        random_state=42,
+        n_jobs=-1
+    )
+
+    return random_search
+
+
+# Function to load data
+def load_data(file_path):
+    return pd.read_csv(file_path)
+
+
+# Function to load the data splits
+def load_data_splits(target_variable, pgs_1="with", pgs_2="without"):
+    if target_variable == "AntisocialTrajectory":
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/X_train_old_AST.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/X_test_old_AST.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/y_train_old_AST.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/y_test_old_AST.csv")
+
+        X_train_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/X_train_new_AST.csv")
+        X_test_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/X_test_new_AST.csv")
+        y_train_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/y_train_new_AST.csv")
+        y_test_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/y_test_new_AST.csv")
+
+    else:
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/X_train_old_SUT.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/X_test_old_SUT.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/y_train_old_SUT.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/y_test_old_SUT.csv")
+
+        X_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_train_new_SUT.csv")
+        X_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_test_new_SUT.csv")
+        y_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/y_train_new_SUT.csv")
+        y_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/y_test_new_SUT.csv")
+
+    return X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old
+
+
+# Define a function or mapping to determine transfer strategy
+def get_transfer_strategy(base_model_type, target_model_type):
+    # Example mappings, to be expanded based on actual compatibility
+    direct_transfer_compatible = {
+        ('RandomForestClassifier', 'XGBClassifier'): True,
+        ('RandomForestClassifier', 'GradientBoostingClassifier'): True,
+        ('XGBClassifier', 'XGBClassifier'): True,
+        ('XGBClassifier', 'GradientBoostingClassifier'): True,
+
+        # Add more pairs as needed
+    }
+    return direct_transfer_compatible.get((base_model_type, target_model_type), False)
+
+
+def search_spaces():
+    # Define search spaces for each model
+    search_spaces = {
+        'RandomForest': {
+            'n_estimators': np.arange(300, 1001, 50),
+            'max_depth': [None] + list(np.arange(10, 101, 10)),
+            'min_samples_split': np.arange(2, 21, 2),
+            'min_samples_leaf': np.arange(1, 21, 2),
+            'max_features': ['sqrt', 'log2', None],
+            'bootstrap': [True, False]
+        },
+        'GBC': {
+            'n_estimators': [10, 50, 100, 200, 500, 1000],
+            'learning_rate': [0.001, 0.01, 0.1, 0.2, 0.5, 1.0],
+            'max_depth': [3, 5, 10, 20, 50],
+            'min_samples_split': range(2, 11, 2),
+            'min_samples_leaf': range(1, 11, 2),
+            'subsample': [0.5, 0.75, 1.0],
+            'max_features': ['sqrt', 'log2', None],
+        },
+        'XGBoost': {
+            'n_estimators': (100, 1000),
+            'learning_rate': (0.01, 0.2),
+            'max_depth': (3, 10),
+            'min_child_weight': (0, 10),
+            'subsample': (0.5, 1.0),
+            'colsample_bytree': (0.5, 1.0),
+            'gamma': (0, 1),
+            'reg_alpha': (0, 10),
+            'reg_lambda': (0, 10),
+            'max_delta_step': (0, 5),
+            'colsample_bylevel': (0.5, 1.0),
+        },
+        'CatBoost': {
+            'iterations': [100, 500, 1000],
+            'learning_rate': [0.01, 0.05, 0.1],
+            'depth': [4, 6, 10],
+            'l2_leaf_reg': [1, 3, 5, 7, 9],
+            'border_count': [32, 64, 128, 254],
+            'bootstrap_type': ['Bayesian', 'Bernoulli', 'MVS'],
+        }
+    }
+
+    return search_spaces

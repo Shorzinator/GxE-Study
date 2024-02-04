@@ -109,7 +109,7 @@ def train_and_evaluate_race_specific_models(
     return race_models, race_best_params, performance_metrics
 
 
-def main(target_variable, race_column="Race", tuning=True):
+def main(target_variable, race_column="Race", tuning=False):
     if target_variable == "AntisocialTrajectory":
         tag = "AST"
     else:
@@ -157,20 +157,25 @@ def main(target_variable, race_column="Race", tuning=True):
     print(f"Accuracy for base model: {base_model_accuracy}")
 
     # Save base model and its metrics
-    pickle.dump(base_model, open(f"../../../results/models/classification/HetHieTL/{tag}/BaseModel - XGB/base_model.pkl"
-                                 , "wb"))
-    pd.DataFrame(
-        {
-            'Model': ['Base Model'],
-            'Accuracy': [base_model_accuracy],
-            'Best Params': [str(best_params)]
-        }
-    ).to_csv(f"../../../results/metrics/classification/HetHieTL/{tag}/BaseModel - XGB/base_model_metrics.csv",
-             index=False)
+    # pickle.dump(base_model, open(f"../../../results/models/classification/HetHieTL/{tag}/BaseModel - XGB/base_model.pkl"
+    #                              , "wb"))
+    # pd.DataFrame(
+    #     {
+    #         'Model': ['Base Model'],
+    #         'Accuracy': [base_model_accuracy],
+    #         'Best Params': [str(best_params)]
+    #     }
+    # ).to_csv(f"../../../results/metrics/classification/HetHieTL/{tag}/BaseModel - XGB/base_model_metrics.csv",
+    #          index=False)
 
     # Step 2: Retrain base model on new data (excluding race) as an intermediate model
-    intermediate_model = random_search_tuning(deepcopy(base_model), base_model_type, params, X_train_new,
-                                              y_train_new_mapped)
+    # intermediate_model = random_search_tuning(deepcopy(base_model), base_model_type, params, X_train_new,
+    #                                           y_train_new_mapped)
+    intermediate_model = XGBClassifier(eval_metric="mlogloss")
+
+    # intermediate_model = random_search_tuning(intermediate_model, base_model_type, params, X_train_new,
+    #                                           y_train_new_mapped)
+
     intermediate_model.fit(X_train_new.drop(columns=[race_column]), y_train_new_mapped)
     prediction = intermediate_model.predict(X_test_new.drop(columns=[race_column]))
     intermediate_accuracy = accuracy_score(y_test_new_mapped, prediction)
@@ -178,7 +183,8 @@ def main(target_variable, race_column="Race", tuning=True):
     print(f"Accuracy for intermediate model (excluding race): {intermediate_accuracy}")
 
     # Save intermediate model and its metrics
-    pickle.dump(intermediate_model, open(f"../../../results/models/classification/HetHieTL/{tag}/intermediate_model.pkl"
+    pickle.dump(intermediate_model, open(f"../../../results/models/classification/HetHieTL/{tag}/"
+                                         f"intermediate_model_without_tl_and_tuning.pkl"
                                          , "wb"))
     pd.DataFrame(
         {
@@ -186,8 +192,8 @@ def main(target_variable, race_column="Race", tuning=True):
             'Accuracy': [intermediate_accuracy]
         }
     ).to_csv(f"../../../results/metrics/classification/HetHieTL/{tag}/BaseModel - XGB/"
-             f"intermediate_model_metrics.csv", index=False)
-
+             f"intermediate_model_metrics_without_tl_and_tuning.csv", index=False)
+    exit()
     # Step 3: Train and evaluate race-specific models
     final_models, race_best_params, performance_metrics = train_and_evaluate_race_specific_models(
         X_train_new, y_train_new_mapped, X_test_new, y_test_new_mapped, race_column, intermediate_model,

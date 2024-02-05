@@ -99,7 +99,14 @@ def random_search_tuning_intermediate(model, model_name, params, race_X_train, r
         n_jobs=-1
     )
 
-    return random_search
+    # Fit the model
+    random_search.fit(race_X_train, race_y_train)
+
+    # Best model and parameters
+    best_model = random_search.best_estimator_
+    best_params = random_search.best_params_
+
+    return best_model, best_params
 
 
 # Function to load data
@@ -110,21 +117,21 @@ def load_data(file_path):
 # Function to load the data splits
 def load_data_splits(target_variable, pgs_1="with", pgs_2="without"):
     if target_variable == "AntisocialTrajectory":
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/X_train_old_AST.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/X_test_old_AST.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/y_train_old_AST.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_old/y_test_old_AST.csv")
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/X_train_old_AST.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/X_test_old_AST.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/y_train_old_AST.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/y_test_old_AST.csv")
 
-        X_train_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/X_train_new_AST.csv")
-        X_test_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/X_test_new_AST.csv")
-        y_train_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/y_train_new_AST.csv")
-        y_test_new = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/AST_new/y_test_new_AST.csv")
+        X_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/X_train_new_AST.csv")
+        X_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/X_test_new_AST.csv")
+        y_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/y_train_new_AST.csv")
+        y_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/y_test_new_AST.csv")
 
     else:
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/X_train_old_SUT.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/X_test_old_SUT.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/y_train_old_SUT.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_2}_PGS/SUT_old/y_test_old_SUT.csv")
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/X_train_old_SUT.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/X_test_old_SUT.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/y_train_old_SUT.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/y_test_old_SUT.csv")
 
         X_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_train_new_SUT.csv")
         X_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_test_new_SUT.csv")
@@ -168,7 +175,7 @@ def search_spaces():
             'subsample': [0.5, 0.75, 1.0],
             'max_features': ['sqrt', 'log2', None],
         },
-        'XGBoost': {
+        'XGBClassifier': {
             'n_estimators': (100, 1000),
             'learning_rate': (0.01, 0.2),
             'max_depth': (3, 10),

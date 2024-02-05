@@ -1,184 +1,249 @@
 Phase_2/
-    update_directory_tree.py
-    RoughWork.txt
     directory_tree.txt
-    preprocessed_data/
-        without_PGS/
-            SUT_new/
-                X_test_new_SUT.csv
-                y_test_new_SUT.csv
-                y_train_new_SUT.csv
-                X_train_new_SUT.csv
-            AST_old/
-                y_train_old_AST.csv
-                X_train_old_AST.csv
-                X_test_old_AST.csv
-                y_test_old_AST.csv
-            SUT_old/
-                y_test_old_SUT.csv
-                X_test_old_SUT.csv
-                y_train_old_SUT.csv
-                X_train_old_SUT.csv
-            AST_new/
-                y_train_new_AST.csv
-                X_train_new_AST.csv
-                y_test_new_AST.csv
-                X_test_new_AST.csv
-        with_PGS/
-            SUT_new/
-                X_test_new_SUT.csv
-                y_test_new_SUT.csv
-                y_train_new_SUT.csv
-                X_train_new_SUT.csv
-            AST_old/
-                y_train_old_AST.csv
-                X_train_old_AST.csv
-                X_test_old_AST.csv
-                y_test_old_AST.csv
-            SUT_old/
-                y_test_old_SUT.csv
-                X_test_old_SUT.csv
-                y_train_old_SUT.csv
-                X_train_old_SUT.csv
-            AST_new/
-                y_train_new_AST.csv
-                X_train_new_AST.csv
-                y_test_new_AST.csv
-                X_test_new_AST.csv
+    update_directory_tree.py
     eda/
-        initial_eda.py
         eda_2.py
         eda_race_wise.py
+        initial_eda.py
+    model_scripts/
+        model_utils.py
+        Classification/
+            heterogeneous_hierarchical_transfer_learning_classification/
+                model_1 (BayesianOptimization).py
+                model_1 (Optuna).py
+                model_1 (RandomSearchCV).py
+                model_1 (RSCV_GAM_only).py
+                TrialFile.py
+                XGBoost_race_1.0_metrics.csv
+                XGBoost_race_2.0_metrics.csv
+                XGBoost_race_3.0_metrics.csv
+                XGBoost_race_4.0_metrics.csv
+                catboost_info/
+                    catboost_training.json
+                    learn_error.tsv
+                    time_left.tsv
+                    learn/
+                        events.out.tfevents
+                    tmp/
+        Regression/
+            heterogeneous_hierarchical_transfer_learning/
+                model_1.py
+            homogenous_hierarchical_transfer_learning/
+                model_1 (RanFor).py
+            standard_models/
+                model (trial).py
+                model_1 (LogReg).py
+                model_2 (RigReg).py
+                model_3 (RanFor).py
+                model_4 (OLS).py
+                __pycache__/
+        __pycache__/
+            model_utils.cpython-311.pyc
+            model_utils.cpython-39.pyc
+    preprocessed_data/
+        without_PGS/
+            AST_new/
+                X_test_new_AST.csv
+                X_train_new_AST.csv
+                y_test_new_AST.csv
+                y_train_new_AST.csv
+            AST_old/
+                X_test_old_AST.csv
+                X_train_old_AST.csv
+                y_test_old_AST.csv
+                y_train_old_AST.csv
+            SUT_new/
+                X_test_new_SUT.csv
+                X_train_new_SUT.csv
+                y_test_new_SUT.csv
+                y_train_new_SUT.csv
+            SUT_old/
+                X_test_old_SUT.csv
+                X_train_old_SUT.csv
+                y_test_old_SUT.csv
+                y_train_old_SUT.csv
+        with_PGS/
+            AST_new/
+                X_test_new_AST.csv
+                X_train_new_AST.csv
+                y_test_new_AST.csv
+                y_train_new_AST.csv
+            AST_old/
+                X_test_old_AST.csv
+                X_train_old_AST.csv
+                y_test_old_AST.csv
+                y_train_old_AST.csv
+            SUT_new/
+                X_test_new_SUT.csv
+                X_train_new_SUT.csv
+                y_test_new_SUT.csv
+                y_train_new_SUT.csv
+            SUT_old/
+                X_test_old_SUT.csv
+                X_train_old_SUT.csv
+                y_test_old_SUT.csv
+                y_train_old_SUT.csv
+    preprocessing_scripts/
+        master_preprocessing.py
+        preprocessing_newData.py
+        preprocessing_newData_without_genetics.py
+        preprocessing_oldData.py
+        preprocessing_oldData_without_genetics.py
+        preprocessing_utils.py
+        __pycache__/
+            preprocessing_utils.cpython-311.pyc
+            preprocessing_utils.cpython-39.pyc
     results/
         metrics/
             classification/
+                HetHieTL/
+                    AST/
+                        BaseModel - RanFor/
+                            base_model_metrics.csv
+                            intermediate_model_metrics_tl.csv
+                        BaseModel - XGB/
+                            base_model_metrics.csv
+                            intermediate_model_metrics_without_tl.csv
+                        CatBoost/
+                            CatBoost_race_1.0_metrics.csv
+                            CatBoost_race_2.0_metrics.csv
+                            CatBoost_race_3.0_metrics.csv
+                            CatBoost_race_4.0_metrics.csv
+                        XGB/
                 HomHieTL/
+        modeling/
+            AntisocialTrajectory_neighborhood_regression_layers.jpg
+            AntisocialTrajectory_neighborhood_regression_layers.png
+            approach_comparison_for_modeling.png
+            new_train_feature_importance.png
+            new_train_learning_curve.png
+            old_train_feature_importance.png
+            old_train_learning_curve.png
+        models/
+            classification/
+                HetHieTL/
+                    AST/
+                        BaseModel - RanFor/
+                            base_model.pkl
+                            intermediate_model.pkl
+                        BaseModel - XGB/
+                            base_model.pkl
+                            base_model_woPGS.pkl
+                            base_model_wPGS.pkl
+                            intermediate_model_without_tl.pkl
+                            intermediate_model_with_tl.pkl
+                            intermediate_model_wRace_woPGS.pkl
+                            intermediate_model_wRace_wPGS.pkl
+                        CatBoost/
+                            CatBoost_race_1.0.pkl
+                            CatBoost_race_2.0.pkl
+                            CatBoost_race_3.0.pkl
+                            CatBoost_race_4.0.pkl
+                        XGBoost/
+                            XGBoost_race_1.0_woPGS.pkl
+                            XGBoost_race_2.0_woPGS.pkl
+                            XGBoost_race_3.0_woPGS.pkl
+                            XGBoost_race_4.0_woPGS.pkl
+                            XGBoost_wPGS_race_1.0.pkl
+                            XGBoost_wPGS_race_2.0.pkl
+                            XGBoost_wPGS_race_3.0.pkl
+                            XGBoost_wPGS_race_4.0.pkl
+                    SUT/
+                        BaseModel - XGB/
+                            base_model_woPGS.pkl
+                            base_model_wPGS.pkl
+                            intermediate_model_wRace_woPGS.pkl
+                            intermediate_model_wRace_wPGS.pkl
+                        XGBoost/
+                            XGBoost_race_1.0_woPGS.pkl
+                            XGBoost_race_2.0_woPGS.pkl
+                            XGBoost_race_3.0_woPGS.pkl
+                            XGBoost_race_4.0_woPGS.pkl
+                            XGBoost_wPGS_race_1.0.pkl
+                            XGBoost_wPGS_race_2.0.pkl
+                            XGBoost_wPGS_race_3.0.pkl
+                            XGBoost_wPGS_race_4.0.pkl
         new_data/
             QQ Plot of DelinquentPeer after StandardScalar.png
             QQ Plot of DelinquentPeer after YJ Transformation.png
             QQ Plot of NeighborConnect after StandardScalar.png
-            Significant Dunns Test p-values for SchoolConnect_X_train_AST.png
-            QQ Plot of SchoolConnect after YJ Transformation.png
-            QQ Plot of ParentalWarmth after StandardScalar.png
             QQ Plot of NeighborConnect after YJ Transformation.png
-            Significant Dunns Test p-values for ParentalWarmth_X_train_AST.png
+            QQ Plot of ParentalWarmth after StandardScalar.png
+            QQ Plot of ParentalWarmth after YJ Transformation.png
             QQ Plot of SchoolConnect after StandardScalar.png
+            QQ Plot of SchoolConnect after YJ Transformation.png
+            Significant Dunns Test p-values for Age_X_train_AST.png
             Significant Dunns Test p-values for DelinquentPeer_X_train_AST.png
             Significant Dunns Test p-values for NeighborConnect_X_train_AST.png
-            QQ Plot of ParentalWarmth after YJ Transformation.png
-            Significant Dunns Test p-values for Age_X_train_AST.png
-        models/
-            classification/
-                HetHieTL/
+            Significant Dunns Test p-values for ParentalWarmth_X_train_AST.png
+            Significant Dunns Test p-values for SchoolConnect_X_train_AST.png
         old_data/
             QQ Plot of DelinquentPeer after StandardScalar.png
             QQ Plot of DelinquentPeer after YJ Transformation.png
             QQ Plot of NeighborConnect after StandardScalar.png
-            QQ Plot of SchoolConnect after YJ Transformation.png
-            QQ Plot of ParentalWarmth after StandardScalar.png
             QQ Plot of NeighborConnect after YJ Transformation.png
-            QQ Plot of SchoolConnect after StandardScalar.png
+            QQ Plot of ParentalWarmth after StandardScalar.png
             QQ Plot of ParentalWarmth after YJ Transformation.png
-        modeling/
-            new_train_feature_importance.png
-            AntisocialTrajectory_neighborhood_regression_layers.jpg
-            AntisocialTrajectory_neighborhood_regression_layers.png
-            new_train_learning_curve.png
-            old_train_learning_curve.png
-            old_train_feature_importance.png
-        raw_old_data/
-            Distribution of PolygenicScoreEXT Across SUT Classes.png
-            Distribution of PolygenicScoreEXT Across AST Classes.png
-            Distribution of NeighborConnect Across AST Classes.png
-            Distribution of NeighborConnect Across SUT Classes.png
-            Class Distribution in AntisocialTrajectory.png
-            Distribution of ParentalWarmth Across SUT Classes.png
-            Distribution of ParentalWarmth Across AST Classes.png
-            Distribution of SchoolConnect Across SUT Classes.png
-            Distribution of SchoolConnect Across AST Classes.png
-            Class Distribution in SubstanceUseTrajectory.png
-            Distribution of Age Across SUT Classes.png
-            Distribution of Age Across AST Classes.png
-            Distribution of DelinquentPeer Across SUT Classes.png
-            Distribution of DelinquentPeer Across AST Classes.png
+            QQ Plot of SchoolConnect after StandardScalar.png
+            QQ Plot of SchoolConnect after YJ Transformation.png
         raw_new_data/
-            Distribution of SchoolConnect by Race for SUT.png
-            Correlation Matrix for 3.0 for SUT.png
-            Correlation Matrix for 1.0 for AST.png
-            Correlation Matrix for nan for AST.png
-            Distribution of AntisocialTrajectory by Race for SUT.png
-            Correlation Matrix for 5.0 for AST.png
-            Correlation Matrix for 2.0 for AST.png
-            Distribution of PolygenicScoreEXT Across SUT Classes.png
-            Distribution of Age by Race for AST.png
-            Distribution of PolygenicScoreEXT Across AST Classes.png
-            Distribution of NeighborConnect Across AST Classes.png
-            Correlation Matrix for 4.0 for SUT.png
-            Distribution of NeighborConnect Across SUT Classes.png
             Class Distribution in AntisocialTrajectory.png
-            Distribution of Sex by Race for AST.png
-            Distribution of ParentalWarmth Across SUT Classes.png
-            Distribution of ParentalWarmth Across AST Classes.png
-            Distribution of DelinquentPeer by Race for SUT.png
-            Distribution of SubstanceUseTrajectory by Race for AST.png
-            Distribution of ParentalWarmth by Race for AST.png
-            Distribution of NeighborConnect by Race for SUT.png
-            Distribution of SchoolConnect Across SUT Classes.png
-            Distribution of Sex by Race for SUT.png
-            Distribution of SchoolConnect Across AST Classes.png
-            Distribution of DelinquentPeer by Race for AST.png
-            Distribution of ParentalWarmth by Race for SUT.png
-            Distribution of NeighborConnect by Race for AST.png
-            Distribution of SchoolConnect by Race for AST.png
-            Correlation Matrix for 3.0 for AST.png
-            Correlation Matrix for 1.0 for SUT.png
             Class Distribution in SubstanceUseTrajectory.png
-            Correlation Matrix for nan for SUT.png
-            Correlation Matrix for 5.0 for SUT.png
+            Correlation Matrix for 1.0 for AST.png
+            Correlation Matrix for 1.0 for SUT.png
+            Correlation Matrix for 2.0 for AST.png
             Correlation Matrix for 2.0 for SUT.png
-            Distribution of Age Across SUT Classes.png
-            Distribution of Age by Race for SUT.png
-            Distribution of Age Across AST Classes.png
+            Correlation Matrix for 3.0 for AST.png
+            Correlation Matrix for 3.0 for SUT.png
             Correlation Matrix for 4.0 for AST.png
-            Distribution of DelinquentPeer Across SUT Classes.png
+            Correlation Matrix for 4.0 for SUT.png
+            Correlation Matrix for 5.0 for AST.png
+            Correlation Matrix for 5.0 for SUT.png
+            Correlation Matrix for nan for AST.png
+            Correlation Matrix for nan for SUT.png
+            Distribution of Age Across AST Classes.png
+            Distribution of Age Across SUT Classes.png
+            Distribution of Age by Race for AST.png
+            Distribution of Age by Race for SUT.png
+            Distribution of AntisocialTrajectory by Race for SUT.png
             Distribution of DelinquentPeer Across AST Classes.png
-    model_scripts/
-        model_utils.py
-        Classification/
-            homogeneous_hierarchical_transfer_learning_classification/
-            heterogeneous_hierarchical_transfer_learning_classification/
-                model_1 (BayesianOptimization).py
-                model_1 (RSCV_GAM_only).py
-                model_1 (Optuna).py
-                model_1 (RandomSearchCV).py
-                catboost_info/
-                    learn_error.tsv
-                    time_left.tsv
-                    catboost_training.json
-                    learn/
-                        events.out.tfevents
-                    tmp/
-        __pycache__/
-            model_utils.cpython-311.pyc
-            model_utils.cpython-39.pyc
-        Regression/
-            homogenous_hierarchical_transfer_learning/
-                model_1 (RanFor).py
-            heterogeneous_hierarchical_transfer_learning/
-                model_1.py
-            standard_models/
-                model (trial).py
-                model_2 (RigReg).py
-                model_1 (LogReg).py
-                model_4 (OLS).py
-                model_3 (RanFor).py
-    preprocessing_scripts/
-        master_preprocessing.py
-        preprocessing_newData.py
-        preprocessing_utils.py
-        preprocessing_newData_without_genetics.py
-        preprocessing_oldData.py
-        preprocessing_oldData_without_genetics.py
-        __pycache__/
-            preprocessing_utils.cpython-311.pyc
-            preprocessing_utils.cpython-39.pyc
+            Distribution of DelinquentPeer Across SUT Classes.png
+            Distribution of DelinquentPeer by Race for AST.png
+            Distribution of DelinquentPeer by Race for SUT.png
+            Distribution of NeighborConnect Across AST Classes.png
+            Distribution of NeighborConnect Across SUT Classes.png
+            Distribution of NeighborConnect by Race for AST.png
+            Distribution of NeighborConnect by Race for SUT.png
+            Distribution of ParentalWarmth Across AST Classes.png
+            Distribution of ParentalWarmth Across SUT Classes.png
+            Distribution of ParentalWarmth by Race for AST.png
+            Distribution of ParentalWarmth by Race for SUT.png
+            Distribution of PolygenicScoreEXT Across AST Classes.png
+            Distribution of PolygenicScoreEXT Across SUT Classes.png
+            Distribution of SchoolConnect Across AST Classes.png
+            Distribution of SchoolConnect Across SUT Classes.png
+            Distribution of SchoolConnect by Race for AST.png
+            Distribution of SchoolConnect by Race for SUT.png
+            Distribution of Sex by Race for AST.png
+            Distribution of Sex by Race for SUT.png
+            Distribution of SubstanceUseTrajectory by Race for AST.png
+        raw_old_data/
+            Class Distribution in AntisocialTrajectory.png
+            Class Distribution in SubstanceUseTrajectory.png
+            Distribution of Age Across AST Classes.png
+            Distribution of Age Across SUT Classes.png
+            Distribution of DelinquentPeer Across AST Classes.png
+            Distribution of DelinquentPeer Across SUT Classes.png
+            Distribution of NeighborConnect Across AST Classes.png
+            Distribution of NeighborConnect Across SUT Classes.png
+            Distribution of ParentalWarmth Across AST Classes.png
+            Distribution of ParentalWarmth Across SUT Classes.png
+            Distribution of PolygenicScoreEXT Across AST Classes.png
+            Distribution of PolygenicScoreEXT Across SUT Classes.png
+            Distribution of SchoolConnect Across AST Classes.png
+            Distribution of SchoolConnect Across SUT Classes.png
+    vizualization/
+        confusion_matrix.py
+        feature_importance.py
+        feature_importance_base_interim.py
+        model_performance_comparison.py

@@ -65,8 +65,10 @@ def main():
         for model_name in ['RandomForest', 'GBC', 'XGBoost', 'CatBoost']:
             key_with_tl = f'Race-Specific Model (With TL) - {model_name} - Race {race_id}'
             key_without_tl = f'Race-Specific Model (Without TL) - {model_name} - Race {race_id}'
-            file_path_with_tl = f'../results/metrics/classification/HetHieTL/{model_name}_race_{race_id}_metrics_with_tl.csv'
-            file_path_without_tl = f'../results/metrics/classification/HetHieTL/{model_name}_race_{race_id}_metrics_without_tl.csv'
+            file_path_with_tl = (f'../results/metrics/classification/HetHieTL/{model_name}_race_{race_id}'
+                                 f'_metrics_with_tl.csv')
+            file_path_without_tl = (f'../results/metrics/classification/HetHieTL/{model_name}_race_{race_id}'
+                                    f'_metrics_without_tl.csv')
             metric_files_with_tl[key_with_tl] = file_path_with_tl
             metric_files_without_tl[key_without_tl] = file_path_without_tl
 

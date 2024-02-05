@@ -1,0 +1,2005 @@
+  { "nodeid": 0, "depth": 0, "split": "DelinquentPeer", "split_condition": -0.793484926, "yes": 1, "no": 2, "missing": 2 , "children": [
+    { "nodeid": 1, "depth": 1, "split": "DelinquentPeer", "split_condition": -1.18098712, "yes": 3, "no": 4, "missing": 4 , "children": [
+      { "nodeid": 3, "depth": 2, "split": "NeighborConnect", "split_condition": -1.28715038, "yes": 7, "no": 8, "missing": 8 , "children": [
+        { "nodeid": 7, "depth": 3, "split": "SchoolConnect", "split_condition": 0.0115550011, "yes": 15, "no": 16, "missing": 16 , "children": [
+          { "nodeid": 15, "depth": 4, "split": "NeighborConnect", "split_condition": -1.60714078, "yes": 31, "no": 32, "missing": 32 , "children": [
+            { "nodeid": 31, "depth": 5, "split": "NeighborConnect", "split_condition": -1.95327687, "yes": 63, "no": 64, "missing": 64 , "children": [
+              { "nodeid": 63, "depth": 6, "split": "SchoolConnect", "split_condition": -1.92126918, "yes": 125, "no": 126, "missing": 126 , "children": [
+                { "nodeid": 125, "leaf": -0.133204639 }, 
+                { "nodeid": 126, "depth": 7, "split": "SchoolConnect", "split_condition": -1.79538119, "yes": 247, "no": 248, "missing": 248 , "children": [
+                  { "nodeid": 247, "leaf": -0.128423154 }, 
+                  { "nodeid": 248, "leaf": -0.134223312 }
+                ]}
+              ]}, 
+              { "nodeid": 64, "depth": 6, "split": "SchoolConnect", "split_condition": -1.66256666, "yes": 127, "no": 128, "missing": 128 , "children": [
+                { "nodeid": 127, "depth": 7, "split": "SchoolConnect", "split_condition": -1.92126918, "yes": 249, "no": 250, "missing": 250 , "children": [
+                  { "nodeid": 249, "depth": 8, "split": "SchoolConnect", "split_condition": -1.96633565, "yes": 465, "no": 466, "missing": 466 , "children": [
+                    { "nodeid": 465, "leaf": -0.125564456 }, 
+                    { "nodeid": 466, "leaf": -0.125276357 }
+                  ]}, 
+                  { "nodeid": 250, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.3624171, "yes": 467, "no": 468, "missing": 468 , "children": [
+                    { "nodeid": 467, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.55486035, "yes": 813, "no": 814, "missing": 814 , "children": [
+                      { "nodeid": 813, "leaf": -0.132174104 }, 
+                      { "nodeid": 814, "leaf": -0.127924457 }
+                    ]}, 
+                    { "nodeid": 468, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.33502507, "yes": 815, "no": 816, "missing": 816 , "children": [
+                      { "nodeid": 815, "leaf": -0.132025376 }, 
+                      { "nodeid": 816, "leaf": -0.135731176 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 128, "depth": 7, "split": "SchoolConnect", "split_condition": -0.400064528, "yes": 251, "no": 252, "missing": 252 , "children": [
+                  { "nodeid": 251, "depth": 8, "split": "SchoolConnect", "split_condition": -0.407081902, "yes": 469, "no": 470, "missing": 470 , "children": [
+                    { "nodeid": 469, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 817, "no": 818, "missing": 818 , "children": [
+                      { "nodeid": 817, "leaf": -0.126604691 }, 
+                      { "nodeid": 818, "leaf": -0.127419576 }
+                    ]}, 
+                    { "nodeid": 470, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 819, "no": 820, "missing": 820 , "children": [
+                      { "nodeid": 819, "leaf": -0.130696952 }, 
+                      { "nodeid": 820, "leaf": -0.131849185 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 252, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.48432124, "yes": 471, "no": 472, "missing": 472 , "children": [
+                    { "nodeid": 471, "leaf": -0.125834256 }, 
+                    { "nodeid": 472, "leaf": -0.124449514 }
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 32, "depth": 5, "split": "NeighborConnect", "split_condition": -1.3068316, "yes": 65, "no": 66, "missing": 66 , "children": [
+              { "nodeid": 65, "depth": 6, "split": "SchoolConnect", "split_condition": -0.501651168, "yes": 129, "no": 130, "missing": 130 , "children": [
+                { "nodeid": 129, "depth": 7, "split": "SchoolConnect", "split_condition": -0.516558409, "yes": 253, "no": 254, "missing": 254 , "children": [
+                  { "nodeid": 253, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.48432124, "yes": 473, "no": 474, "missing": 474 , "children": [
+                    { "nodeid": 473, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.73917019, "yes": 821, "no": 822, "missing": 822 , "children": [
+                      { "nodeid": 821, "leaf": -0.134442687 }, 
+                      { "nodeid": 822, "leaf": -0.127987489 }
+                    ]}, 
+                    { "nodeid": 474, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.31980884, "yes": 823, "no": 824, "missing": 824 , "children": [
+                      { "nodeid": 823, "leaf": -0.0598004162 }, 
+                      { "nodeid": 824, "leaf": -0.117295288 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 254, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.24809766, "yes": 475, "no": 476, "missing": 476 , "children": [
+                    { "nodeid": 475, "leaf": -0.13375245 }, 
+                    { "nodeid": 476, "leaf": 0.354226023 }
+                  ]}
+                ]}, 
+                { "nodeid": 130, "depth": 7, "split": "SchoolConnect", "split_condition": -0.305640966, "yes": 255, "no": 256, "missing": 256 , "children": [
+                  { "nodeid": 255, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 477, "no": 478, "missing": 478 , "children": [
+                    { "nodeid": 477, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 825, "no": 826, "missing": 826 , "children": [
+                      { "nodeid": 825, "leaf": -0.12995486 }, 
+                      { "nodeid": 826, "leaf": -0.126535296 }
+                    ]}, 
+                    { "nodeid": 478, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.41597366, "yes": 827, "no": 828, "missing": 828 , "children": [
+                      { "nodeid": 827, "leaf": -0.134922594 }, 
+                      { "nodeid": 828, "leaf": -0.132368848 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 256, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.5747844, "yes": 479, "no": 480, "missing": 480 , "children": [
+                    { "nodeid": 479, "leaf": -0.127210438 }, 
+                    { "nodeid": 480, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 829, "no": 830, "missing": 830 , "children": [
+                      { "nodeid": 829, "leaf": -0.136854693 }, 
+                      { "nodeid": 830, "leaf": -0.134520456 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 66, "depth": 6, "split": "SchoolConnect", "split_condition": -1.03188443, "yes": 131, "no": 132, "missing": 132 , "children": [
+                { "nodeid": 131, "depth": 7, "split": "Is_Male", "split_condition": 1, "yes": 257, "no": 258, "missing": 258 , "children": [
+                  { "nodeid": 257, "leaf": -0.126486823 }, 
+                  { "nodeid": 258, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.31980884, "yes": 481, "no": 482, "missing": 482 , "children": [
+                    { "nodeid": 481, "leaf": -0.128384441 }, 
+                    { "nodeid": 482, "leaf": -0.127802953 }
+                  ]}
+                ]}, 
+                { "nodeid": 132, "depth": 7, "split": "SchoolConnect", "split_condition": -0.114966735, "yes": 259, "no": 260, "missing": 260 , "children": [
+                  { "nodeid": 259, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.60814178, "yes": 483, "no": 484, "missing": 484 , "children": [
+                    { "nodeid": 483, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.76767528, "yes": 831, "no": 832, "missing": 832 , "children": [
+                      { "nodeid": 831, "leaf": -0.142324388 }, 
+                      { "nodeid": 832, "leaf": -0.142831266 }
+                    ]}, 
+                    { "nodeid": 484, "leaf": -0.138396099 }
+                  ]}, 
+                  { "nodeid": 260, "leaf": -0.127210438 }
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 16, "depth": 4, "split": "NeighborConnect", "split_condition": -1.39760041, "yes": 33, "no": 34, "missing": 34 , "children": [
+            { "nodeid": 33, "depth": 5, "split": "NeighborConnect", "split_condition": -1.7813648, "yes": 67, "no": 68, "missing": 68 , "children": [
+              { "nodeid": 67, "depth": 6, "split": "SchoolConnect", "split_condition": 0.184937313, "yes": 133, "no": 134, "missing": 134 , "children": [
+                { "nodeid": 133, "depth": 7, "split": "SchoolConnect", "split_condition": 0.178363785, "yes": 261, "no": 262, "missing": 262 , "children": [
+                  { "nodeid": 261, "leaf": 0.361335963 }, 
+                  { "nodeid": 262, "leaf": 0.381211787 }
+                ]}, 
+                { "nodeid": 134, "depth": 7, "split": "SchoolConnect", "split_condition": 0.230090931, "yes": 263, "no": 264, "missing": 264 , "children": [
+                  { "nodeid": 263, "leaf": -0.133335575 }, 
+                  { "nodeid": 264, "leaf": -0.136255965 }
+                ]}
+              ]}, 
+              { "nodeid": 68, "depth": 6, "split": "SchoolConnect", "split_condition": 0.60852313, "yes": 135, "no": 136, "missing": 136 , "children": [
+                { "nodeid": 135, "depth": 7, "split": "SchoolConnect", "split_condition": 0.197252288, "yes": 265, "no": 266, "missing": 266 , "children": [
+                  { "nodeid": 265, "leaf": -0.134471655 }, 
+                  { "nodeid": 266, "leaf": -0.131880507 }
+                ]}, 
+                { "nodeid": 136, "depth": 7, "split": "SchoolConnect", "split_condition": 0.627728939, "yes": 267, "no": 268, "missing": 268 , "children": [
+                  { "nodeid": 267, "leaf": -0.139471874 }, 
+                  { "nodeid": 268, "leaf": -0.135425419 }
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 34, "leaf": 0.363746971 }
+          ]}
+        ]}, 
+        { "nodeid": 8, "depth": 3, "split": "SchoolConnect", "split_condition": 0.973843396, "yes": 17, "no": 18, "missing": 18 , "children": [
+          { "nodeid": 17, "depth": 4, "split": "NeighborConnect", "split_condition": -1.15578938, "yes": 35, "no": 36, "missing": 36 , "children": [
+            { "nodeid": 35, "depth": 5, "split": "Is_Male", "split_condition": 1, "yes": 69, "no": 70, "missing": 70 , "children": [
+              { "nodeid": 69, "depth": 6, "split": "SchoolConnect", "split_condition": -1.30029428, "yes": 137, "no": 138, "missing": 138 , "children": [
+                { "nodeid": 137, "depth": 7, "split": "SchoolConnect", "split_condition": -1.38756037, "yes": 269, "no": 270, "missing": 270 , "children": [
+                  { "nodeid": 269, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 485, "no": 486, "missing": 486 , "children": [
+                    { "nodeid": 485, "leaf": -0.127491772 }, 
+                    { "nodeid": 486, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.378456, "yes": 833, "no": 834, "missing": 834 , "children": [
+                      { "nodeid": 833, "leaf": -0.126245141 }, 
+                      { "nodeid": 834, "leaf": -0.127233982 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 270, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 487, "no": 488, "missing": 488 , "children": [
+                    { "nodeid": 487, "leaf": -0.131139264 }, 
+                    { "nodeid": 488, "leaf": -0.128213361 }
+                  ]}
+                ]}, 
+                { "nodeid": 138, "depth": 7, "split": "SchoolConnect", "split_condition": -0.783862829, "yes": 271, "no": 272, "missing": 272 , "children": [
+                  { "nodeid": 271, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.27236736, "yes": 489, "no": 490, "missing": 490 , "children": [
+                    { "nodeid": 489, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.71020257, "yes": 835, "no": 836, "missing": 836 , "children": [
+                      { "nodeid": 835, "leaf": -0.142324388 }, 
+                      { "nodeid": 836, "leaf": 0.26538679 }
+                    ]}, 
+                    { "nodeid": 490, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.25838125, "yes": 837, "no": 838, "missing": 838 , "children": [
+                      { "nodeid": 837, "leaf": -0.141166821 }, 
+                      { "nodeid": 838, "leaf": -0.12987259 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 272, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.34494793, "yes": 491, "no": 492, "missing": 492 , "children": [
+                    { "nodeid": 491, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.41597366, "yes": 839, "no": 840, "missing": 840 , "children": [
+                      { "nodeid": 839, "leaf": -0.134666473 }, 
+                      { "nodeid": 840, "leaf": 0.132988766 }
+                    ]}, 
+                    { "nodeid": 492, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.25838125, "yes": 841, "no": 842, "missing": 842 , "children": [
+                      { "nodeid": 841, "leaf": -0.130138233 }, 
+                      { "nodeid": 842, "leaf": -0.133381441 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 70, "depth": 6, "split": "SchoolConnect", "split_condition": -1.16559255, "yes": 139, "no": 140, "missing": 140 , "children": [
+                { "nodeid": 139, "depth": 7, "split": "SchoolConnect", "split_condition": -1.27938509, "yes": 273, "no": 274, "missing": 274 , "children": [
+                  { "nodeid": 273, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.97942984, "yes": 493, "no": 494, "missing": 494 , "children": [
+                    { "nodeid": 493, "leaf": -0.124952964 }, 
+                    { "nodeid": 494, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.76767528, "yes": 843, "no": 844, "missing": 844 , "children": [
+                      { "nodeid": 843, "leaf": -0.129054204 }, 
+                      { "nodeid": 844, "leaf": -0.12813361 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 274, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.34494793, "yes": 495, "no": 496, "missing": 496 , "children": [
+                    { "nodeid": 495, "leaf": 0.387780488 }, 
+                    { "nodeid": 496, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.29401755, "yes": 845, "no": 846, "missing": 846 , "children": [
+                      { "nodeid": 845, "leaf": 0.277016401 }, 
+                      { "nodeid": 846, "leaf": 0.281498015 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 140, "depth": 7, "split": "SchoolConnect", "split_condition": -1.14822412, "yes": 275, "no": 276, "missing": 276 , "children": [
+                  { "nodeid": 275, "leaf": -0.134295762 }, 
+                  { "nodeid": 276, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.29401755, "yes": 497, "no": 498, "missing": 498 , "children": [
+                    { "nodeid": 497, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.5399456, "yes": 847, "no": 848, "missing": 848 , "children": [
+                      { "nodeid": 847, "leaf": -0.127976671 }, 
+                      { "nodeid": 848, "leaf": -0.129747555 }
+                    ]}, 
+                    { "nodeid": 498, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.2213769, "yes": 849, "no": 850, "missing": 850 , "children": [
+                      { "nodeid": 849, "leaf": -0.127695128 }, 
+                      { "nodeid": 850, "leaf": -0.127133757 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 36, "depth": 5, "split": "NeighborConnect", "split_condition": 0.442004532, "yes": 71, "no": 72, "missing": 72 , "children": [
+              { "nodeid": 71, "depth": 6, "split": "SchoolConnect", "split_condition": -1.05105901, "yes": 141, "no": 142, "missing": 142 , "children": [
+                { "nodeid": 141, "depth": 7, "split": "SchoolConnect", "split_condition": -1.77171457, "yes": 277, "no": 278, "missing": 278 , "children": [
+                  { "nodeid": 277, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4269042, "yes": 499, "no": 500, "missing": 500 , "children": [
+                    { "nodeid": 499, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.48432124, "yes": 851, "no": 852, "missing": 852 , "children": [
+                      { "nodeid": 851, "leaf": -0.131341189 }, 
+                      { "nodeid": 852, "leaf": 0.0869499445 }
+                    ]}, 
+                    { "nodeid": 500, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 853, "no": 854, "missing": 854 , "children": [
+                      { "nodeid": 853, "leaf": 0.102842703 }, 
+                      { "nodeid": 854, "leaf": -0.118211225 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 278, "depth": 8, "split": "SchoolConnect", "split_condition": -1.41201496, "yes": 501, "no": 502, "missing": 502 , "children": [
+                    { "nodeid": 501, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.97942984, "yes": 855, "no": 856, "missing": 856 , "children": [
+                      { "nodeid": 855, "leaf": 0.276726037 }, 
+                      { "nodeid": 856, "leaf": -0.116242252 }
+                    ]}, 
+                    { "nodeid": 502, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 857, "no": 858, "missing": 858 , "children": [
+                      { "nodeid": 857, "leaf": -0.0809734687 }, 
+                      { "nodeid": 858, "leaf": -0.108337782 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 142, "depth": 7, "split": "SchoolConnect", "split_condition": -0.73910892, "yes": 279, "no": 280, "missing": 280 , "children": [
+                  { "nodeid": 279, "depth": 8, "split": "SchoolConnect", "split_condition": -0.830007195, "yes": 503, "no": 504, "missing": 504 , "children": [
+                    { "nodeid": 503, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 859, "no": 860, "missing": 860 , "children": [
+                      { "nodeid": 859, "leaf": -0.0810929239 }, 
+                      { "nodeid": 860, "leaf": -0.0444500111 }
+                    ]}, 
+                    { "nodeid": 504, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 861, "no": 862, "missing": 862 , "children": [
+                      { "nodeid": 861, "leaf": -0.0886023417 }, 
+                      { "nodeid": 862, "leaf": 0.0428181551 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 280, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.52041113, "yes": 505, "no": 506, "missing": 506 , "children": [
+                    { "nodeid": 505, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.92093861, "yes": 863, "no": 864, "missing": 864 , "children": [
+                      { "nodeid": 863, "leaf": -0.0797898769 }, 
+                      { "nodeid": 864, "leaf": -0.109108627 }
+                    ]}, 
+                    { "nodeid": 506, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 865, "no": 866, "missing": 866 , "children": [
+                      { "nodeid": 865, "leaf": -0.0433151275 }, 
+                      { "nodeid": 866, "leaf": -0.0656510815 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 72, "depth": 6, "split": "SchoolConnect", "split_condition": 0.247716516, "yes": 143, "no": 144, "missing": 144 , "children": [
+                { "nodeid": 143, "depth": 7, "split": "Is_Male", "split_condition": 1, "yes": 281, "no": 282, "missing": 282 , "children": [
+                  { "nodeid": 281, "depth": 8, "split": "SchoolConnect", "split_condition": -0.00376882614, "yes": 507, "no": 508, "missing": 508 , "children": [
+                    { "nodeid": 507, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.41597366, "yes": 867, "no": 868, "missing": 868 , "children": [
+                      { "nodeid": 867, "leaf": -0.13000451 }, 
+                      { "nodeid": 868, "leaf": -0.131481767 }
+                    ]}, 
+                    { "nodeid": 508, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 869, "no": 870, "missing": 870 , "children": [
+                      { "nodeid": 869, "leaf": -0.143457919 }, 
+                      { "nodeid": 870, "leaf": -0.135431439 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 282, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.65878153, "yes": 509, "no": 510, "missing": 510 , "children": [
+                    { "nodeid": 509, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.97942984, "yes": 871, "no": 872, "missing": 872 , "children": [
+                      { "nodeid": 871, "leaf": -0.139402628 }, 
+                      { "nodeid": 872, "leaf": -0.128805056 }
+                    ]}, 
+                    { "nodeid": 510, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.33502507, "yes": 873, "no": 874, "missing": 874 , "children": [
+                      { "nodeid": 873, "leaf": -0.0336768739 }, 
+                      { "nodeid": 874, "leaf": -0.130437061 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 144, "depth": 7, "split": "SchoolConnect", "split_condition": 0.400302142, "yes": 283, "no": 284, "missing": 284 , "children": [
+                  { "nodeid": 283, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 511, "no": 512, "missing": 512 , "children": [
+                    { "nodeid": 511, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.88001728, "yes": 875, "no": 876, "missing": 876 , "children": [
+                      { "nodeid": 875, "leaf": -0.125355348 }, 
+                      { "nodeid": 876, "leaf": -0.00582643133 }
+                    ]}, 
+                    { "nodeid": 512, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 877, "no": 878, "missing": 878 , "children": [
+                      { "nodeid": 877, "leaf": -0.134425536 }, 
+                      { "nodeid": 878, "leaf": 0.322420746 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 284, "depth": 8, "split": "SchoolConnect", "split_condition": 0.803930938, "yes": 513, "no": 514, "missing": 514 , "children": [
+                    { "nodeid": 513, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 879, "no": 880, "missing": 880 , "children": [
+                      { "nodeid": 879, "leaf": -0.132076979 }, 
+                      { "nodeid": 880, "leaf": -0.127886429 }
+                    ]}, 
+                    { "nodeid": 514, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.79245019, "yes": 881, "no": 882, "missing": 882 , "children": [
+                      { "nodeid": 881, "leaf": -0.127229407 }, 
+                      { "nodeid": 882, "leaf": 0.000793742132 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 18, "depth": 4, "split": "NeighborConnect", "split_condition": 0.0305873472, "yes": 37, "no": 38, "missing": 38 , "children": [
+            { "nodeid": 37, "depth": 5, "split": "NeighborConnect", "split_condition": -0.725266755, "yes": 73, "no": 74, "missing": 74 , "children": [
+              { "nodeid": 73, "depth": 6, "split": "SchoolConnect", "split_condition": 1.39342189, "yes": 145, "no": 146, "missing": 146 , "children": [
+                { "nodeid": 145, "depth": 7, "split": "SchoolConnect", "split_condition": 1.20054233, "yes": 285, "no": 286, "missing": 286 , "children": [
+                  { "nodeid": 285, "leaf": -0.132948473 }, 
+                  { "nodeid": 286, "leaf": -0.131956935 }
+                ]}, 
+                { "nodeid": 146, "leaf": -0.13095516 }
+              ]}, 
+              { "nodeid": 74, "depth": 6, "split": "Is_Male", "split_condition": 1, "yes": 147, "no": 148, "missing": 148 , "children": [
+                { "nodeid": 147, "depth": 7, "split": "SchoolConnect", "split_condition": 0.992946029, "yes": 287, "no": 288, "missing": 288 , "children": [
+                  { "nodeid": 287, "leaf": 0.385068178 }, 
+                  { "nodeid": 288, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.4700948, "yes": 515, "no": 516, "missing": 516 , "children": [
+                    { "nodeid": 515, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.62536156, "yes": 883, "no": 884, "missing": 884 , "children": [
+                      { "nodeid": 883, "leaf": -0.131605685 }, 
+                      { "nodeid": 884, "leaf": -0.128522113 }
+                    ]}, 
+                    { "nodeid": 516, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.26109266, "yes": 885, "no": 886, "missing": 886 , "children": [
+                      { "nodeid": 885, "leaf": 0.380638093 }, 
+                      { "nodeid": 886, "leaf": 0.314725876 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 148, "depth": 7, "split": "SchoolConnect", "split_condition": 1.00007451, "yes": 289, "no": 290, "missing": 290 , "children": [
+                  { "nodeid": 289, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.39521635, "yes": 517, "no": 518, "missing": 518 , "children": [
+                    { "nodeid": 517, "leaf": -0.134181932 }, 
+                    { "nodeid": 518, "leaf": -0.133251309 }
+                  ]}, 
+                  { "nodeid": 290, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.3624171, "yes": 519, "no": 520, "missing": 520 , "children": [
+                    { "nodeid": 519, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.40297329, "yes": 887, "no": 888, "missing": 888 , "children": [
+                      { "nodeid": 887, "leaf": 0.31036073 }, 
+                      { "nodeid": 888, "leaf": 0.322447389 }
+                    ]}, 
+                    { "nodeid": 520, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.33502507, "yes": 889, "no": 890, "missing": 890 , "children": [
+                      { "nodeid": 889, "leaf": 0.0540208519 }, 
+                      { "nodeid": 890, "leaf": -0.128439307 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 38, "depth": 5, "split": "NeighborConnect", "split_condition": 0.240689605, "yes": 75, "no": 76, "missing": 76 , "children": [
+              { "nodeid": 75, "depth": 6, "split": "SchoolConnect", "split_condition": 1.40802753, "yes": 149, "no": 150, "missing": 150 , "children": [
+                { "nodeid": 149, "leaf": -0.128439307 }, 
+                { "nodeid": 150, "depth": 7, "split": "SchoolConnect", "split_condition": 1.63087797, "yes": 291, "no": 292, "missing": 292 , "children": [
+                  { "nodeid": 291, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.55486035, "yes": 521, "no": 522, "missing": 522 , "children": [
+                    { "nodeid": 521, "leaf": -0.123603046 }, 
+                    { "nodeid": 522, "leaf": -0.128439307 }
+                  ]}, 
+                  { "nodeid": 292, "leaf": -0.128285557 }
+                ]}
+              ]}, 
+              { "nodeid": 76, "depth": 6, "split": "SchoolConnect", "split_condition": 1.00007451, "yes": 151, "no": 152, "missing": 152 , "children": [
+                { "nodeid": 151, "leaf": -0.126586363 }, 
+                { "nodeid": 152, "leaf": -0.14390184 }
+              ]}
+            ]}
+          ]}
+        ]}
+      ]}, 
+      { "nodeid": 4, "depth": 2, "split": "NeighborConnect", "split_condition": 0.358310968, "yes": 9, "no": 10, "missing": 10 , "children": [
+        { "nodeid": 9, "depth": 3, "split": "SchoolConnect", "split_condition": -0.6224069, "yes": 19, "no": 20, "missing": 20 , "children": [
+          { "nodeid": 19, "depth": 4, "split": "NeighborConnect", "split_condition": -0.718224704, "yes": 39, "no": 40, "missing": 40 , "children": [
+            { "nodeid": 39, "depth": 5, "split": "NeighborConnect", "split_condition": -1.5314008, "yes": 77, "no": 78, "missing": 78 , "children": [
+              { "nodeid": 77, "depth": 6, "split": "Is_Male", "split_condition": 1, "yes": 153, "no": 154, "missing": 154 , "children": [
+                { "nodeid": 153, "depth": 7, "split": "SchoolConnect", "split_condition": -1.10914385, "yes": 293, "no": 294, "missing": 294 , "children": [
+                  { "nodeid": 293, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.87260282, "yes": 523, "no": 524, "missing": 524 , "children": [
+                    { "nodeid": 523, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.10912526, "yes": 891, "no": 892, "missing": 892 , "children": [
+                      { "nodeid": 891, "leaf": -0.127647981 }, 
+                      { "nodeid": 892, "leaf": -0.130681023 }
+                    ]}, 
+                    { "nodeid": 524, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 893, "no": 894, "missing": 894 , "children": [
+                      { "nodeid": 893, "leaf": -0.127471358 }, 
+                      { "nodeid": 894, "leaf": -0.126363546 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 294, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.02291954, "yes": 525, "no": 526, "missing": 526 , "children": [
+                    { "nodeid": 525, "leaf": -0.131976202 }, 
+                    { "nodeid": 526, "leaf": 0.376057953 }
+                  ]}
+                ]}, 
+                { "nodeid": 154, "depth": 7, "split": "SchoolConnect", "split_condition": -1.77171457, "yes": 295, "no": 296, "missing": 296 , "children": [
+                  { "nodeid": 295, "leaf": -0.135731176 }, 
+                  { "nodeid": 296, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.04114676, "yes": 527, "no": 528, "missing": 528 , "children": [
+                    { "nodeid": 527, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.05603862, "yes": 895, "no": 896, "missing": 896 , "children": [
+                      { "nodeid": 895, "leaf": 0.266455144 }, 
+                      { "nodeid": 896, "leaf": -0.124311447 }
+                    ]}, 
+                    { "nodeid": 528, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.984350979, "yes": 897, "no": 898, "missing": 898 , "children": [
+                      { "nodeid": 897, "leaf": 0.388767809 }, 
+                      { "nodeid": 898, "leaf": 0.350686252 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 78, "depth": 6, "split": "Is_Male", "split_condition": 1, "yes": 155, "no": 156, "missing": 156 , "children": [
+                { "nodeid": 155, "depth": 7, "split": "SchoolConnect", "split_condition": -1.01916921, "yes": 297, "no": 298, "missing": 298 , "children": [
+                  { "nodeid": 297, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.921198487, "yes": 529, "no": 530, "missing": 530 , "children": [
+                    { "nodeid": 529, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.06259215, "yes": 899, "no": 900, "missing": 900 , "children": [
+                      { "nodeid": 899, "leaf": -0.131366163 }, 
+                      { "nodeid": 900, "leaf": -0.128610969 }
+                    ]}, 
+                    { "nodeid": 530, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.87260282, "yes": 901, "no": 902, "missing": 902 , "children": [
+                      { "nodeid": 901, "leaf": 0.424301863 }, 
+                      { "nodeid": 902, "leaf": -0.129327938 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 298, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.06259215, "yes": 531, "no": 532, "missing": 532 , "children": [
+                    { "nodeid": 531, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.09247005, "yes": 903, "no": 904, "missing": 904 , "children": [
+                      { "nodeid": 903, "leaf": 0.00359642296 }, 
+                      { "nodeid": 904, "leaf": 0.261309594 }
+                    ]}, 
+                    { "nodeid": 532, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.939595163, "yes": 905, "no": 906, "missing": 906 , "children": [
+                      { "nodeid": 905, "leaf": -0.0246127676 }, 
+                      { "nodeid": 906, "leaf": -0.128761679 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 156, "depth": 7, "split": "SchoolConnect", "split_condition": -1.40026903, "yes": 299, "no": 300, "missing": 300 , "children": [
+                  { "nodeid": 299, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.10912526, "yes": 533, "no": 534, "missing": 534 , "children": [
+                    { "nodeid": 533, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.15211737, "yes": 907, "no": 908, "missing": 908 , "children": [
+                      { "nodeid": 907, "leaf": -0.127337918 }, 
+                      { "nodeid": 908, "leaf": -0.128239438 }
+                    ]}, 
+                    { "nodeid": 534, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.03341997, "yes": 909, "no": 910, "missing": 910 , "children": [
+                      { "nodeid": 909, "leaf": -0.134547338 }, 
+                      { "nodeid": 910, "leaf": -0.129015684 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 300, "depth": 8, "split": "SchoolConnect", "split_condition": -1.38756037, "yes": 535, "no": 536, "missing": 536 , "children": [
+                    { "nodeid": 535, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.14175475, "yes": 911, "no": 912, "missing": 912 , "children": [
+                      { "nodeid": 911, "leaf": -0.0212445669 }, 
+                      { "nodeid": 912, "leaf": 0.291819811 }
+                    ]}, 
+                    { "nodeid": 536, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.807969332, "yes": 913, "no": 914, "missing": 914 , "children": [
+                      { "nodeid": 913, "leaf": -0.116159163 }, 
+                      { "nodeid": 914, "leaf": 0.0158052016 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 40, "depth": 5, "split": "NeighborConnect", "split_condition": -0.674703538, "yes": 79, "no": 80, "missing": 80 , "children": [
+              { "nodeid": 79, "depth": 6, "split": "Is_Male", "split_condition": 1, "yes": 157, "no": 158, "missing": 158 , "children": [
+                { "nodeid": 157, "depth": 7, "split": "SchoolConnect", "split_condition": -1.27938509, "yes": 301, "no": 302, "missing": 302 , "children": [
+                  { "nodeid": 301, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.07176173, "yes": 537, "no": 538, "missing": 538 , "children": [
+                    { "nodeid": 537, "leaf": -0.124782979 }, 
+                    { "nodeid": 538, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.01240087, "yes": 915, "no": 916, "missing": 916 , "children": [
+                      { "nodeid": 915, "leaf": -0.128381953 }, 
+                      { "nodeid": 916, "leaf": -0.130053848 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 302, "leaf": -0.131189555 }
+                ]}, 
+                { "nodeid": 158, "depth": 7, "split": "SchoolConnect", "split_condition": -0.810599566, "yes": 303, "no": 304, "missing": 304 , "children": [
+                  { "nodeid": 303, "depth": 8, "split": "SchoolConnect", "split_condition": -0.988510728, "yes": 539, "no": 540, "missing": 540 , "children": [
+                    { "nodeid": 539, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.02291954, "yes": 917, "no": 918, "missing": 918 , "children": [
+                      { "nodeid": 917, "leaf": -0.130439863 }, 
+                      { "nodeid": 918, "leaf": 0.131516933 }
+                    ]}, 
+                    { "nodeid": 540, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.10197318, "yes": 919, "no": 920, "missing": 920 , "children": [
+                      { "nodeid": 919, "leaf": 0.36276865 }, 
+                      { "nodeid": 920, "leaf": 0.324338764 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 304, "depth": 8, "split": "SchoolConnect", "split_condition": -0.698169172, "yes": 541, "no": 542, "missing": 542 , "children": [
+                    { "nodeid": 541, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.17178714, "yes": 921, "no": 922, "missing": 922 , "children": [
+                      { "nodeid": 921, "leaf": -0.133900523 }, 
+                      { "nodeid": 922, "leaf": -0.130986318 }
+                    ]}, 
+                    { "nodeid": 542, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.984350979, "yes": 923, "no": 924, "missing": 924 , "children": [
+                      { "nodeid": 923, "leaf": 0.340696454 }, 
+                      { "nodeid": 924, "leaf": -0.129277319 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 80, "depth": 6, "split": "SchoolConnect", "split_condition": -1.3190819, "yes": 159, "no": 160, "missing": 160 , "children": [
+                { "nodeid": 159, "depth": 7, "split": "SchoolConnect", "split_condition": -1.42916656, "yes": 305, "no": 306, "missing": 306 , "children": [
+                  { "nodeid": 305, "depth": 8, "split": "SchoolConnect", "split_condition": -1.50230396, "yes": 543, "no": 544, "missing": 544 , "children": [
+                    { "nodeid": 543, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 925, "no": 926, "missing": 926 , "children": [
+                      { "nodeid": 925, "leaf": -0.0252020638 }, 
+                      { "nodeid": 926, "leaf": 0.100760855 }
+                    ]}, 
+                    { "nodeid": 544, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.88920331, "yes": 927, "no": 928, "missing": 928 , "children": [
+                      { "nodeid": 927, "leaf": -0.127578884 }, 
+                      { "nodeid": 928, "leaf": -0.130924925 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 306, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.09247005, "yes": 545, "no": 546, "missing": 546 , "children": [
+                    { "nodeid": 545, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.10912526, "yes": 929, "no": 930, "missing": 930 , "children": [
+                      { "nodeid": 929, "leaf": -0.128966048 }, 
+                      { "nodeid": 930, "leaf": -0.13194266 }
+                    ]}, 
+                    { "nodeid": 546, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.821541905, "yes": 931, "no": 932, "missing": 932 , "children": [
+                      { "nodeid": 931, "leaf": 0.137693852 }, 
+                      { "nodeid": 932, "leaf": -0.127284393 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 160, "depth": 7, "split": "SchoolConnect", "split_condition": -0.803582191, "yes": 307, "no": 308, "missing": 308 , "children": [
+                  { "nodeid": 307, "depth": 8, "split": "SchoolConnect", "split_condition": -0.810599566, "yes": 547, "no": 548, "missing": 548 , "children": [
+                    { "nodeid": 547, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.921198487, "yes": 933, "no": 934, "missing": 934 , "children": [
+                      { "nodeid": 933, "leaf": -0.0817957744 }, 
+                      { "nodeid": 934, "leaf": -0.0394213311 }
+                    ]}, 
+                    { "nodeid": 548, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.03341997, "yes": 935, "no": 936, "missing": 936 , "children": [
+                      { "nodeid": 935, "leaf": 0.221669242 }, 
+                      { "nodeid": 936, "leaf": -0.0189625658 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 308, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.10197318, "yes": 549, "no": 550, "missing": 550 , "children": [
+                    { "nodeid": 549, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.10912526, "yes": 937, "no": 938, "missing": 938 , "children": [
+                      { "nodeid": 937, "leaf": -0.058282353 }, 
+                      { "nodeid": 938, "leaf": 0.120318174 }
+                    ]}, 
+                    { "nodeid": 550, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 939, "no": 940, "missing": 940 , "children": [
+                      { "nodeid": 939, "leaf": -0.039487198 }, 
+                      { "nodeid": 940, "leaf": -0.118888333 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 20, "depth": 4, "split": "NeighborConnect", "split_condition": 0.0552949309, "yes": 41, "no": 42, "missing": 42 , "children": [
+            { "nodeid": 41, "depth": 5, "split": "NeighborConnect", "split_condition": -0.089255318, "yes": 81, "no": 82, "missing": 82 , "children": [
+              { "nodeid": 81, "depth": 6, "split": "SchoolConnect", "split_condition": 0.392422497, "yes": 161, "no": 162, "missing": 162 , "children": [
+                { "nodeid": 161, "depth": 7, "split": "SchoolConnect", "split_condition": -0.259624064, "yes": 309, "no": 310, "missing": 310 , "children": [
+                  { "nodeid": 309, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.939595163, "yes": 551, "no": 552, "missing": 552 , "children": [
+                    { "nodeid": 551, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 941, "no": 942, "missing": 942 , "children": [
+                      { "nodeid": 941, "leaf": -0.0636342987 }, 
+                      { "nodeid": 942, "leaf": 0.0577602386 }
+                    ]}, 
+                    { "nodeid": 552, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.929336488, "yes": 943, "no": 944, "missing": 944 , "children": [
+                      { "nodeid": 943, "leaf": -0.134122208 }, 
+                      { "nodeid": 944, "leaf": -0.0158084054 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 310, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.81027621, "yes": 553, "no": 554, "missing": 554 , "children": [
+                    { "nodeid": 553, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.882272482, "yes": 945, "no": 946, "missing": 946 , "children": [
+                      { "nodeid": 945, "leaf": -0.0535396524 }, 
+                      { "nodeid": 946, "leaf": -0.0276446436 }
+                    ]}, 
+                    { "nodeid": 554, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.80166924, "yes": 947, "no": 948, "missing": 948 , "children": [
+                      { "nodeid": 947, "leaf": -0.10921061 }, 
+                      { "nodeid": 948, "leaf": -0.133640572 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 162, "depth": 7, "split": "SchoolConnect", "split_condition": 0.396509111, "yes": 311, "no": 312, "missing": 312 , "children": [
+                  { "nodeid": 311, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.02291954, "yes": 555, "no": 556, "missing": 556 , "children": [
+                    { "nodeid": 555, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 949, "no": 950, "missing": 950 , "children": [
+                      { "nodeid": 949, "leaf": -0.129922077 }, 
+                      { "nodeid": 950, "leaf": 0.372897983 }
+                    ]}, 
+                    { "nodeid": 556, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.830406666, "yes": 951, "no": 952, "missing": 952 , "children": [
+                      { "nodeid": 951, "leaf": 0.108344473 }, 
+                      { "nodeid": 952, "leaf": -0.13689594 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 312, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.80166924, "yes": 557, "no": 558, "missing": 558 , "children": [
+                    { "nodeid": 557, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.95115912, "yes": 953, "no": 954, "missing": 954 , "children": [
+                      { "nodeid": 953, "leaf": 0.0376711674 }, 
+                      { "nodeid": 954, "leaf": -0.0201647449 }
+                    ]}, 
+                    { "nodeid": 558, "leaf": 0.369849175 }
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 82, "depth": 6, "split": "SchoolConnect", "split_condition": -0.60692507, "yes": 163, "no": 164, "missing": 164 , "children": [
+                { "nodeid": 163, "depth": 7, "split": "Is_Male", "split_condition": 1, "yes": 313, "no": 314, "missing": 314 , "children": [
+                  { "nodeid": 313, "leaf": 0.389638156 }, 
+                  { "nodeid": 314, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.863356531, "yes": 559, "no": 560, "missing": 560 , "children": [
+                    { "nodeid": 559, "leaf": -0.134128407 }, 
+                    { "nodeid": 560, "leaf": 0.277351111 }
+                  ]}
+                ]}, 
+                { "nodeid": 164, "depth": 7, "split": "SchoolConnect", "split_condition": -0.0115550011, "yes": 315, "no": 316, "missing": 316 , "children": [
+                  { "nodeid": 315, "depth": 8, "split": "SchoolConnect", "split_condition": -0.33574301, "yes": 561, "no": 562, "missing": 562 , "children": [
+                    { "nodeid": 561, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.14175475, "yes": 955, "no": 956, "missing": 956 , "children": [
+                      { "nodeid": 955, "leaf": -0.138247266 }, 
+                      { "nodeid": 956, "leaf": -0.132967308 }
+                    ]}, 
+                    { "nodeid": 562, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.939595163, "yes": 957, "no": 958, "missing": 958 , "children": [
+                      { "nodeid": 957, "leaf": -0.134681329 }, 
+                      { "nodeid": 958, "leaf": -0.0843192562 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 316, "depth": 8, "split": "SchoolConnect", "split_condition": 0.0546645969, "yes": 563, "no": 564, "missing": 564 , "children": [
+                    { "nodeid": 563, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.0469166, "yes": 959, "no": 960, "missing": 960 , "children": [
+                      { "nodeid": 959, "leaf": 0.319323391 }, 
+                      { "nodeid": 960, "leaf": 0.435166448 }
+                    ]}, 
+                    { "nodeid": 564, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 961, "no": 962, "missing": 962 , "children": [
+                      { "nodeid": 961, "leaf": -0.130886003 }, 
+                      { "nodeid": 962, "leaf": -0.0281479098 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 42, "depth": 5, "split": "NeighborConnect", "split_condition": 0.184331521, "yes": 83, "no": 84, "missing": 84 , "children": [
+              { "nodeid": 83, "depth": 6, "split": "SchoolConnect", "split_condition": -0.313310683, "yes": 165, "no": 166, "missing": 166 , "children": [
+                { "nodeid": 165, "depth": 7, "split": "SchoolConnect", "split_condition": -0.588597536, "yes": 317, "no": 318, "missing": 318 , "children": [
+                  { "nodeid": 317, "depth": 8, "split": "SchoolConnect", "split_condition": -0.592872679, "yes": 565, "no": 566, "missing": 566 , "children": [
+                    { "nodeid": 565, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.08325398, "yes": 963, "no": 964, "missing": 964 , "children": [
+                      { "nodeid": 963, "leaf": -0.13232322 }, 
+                      { "nodeid": 964, "leaf": -0.126183167 }
+                    ]}, 
+                    { "nodeid": 566, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.06259215, "yes": 965, "no": 966, "missing": 966 , "children": [
+                      { "nodeid": 965, "leaf": 0.336108327 }, 
+                      { "nodeid": 966, "leaf": 0.392345369 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 318, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.01240087, "yes": 567, "no": 568, "missing": 568 , "children": [
+                    { "nodeid": 567, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.05603862, "yes": 967, "no": 968, "missing": 968 , "children": [
+                      { "nodeid": 967, "leaf": 0.0590104535 }, 
+                      { "nodeid": 968, "leaf": 0.402535766 }
+                    ]}, 
+                    { "nodeid": 568, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.921198487, "yes": 969, "no": 970, "missing": 970 , "children": [
+                      { "nodeid": 969, "leaf": -0.133510977 }, 
+                      { "nodeid": 970, "leaf": 0.0273602847 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 166, "depth": 7, "split": "SchoolConnect", "split_condition": 0.00799956731, "yes": 319, "no": 320, "missing": 320 , "children": [
+                  { "nodeid": 319, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.07176173, "yes": 569, "no": 570, "missing": 570 , "children": [
+                    { "nodeid": 569, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.13292837, "yes": 971, "no": 972, "missing": 972 , "children": [
+                      { "nodeid": 971, "leaf": 0.359473914 }, 
+                      { "nodeid": 972, "leaf": 0.332200468 }
+                    ]}, 
+                    { "nodeid": 570, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 973, "no": 974, "missing": 974 , "children": [
+                      { "nodeid": 973, "leaf": -0.134540901 }, 
+                      { "nodeid": 974, "leaf": 0.196676537 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 320, "depth": 8, "split": "SchoolConnect", "split_condition": 0.190440252, "yes": 571, "no": 572, "missing": 572 , "children": [
+                    { "nodeid": 571, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.929336488, "yes": 975, "no": 976, "missing": 976 , "children": [
+                      { "nodeid": 975, "leaf": -0.101490095 }, 
+                      { "nodeid": 976, "leaf": 0.277351111 }
+                    ]}, 
+                    { "nodeid": 572, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.821541905, "yes": 977, "no": 978, "missing": 978 , "children": [
+                      { "nodeid": 977, "leaf": 0.155177638 }, 
+                      { "nodeid": 978, "leaf": -0.134440854 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 84, "depth": 6, "split": "SchoolConnect", "split_condition": -0.272182018, "yes": 167, "no": 168, "missing": 168 , "children": [
+                { "nodeid": 167, "depth": 7, "split": "SchoolConnect", "split_condition": -0.4915438, "yes": 321, "no": 322, "missing": 322 , "children": [
+                  { "nodeid": 321, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.04114676, "yes": 573, "no": 574, "missing": 574 , "children": [
+                    { "nodeid": 573, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.14175475, "yes": 979, "no": 980, "missing": 980 , "children": [
+                      { "nodeid": 979, "leaf": 0.39052853 }, 
+                      { "nodeid": 980, "leaf": 0.447906345 }
+                    ]}, 
+                    { "nodeid": 574, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 981, "no": 982, "missing": 982 , "children": [
+                      { "nodeid": 981, "leaf": -0.131030411 }, 
+                      { "nodeid": 982, "leaf": 0.316390187 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 322, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.07176173, "yes": 575, "no": 576, "missing": 576 , "children": [
+                    { "nodeid": 575, "leaf": -0.128118172 }, 
+                    { "nodeid": 576, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.00354075, "yes": 983, "no": 984, "missing": 984 , "children": [
+                      { "nodeid": 983, "leaf": -0.14026016 }, 
+                      { "nodeid": 984, "leaf": -0.131311849 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 168, "depth": 7, "split": "SchoolConnect", "split_condition": -0.259624064, "yes": 323, "no": 324, "missing": 324 , "children": [
+                  { "nodeid": 323, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.12195647, "yes": 577, "no": 578, "missing": 578 , "children": [
+                    { "nodeid": 577, "leaf": 0.332967281 }, 
+                    { "nodeid": 578, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.07176173, "yes": 985, "no": 986, "missing": 986 , "children": [
+                      { "nodeid": 985, "leaf": 0.398846716 }, 
+                      { "nodeid": 986, "leaf": 0.339268535 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 324, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.994535565, "yes": 579, "no": 580, "missing": 580 , "children": [
+                    { "nodeid": 579, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.01240087, "yes": 987, "no": 988, "missing": 988 , "children": [
+                      { "nodeid": 987, "leaf": -0.064198263 }, 
+                      { "nodeid": 988, "leaf": -0.133892059 }
+                    ]}, 
+                    { "nodeid": 580, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.984350979, "yes": 989, "no": 990, "missing": 990 , "children": [
+                      { "nodeid": 989, "leaf": 0.350504875 }, 
+                      { "nodeid": 990, "leaf": 0.0111118201 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}, 
+        { "nodeid": 10, "depth": 3, "split": "Is_Male", "split_condition": 1, "yes": 21, "no": 22, "missing": 22 , "children": [
+          { "nodeid": 21, "depth": 4, "split": "NeighborConnect", "split_condition": 0.401260316, "yes": 43, "no": 44, "missing": 44 , "children": [
+            { "nodeid": 43, "depth": 5, "split": "NeighborConnect", "split_condition": 0.383528292, "yes": 85, "no": 86, "missing": 86 , "children": [
+              { "nodeid": 85, "depth": 6, "split": "SchoolConnect", "split_condition": -0.313310683, "yes": 169, "no": 170, "missing": 170 , "children": [
+                { "nodeid": 169, "depth": 7, "split": "SchoolConnect", "split_condition": -0.588597536, "yes": 325, "no": 326, "missing": 326 , "children": [
+                  { "nodeid": 325, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.17178714, "yes": 581, "no": 582, "missing": 582 , "children": [
+                    { "nodeid": 581, "leaf": -0.124675989 }, 
+                    { "nodeid": 582, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.854885995, "yes": 991, "no": 992, "missing": 992 , "children": [
+                      { "nodeid": 991, "leaf": -0.128684923 }, 
+                      { "nodeid": 992, "leaf": -0.126802638 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 326, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.929336488, "yes": 583, "no": 584, "missing": 584 , "children": [
+                    { "nodeid": 583, "leaf": -0.134425536 }, 
+                    { "nodeid": 584, "leaf": -0.133788034 }
+                  ]}
+                ]}, 
+                { "nodeid": 170, "depth": 7, "split": "SchoolConnect", "split_condition": -0.239596814, "yes": 327, "no": 328, "missing": 328 , "children": [
+                  { "nodeid": 327, "leaf": 0.366537809 }, 
+                  { "nodeid": 328, "depth": 8, "split": "SchoolConnect", "split_condition": 0.204380766, "yes": 585, "no": 586, "missing": 586 , "children": [
+                    { "nodeid": 585, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.994535565, "yes": 993, "no": 994, "missing": 994 , "children": [
+                      { "nodeid": 993, "leaf": -0.135400444 }, 
+                      { "nodeid": 994, "leaf": -0.13226451 }
+                    ]}, 
+                    { "nodeid": 586, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.958432436, "yes": 995, "no": 996, "missing": 996 , "children": [
+                      { "nodeid": 995, "leaf": 0.109446444 }, 
+                      { "nodeid": 996, "leaf": -0.129750669 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 86, "depth": 6, "split": "SchoolConnect", "split_condition": -0.137546718, "yes": 171, "no": 172, "missing": 172 , "children": [
+                { "nodeid": 171, "leaf": 0.396033287 }, 
+                { "nodeid": 172, "leaf": 0.41310367 }
+              ]}
+            ]}, 
+            { "nodeid": 44, "depth": 5, "split": "NeighborConnect", "split_condition": 0.413056552, "yes": 87, "no": 88, "missing": 88 , "children": [
+              { "nodeid": 87, "depth": 6, "split": "SchoolConnect", "split_condition": -1.59704268, "yes": 173, "no": 174, "missing": 174 , "children": [
+                { "nodeid": 173, "depth": 7, "split": "SchoolConnect", "split_condition": -1.79538119, "yes": 329, "no": 330, "missing": 330 , "children": [
+                  { "nodeid": 329, "leaf": -0.136239767 }, 
+                  { "nodeid": 330, "leaf": -0.139743388 }
+                ]}, 
+                { "nodeid": 174, "depth": 7, "split": "SchoolConnect", "split_condition": 1.63087797, "yes": 331, "no": 332, "missing": 332 , "children": [
+                  { "nodeid": 331, "depth": 8, "split": "SchoolConnect", "split_condition": -0.00293957512, "yes": 587, "no": 588, "missing": 588 , "children": [
+                    { "nodeid": 587, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.819242299, "yes": 997, "no": 998, "missing": 998 , "children": [
+                      { "nodeid": 997, "leaf": -0.131560907 }, 
+                      { "nodeid": 998, "leaf": -0.129946068 }
+                    ]}, 
+                    { "nodeid": 588, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.09247005, "yes": 999, "no": 1000, "missing": 1000 , "children": [
+                      { "nodeid": 999, "leaf": -0.130641505 }, 
+                      { "nodeid": 1000, "leaf": -0.129031375 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 332, "leaf": -0.138222322 }
+                ]}
+              ]}, 
+              { "nodeid": 88, "depth": 6, "split": "SchoolConnect", "split_condition": 0.803930938, "yes": 175, "no": 176, "missing": 176 , "children": [
+                { "nodeid": 175, "depth": 7, "split": "SchoolConnect", "split_condition": 0.204380766, "yes": 333, "no": 334, "missing": 334 , "children": [
+                  { "nodeid": 333, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 589, "no": 590, "missing": 590 , "children": [
+                    { "nodeid": 589, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.939595163, "yes": 1001, "no": 1002, "missing": 1002 , "children": [
+                      { "nodeid": 1001, "leaf": -0.131864384 }, 
+                      { "nodeid": 1002, "leaf": -0.128432646 }
+                    ]}, 
+                    { "nodeid": 590, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.819242299, "yes": 1003, "no": 1004, "missing": 1004 , "children": [
+                      { "nodeid": 1003, "leaf": -0.135928154 }, 
+                      { "nodeid": 1004, "leaf": -0.132355899 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 334, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.844017923, "yes": 591, "no": 592, "missing": 592 , "children": [
+                    { "nodeid": 591, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 1005, "no": 1006, "missing": 1006 , "children": [
+                      { "nodeid": 1005, "leaf": -0.131440103 }, 
+                      { "nodeid": 1006, "leaf": -0.133194596 }
+                    ]}, 
+                    { "nodeid": 592, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.819242299, "yes": 1007, "no": 1008, "missing": 1008 , "children": [
+                      { "nodeid": 1007, "leaf": 0.125869945 }, 
+                      { "nodeid": 1008, "leaf": 0.396993548 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 176, "depth": 7, "split": "SchoolConnect", "split_condition": 0.823136806, "yes": 335, "no": 336, "missing": 336 , "children": [
+                  { "nodeid": 335, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.17178714, "yes": 593, "no": 594, "missing": 594 , "children": [
+                    { "nodeid": 593, "leaf": -0.133729249 }, 
+                    { "nodeid": 594, "leaf": 0.420361429 }
+                  ]}, 
+                  { "nodeid": 336, "leaf": -0.129149422 }
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 22, "depth": 4, "split": "NeighborConnect", "split_condition": 0.499142855, "yes": 45, "no": 46, "missing": 46 , "children": [
+            { "nodeid": 45, "depth": 5, "split": "NeighborConnect", "split_condition": 0.383528292, "yes": 89, "no": 90, "missing": 90 , "children": [
+              { "nodeid": 89, "depth": 6, "split": "SchoolConnect", "split_condition": 0.140715957, "yes": 177, "no": 178, "missing": 178 , "children": [
+                { "nodeid": 177, "depth": 7, "split": "SchoolConnect", "split_condition": -0.00293957512, "yes": 337, "no": 338, "missing": 338 , "children": [
+                  { "nodeid": 337, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.10197318, "yes": 595, "no": 596, "missing": 596 , "children": [
+                    { "nodeid": 595, "leaf": 0.327122539 }, 
+                    { "nodeid": 596, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.95115912, "yes": 1009, "no": 1010, "missing": 1010 , "children": [
+                      { "nodeid": 1009, "leaf": -0.140306279 }, 
+                      { "nodeid": 1010, "leaf": 0.0532707684 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 338, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.02291954, "yes": 597, "no": 598, "missing": 598 , "children": [
+                    { "nodeid": 597, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.17178714, "yes": 1011, "no": 1012, "missing": 1012 , "children": [
+                      { "nodeid": 1011, "leaf": 0.35996902 }, 
+                      { "nodeid": 1012, "leaf": 0.38142544 }
+                    ]}, 
+                    { "nodeid": 598, "leaf": 0.277351111 }
+                  ]}
+                ]}, 
+                { "nodeid": 178, "depth": 7, "split": "SchoolConnect", "split_condition": 0.220031187, "yes": 339, "no": 340, "missing": 340 , "children": [
+                  { "nodeid": 339, "leaf": -0.131519973 }, 
+                  { "nodeid": 340, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.939595163, "yes": 599, "no": 600, "missing": 600 , "children": [
+                    { "nodeid": 599, "leaf": -0.137618572 }, 
+                    { "nodeid": 600, "leaf": -0.133649617 }
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 90, "depth": 6, "split": "SchoolConnect", "split_condition": -0.634148836, "yes": 179, "no": 180, "missing": 180 , "children": [
+                { "nodeid": 179, "depth": 7, "split": "SchoolConnect", "split_condition": -0.764067829, "yes": 341, "no": 342, "missing": 342 , "children": [
+                  { "nodeid": 341, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.0469166, "yes": 601, "no": 602, "missing": 602 , "children": [
+                    { "nodeid": 601, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.12195647, "yes": 1013, "no": 1014, "missing": 1014 , "children": [
+                      { "nodeid": 1013, "leaf": 0.120234661 }, 
+                      { "nodeid": 1014, "leaf": 0.407847255 }
+                    ]}, 
+                    { "nodeid": 602, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.87260282, "yes": 1015, "no": 1016, "missing": 1016 , "children": [
+                      { "nodeid": 1015, "leaf": -0.132338107 }, 
+                      { "nodeid": 1016, "leaf": 0.0656381175 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 342, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.958432436, "yes": 603, "no": 604, "missing": 604 , "children": [
+                    { "nodeid": 603, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.09247005, "yes": 1017, "no": 1018, "missing": 1018 , "children": [
+                      { "nodeid": 1017, "leaf": 0.346044689 }, 
+                      { "nodeid": 1018, "leaf": 0.394265205 }
+                    ]}, 
+                    { "nodeid": 604, "leaf": -0.133515134 }
+                  ]}
+                ]}, 
+                { "nodeid": 180, "depth": 7, "split": "SchoolConnect", "split_condition": 0.796913564, "yes": 343, "no": 344, "missing": 344 , "children": [
+                  { "nodeid": 343, "depth": 8, "split": "SchoolConnect", "split_condition": -0.00293957512, "yes": 605, "no": 606, "missing": 606 , "children": [
+                    { "nodeid": 605, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.901524842, "yes": 1019, "no": 1020, "missing": 1020 , "children": [
+                      { "nodeid": 1019, "leaf": -0.1337495 }, 
+                      { "nodeid": 1020, "leaf": -0.131551951 }
+                    ]}, 
+                    { "nodeid": 606, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.05603862, "yes": 1021, "no": 1022, "missing": 1022 , "children": [
+                      { "nodeid": 1021, "leaf": -0.131991252 }, 
+                      { "nodeid": 1022, "leaf": 0.0960165113 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 344, "leaf": 0.297158808 }
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 46, "depth": 5, "split": "NeighborConnect", "split_condition": 0.573166311, "yes": 91, "no": 92, "missing": 92 , "children": [
+              { "nodeid": 91, "depth": 6, "split": "SchoolConnect", "split_condition": 0.0156416092, "yes": 181, "no": 182, "missing": 182 , "children": [
+                { "nodeid": 181, "depth": 7, "split": "SchoolConnect", "split_condition": -1.74209785, "yes": 345, "no": 346, "missing": 346 , "children": [
+                  { "nodeid": 345, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.16304207, "yes": 607, "no": 608, "missing": 608 , "children": [
+                    { "nodeid": 607, "leaf": -0.130352765 }, 
+                    { "nodeid": 608, "leaf": -0.126284465 }
+                  ]}, 
+                  { "nodeid": 346, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.854885995, "yes": 609, "no": 610, "missing": 610 , "children": [
+                    { "nodeid": 609, "leaf": -0.131626874 }, 
+                    { "nodeid": 610, "leaf": -0.135799408 }
+                  ]}
+                ]}, 
+                { "nodeid": 182, "depth": 7, "split": "SchoolConnect", "split_condition": 0.600532353, "yes": 347, "no": 348, "missing": 348 , "children": [
+                  { "nodeid": 347, "depth": 8, "split": "DelinquentPeer", "split_condition": -1.17178714, "yes": 611, "no": 612, "missing": 612 , "children": [
+                    { "nodeid": 611, "leaf": 0.439435482 }, 
+                    { "nodeid": 612, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.882272482, "yes": 1023, "no": 1024, "missing": 1024 , "children": [
+                      { "nodeid": 1023, "leaf": 0.330286115 }, 
+                      { "nodeid": 1024, "leaf": 0.36380142 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 348, "depth": 8, "split": "SchoolConnect", "split_condition": 0.792142153, "yes": 613, "no": 614, "missing": 614 , "children": [
+                    { "nodeid": 613, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.02291954, "yes": 1025, "no": 1026, "missing": 1026 , "children": [
+                      { "nodeid": 1025, "leaf": -0.0460765809 }, 
+                      { "nodeid": 1026, "leaf": 0.361790538 }
+                    ]}, 
+                    { "nodeid": 614, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.10197318, "yes": 1027, "no": 1028, "missing": 1028 , "children": [
+                      { "nodeid": 1027, "leaf": 0.35520798 }, 
+                      { "nodeid": 1028, "leaf": 0.389979333 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 92, "depth": 6, "split": "SchoolConnect", "split_condition": 0.220031187, "yes": 183, "no": 184, "missing": 184 , "children": [
+                { "nodeid": 183, "depth": 7, "split": "SchoolConnect", "split_condition": -0.407081902, "yes": 349, "no": 350, "missing": 350 , "children": [
+                  { "nodeid": 349, "depth": 8, "split": "SchoolConnect", "split_condition": -0.783862829, "yes": 615, "no": 616, "missing": 616 , "children": [
+                    { "nodeid": 615, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.01240087, "yes": 1029, "no": 1030, "missing": 1030 , "children": [
+                      { "nodeid": 1029, "leaf": -0.142741382 }, 
+                      { "nodeid": 1030, "leaf": -0.130092442 }
+                    ]}, 
+                    { "nodeid": 616, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.849324048, "yes": 1031, "no": 1032, "missing": 1032 , "children": [
+                      { "nodeid": 1031, "leaf": 0.150931895 }, 
+                      { "nodeid": 1032, "leaf": 0.372759104 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 350, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.844017923, "yes": 617, "no": 618, "missing": 618 , "children": [
+                    { "nodeid": 617, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.958432436, "yes": 1033, "no": 1034, "missing": 1034 , "children": [
+                      { "nodeid": 1033, "leaf": -0.136094183 }, 
+                      { "nodeid": 1034, "leaf": -0.132657051 }
+                    ]}, 
+                    { "nodeid": 618, "leaf": -0.140797064 }
+                  ]}
+                ]}, 
+                { "nodeid": 184, "depth": 7, "split": "SchoolConnect", "split_condition": 0.600532353, "yes": 351, "no": 352, "missing": 352 , "children": [
+                  { "nodeid": 351, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.901524842, "yes": 619, "no": 620, "missing": 620 , "children": [
+                    { "nodeid": 619, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.04114676, "yes": 1035, "no": 1036, "missing": 1036 , "children": [
+                      { "nodeid": 1035, "leaf": 0.33425802 }, 
+                      { "nodeid": 1036, "leaf": 0.374069154 }
+                    ]}, 
+                    { "nodeid": 620, "leaf": 0.139629021 }
+                  ]}, 
+                  { "nodeid": 352, "depth": 8, "split": "SchoolConnect", "split_condition": 0.811957002, "yes": 621, "no": 622, "missing": 622 , "children": [
+                    { "nodeid": 621, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.8373155, "yes": 1037, "no": 1038, "missing": 1038 , "children": [
+                      { "nodeid": 1037, "leaf": -0.0656089112 }, 
+                      { "nodeid": 1038, "leaf": 0.205456972 }
+                    ]}, 
+                    { "nodeid": 622, "depth": 9, "split": "DelinquentPeer", "split_condition": -1.00354075, "yes": 1039, "no": 1040, "missing": 1040 , "children": [
+                      { "nodeid": 1039, "leaf": 0.332150728 }, 
+                      { "nodeid": 1040, "leaf": 0.434543908 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}
+      ]}
+    ]}, 
+    { "nodeid": 2, "depth": 1, "split": "ParentalWarmth", "split_condition": 0.564529836, "yes": 5, "no": 6, "missing": 6 , "children": [
+      { "nodeid": 5, "depth": 2, "split": "Is_Male", "split_condition": 1, "yes": 11, "no": 12, "missing": 12 , "children": [
+        { "nodeid": 11, "depth": 3, "split": "SchoolConnect", "split_condition": -0.988510728, "yes": 23, "no": 24, "missing": 24 , "children": [
+          { "nodeid": 23, "depth": 4, "split": "NeighborConnect", "split_condition": -0.704352379, "yes": 47, "no": 48, "missing": 48 , "children": [
+            { "nodeid": 47, "depth": 5, "split": "NeighborConnect", "split_condition": -1.235659, "yes": 93, "no": 94, "missing": 94 , "children": [
+              { "nodeid": 93, "depth": 6, "split": "SchoolConnect", "split_condition": -1.92126918, "yes": 185, "no": 186, "missing": 186 , "children": [
+                { "nodeid": 185, "depth": 7, "split": "SchoolConnect", "split_condition": -1.99573791, "yes": 353, "no": 354, "missing": 354 , "children": [
+                  { "nodeid": 353, "leaf": -0.126143768 }, 
+                  { "nodeid": 354, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.603489876, "yes": 623, "no": 624, "missing": 624 , "children": [
+                    { "nodeid": 623, "leaf": 0.331542045 }, 
+                    { "nodeid": 624, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.596015334, "yes": 1041, "no": 1042, "missing": 1042 , "children": [
+                      { "nodeid": 1041, "leaf": -0.127173021 }, 
+                      { "nodeid": 1042, "leaf": 0.325329781 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 186, "depth": 7, "split": "SchoolConnect", "split_condition": -1.59704268, "yes": 355, "no": 356, "missing": 356 , "children": [
+                  { "nodeid": 355, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.422185421, "yes": 625, "no": 626, "missing": 626 , "children": [
+                    { "nodeid": 625, "leaf": 0.404509544 }, 
+                    { "nodeid": 626, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0104749836, "yes": 1043, "no": 1044, "missing": 1044 , "children": [
+                      { "nodeid": 1043, "leaf": -0.133187786 }, 
+                      { "nodeid": 1044, "leaf": -0.127475634 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 356, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.39216581, "yes": 627, "no": 628, "missing": 628 , "children": [
+                    { "nodeid": 627, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.398299217, "yes": 1045, "no": 1046, "missing": 1046 , "children": [
+                      { "nodeid": 1045, "leaf": -0.128130063 }, 
+                      { "nodeid": 1046, "leaf": 0.427483767 }
+                    ]}, 
+                    { "nodeid": 628, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 1047, "no": 1048, "missing": 1048 , "children": [
+                      { "nodeid": 1047, "leaf": -0.126103863 }, 
+                      { "nodeid": 1048, "leaf": -0.127414092 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 94, "depth": 6, "split": "SchoolConnect", "split_condition": -1.96633565, "yes": 187, "no": 188, "missing": 188 , "children": [
+                { "nodeid": 187, "depth": 7, "split": "SchoolConnect", "split_condition": -1.99573791, "yes": 357, "no": 358, "missing": 358 , "children": [
+                  { "nodeid": 357, "leaf": -0.127069548 }, 
+                  { "nodeid": 358, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.636984229, "yes": 629, "no": 630, "missing": 630 , "children": [
+                    { "nodeid": 629, "leaf": 0.395572275 }, 
+                    { "nodeid": 630, "leaf": -0.129024968 }
+                  ]}
+                ]}, 
+                { "nodeid": 188, "depth": 7, "split": "SchoolConnect", "split_condition": -1.19548237, "yes": 359, "no": 360, "missing": 360 , "children": [
+                  { "nodeid": 359, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.781589687, "yes": 631, "no": 632, "missing": 632 , "children": [
+                    { "nodeid": 631, "leaf": 0.331653804 }, 
+                    { "nodeid": 632, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.194358453, "yes": 1049, "no": 1050, "missing": 1050 , "children": [
+                      { "nodeid": 1049, "leaf": -0.127185553 }, 
+                      { "nodeid": 1050, "leaf": -0.129827559 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 360, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.0611924045, "yes": 633, "no": 634, "missing": 634 , "children": [
+                    { "nodeid": 633, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.596015334, "yes": 1051, "no": 1052, "missing": 1052 , "children": [
+                      { "nodeid": 1051, "leaf": -0.126351863 }, 
+                      { "nodeid": 1052, "leaf": -0.129808694 }
+                    ]}, 
+                    { "nodeid": 634, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.258317649, "yes": 1053, "no": 1054, "missing": 1054 , "children": [
+                      { "nodeid": 1053, "leaf": -0.126746148 }, 
+                      { "nodeid": 1054, "leaf": -0.129230618 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 48, "depth": 5, "split": "NeighborConnect", "split_condition": -0.693456411, "yes": 95, "no": 96, "missing": 96 , "children": [
+              { "nodeid": 95, "depth": 6, "split": "SchoolConnect", "split_condition": -1.35854125, "yes": 189, "no": 190, "missing": 190 , "children": [
+                { "nodeid": 189, "leaf": -0.125700817 }, 
+                { "nodeid": 190, "depth": 7, "split": "SchoolConnect", "split_condition": -1.13383365, "yes": 361, "no": 362, "missing": 362 , "children": [
+                  { "nodeid": 361, "leaf": 0.408926457 }, 
+                  { "nodeid": 362, "leaf": 0.411293328 }
+                ]}
+              ]}, 
+              { "nodeid": 96, "depth": 6, "split": "SchoolConnect", "split_condition": -1.01916921, "yes": 191, "no": 192, "missing": 192 , "children": [
+                { "nodeid": 191, "depth": 7, "split": "SchoolConnect", "split_condition": -1.10914385, "yes": 363, "no": 364, "missing": 364 , "children": [
+                  { "nodeid": 363, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.629435301, "yes": 635, "no": 636, "missing": 636 , "children": [
+                    { "nodeid": 635, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.636984229, "yes": 1055, "no": 1056, "missing": 1056 , "children": [
+                      { "nodeid": 1055, "leaf": 0.0777426958 }, 
+                      { "nodeid": 1056, "leaf": 0.377875775 }
+                    ]}, 
+                    { "nodeid": 636, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.4756428, "yes": 1057, "no": 1058, "missing": 1058 , "children": [
+                      { "nodeid": 1057, "leaf": 0.000271165278 }, 
+                      { "nodeid": 1058, "leaf": -0.0809984133 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 364, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.119617976, "yes": 637, "no": 638, "missing": 638 , "children": [
+                    { "nodeid": 637, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.464397997, "yes": 1059, "no": 1060, "missing": 1060 , "children": [
+                      { "nodeid": 1059, "leaf": 0.0934158415 }, 
+                      { "nodeid": 1060, "leaf": 0.293689281 }
+                    ]}, 
+                    { "nodeid": 638, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.258317649, "yes": 1061, "no": 1062, "missing": 1062 , "children": [
+                      { "nodeid": 1061, "leaf": -0.12761952 }, 
+                      { "nodeid": 1062, "leaf": 0.180652425 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 192, "depth": 7, "split": "SchoolConnect", "split_condition": -1.00283539, "yes": 365, "no": 366, "missing": 366 , "children": [
+                  { "nodeid": 365, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 639, "no": 640, "missing": 640 , "children": [
+                    { "nodeid": 639, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0289882794, "yes": 1063, "no": 1064, "missing": 1064 , "children": [
+                      { "nodeid": 1063, "leaf": -0.132810369 }, 
+                      { "nodeid": 1064, "leaf": 0.287161648 }
+                    ]}, 
+                    { "nodeid": 640, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.133878052, "yes": 1065, "no": 1066, "missing": 1066 , "children": [
+                      { "nodeid": 1065, "leaf": -0.133581385 }, 
+                      { "nodeid": 1066, "leaf": -0.128519595 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 366, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.636984229, "yes": 641, "no": 642, "missing": 642 , "children": [
+                    { "nodeid": 641, "leaf": -0.134107873 }, 
+                    { "nodeid": 642, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 1067, "no": 1068, "missing": 1068 , "children": [
+                      { "nodeid": 1067, "leaf": -0.127930328 }, 
+                      { "nodeid": 1068, "leaf": -0.130768463 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 24, "depth": 4, "split": "NeighborConnect", "split_condition": 0.378009558, "yes": 49, "no": 50, "missing": 50 , "children": [
+            { "nodeid": 49, "depth": 5, "split": "NeighborConnect", "split_condition": -0.376689911, "yes": 97, "no": 98, "missing": 98 , "children": [
+              { "nodeid": 97, "depth": 6, "split": "SchoolConnect", "split_condition": -0.33574301, "yes": 193, "no": 194, "missing": 194 , "children": [
+                { "nodeid": 193, "depth": 7, "split": "SchoolConnect", "split_condition": -0.368781328, "yes": 367, "no": 368, "missing": 368 , "children": [
+                  { "nodeid": 367, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 643, "no": 644, "missing": 644 , "children": [
+                    { "nodeid": 643, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.350639433, "yes": 1069, "no": 1070, "missing": 1070 , "children": [
+                      { "nodeid": 1069, "leaf": -0.0312910937 }, 
+                      { "nodeid": 1070, "leaf": 0.15848957 }
+                    ]}, 
+                    { "nodeid": 644, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0199233033, "yes": 1071, "no": 1072, "missing": 1072 , "children": [
+                      { "nodeid": 1071, "leaf": -0.0730970651 }, 
+                      { "nodeid": 1072, "leaf": -0.108955555 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 368, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.393777639, "yes": 645, "no": 646, "missing": 646 , "children": [
+                    { "nodeid": 645, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.39216581, "yes": 1073, "no": 1074, "missing": 1074 , "children": [
+                      { "nodeid": 1073, "leaf": -0.133445904 }, 
+                      { "nodeid": 1074, "leaf": -0.136606708 }
+                    ]}, 
+                    { "nodeid": 646, "leaf": -0.132289574 }
+                  ]}
+                ]}, 
+                { "nodeid": 194, "depth": 7, "split": "SchoolConnect", "split_condition": -0.0115550011, "yes": 369, "no": 370, "missing": 370 , "children": [
+                  { "nodeid": 369, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 647, "no": 648, "missing": 648 , "children": [
+                    { "nodeid": 647, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.485615849, "yes": 1075, "no": 1076, "missing": 1076 , "children": [
+                      { "nodeid": 1075, "leaf": -0.052263733 }, 
+                      { "nodeid": 1076, "leaf": 0.0380247682 }
+                    ]}, 
+                    { "nodeid": 648, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.185933128, "yes": 1077, "no": 1078, "missing": 1078 , "children": [
+                      { "nodeid": 1077, "leaf": 0.276306003 }, 
+                      { "nodeid": 1078, "leaf": 0.0706706345 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 370, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 649, "no": 650, "missing": 650 , "children": [
+                    { "nodeid": 649, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.113835059, "yes": 1079, "no": 1080, "missing": 1080 , "children": [
+                      { "nodeid": 1079, "leaf": -0.0420877896 }, 
+                      { "nodeid": 1080, "leaf": -0.0999876633 }
+                    ]}, 
+                    { "nodeid": 650, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.393777639, "yes": 1081, "no": 1082, "missing": 1082 , "children": [
+                      { "nodeid": 1081, "leaf": 0.161416918 }, 
+                      { "nodeid": 1082, "leaf": -0.0730777681 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 98, "depth": 6, "split": "SchoolConnect", "split_condition": -0.418534607, "yes": 195, "no": 196, "missing": 196 , "children": [
+                { "nodeid": 195, "depth": 7, "split": "SchoolConnect", "split_condition": -0.588597536, "yes": 371, "no": 372, "missing": 372 , "children": [
+                  { "nodeid": 371, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.346439093, "yes": 651, "no": 652, "missing": 652 , "children": [
+                    { "nodeid": 651, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.654806674, "yes": 1083, "no": 1084, "missing": 1084 , "children": [
+                      { "nodeid": 1083, "leaf": 0.377357215 }, 
+                      { "nodeid": 1084, "leaf": 0.112885177 }
+                    ]}, 
+                    { "nodeid": 652, "leaf": -0.0979138911 }
+                  ]}, 
+                  { "nodeid": 372, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.323469073, "yes": 653, "no": 654, "missing": 654 , "children": [
+                    { "nodeid": 653, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.452293903, "yes": 1085, "no": 1086, "missing": 1086 , "children": [
+                      { "nodeid": 1085, "leaf": 0.0899440721 }, 
+                      { "nodeid": 1086, "leaf": 0.293756574 }
+                    ]}, 
+                    { "nodeid": 654, "leaf": -0.130871132 }
+                  ]}
+                ]}, 
+                { "nodeid": 196, "depth": 7, "split": "SchoolConnect", "split_condition": 0.247716516, "yes": 373, "no": 374, "missing": 374 , "children": [
+                  { "nodeid": 373, "depth": 8, "split": "SchoolConnect", "split_condition": -0.00376882614, "yes": 655, "no": 656, "missing": 656 , "children": [
+                    { "nodeid": 655, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.629435301, "yes": 1087, "no": 1088, "missing": 1088 , "children": [
+                      { "nodeid": 1087, "leaf": 0.325469464 }, 
+                      { "nodeid": 1088, "leaf": 0.0582535379 }
+                    ]}, 
+                    { "nodeid": 656, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1089, "no": 1090, "missing": 1090 , "children": [
+                      { "nodeid": 1089, "leaf": -0.045254942 }, 
+                      { "nodeid": 1090, "leaf": 0.0207910221 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 374, "depth": 8, "split": "SchoolConnect", "split_condition": 0.38529402, "yes": 657, "no": 658, "missing": 658 , "children": [
+                    { "nodeid": 657, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.135919422, "yes": 1091, "no": 1092, "missing": 1092 , "children": [
+                      { "nodeid": 1091, "leaf": 0.383766741 }, 
+                      { "nodeid": 1092, "leaf": 0.298818201 }
+                    ]}, 
+                    { "nodeid": 658, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.393777639, "yes": 1093, "no": 1094, "missing": 1094 , "children": [
+                      { "nodeid": 1093, "leaf": 0.0904797614 }, 
+                      { "nodeid": 1094, "leaf": 0.0148227708 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 50, "depth": 5, "split": "NeighborConnect", "split_condition": 0.413056552, "yes": 99, "no": 100, "missing": 100 , "children": [
+              { "nodeid": 99, "depth": 6, "split": "SchoolConnect", "split_condition": -0.0614913814, "yes": 197, "no": 198, "missing": 198 , "children": [
+                { "nodeid": 197, "depth": 7, "split": "SchoolConnect", "split_condition": -0.195397034, "yes": 375, "no": 376, "missing": 376 , "children": [
+                  { "nodeid": 375, "depth": 8, "split": "SchoolConnect", "split_condition": -0.981399834, "yes": 659, "no": 660, "missing": 660 , "children": [
+                    { "nodeid": 659, "leaf": 0.353550345 }, 
+                    { "nodeid": 660, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.654806674, "yes": 1095, "no": 1096, "missing": 1096 , "children": [
+                      { "nodeid": 1095, "leaf": 0.0818758532 }, 
+                      { "nodeid": 1096, "leaf": -0.0911903456 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 376, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.39216581, "yes": 661, "no": 662, "missing": 662 , "children": [
+                    { "nodeid": 661, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.623008668, "yes": 1097, "no": 1098, "missing": 1098 , "children": [
+                      { "nodeid": 1097, "leaf": 0.0541429631 }, 
+                      { "nodeid": 1098, "leaf": 0.377423465 }
+                    ]}, 
+                    { "nodeid": 662, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1099, "no": 1100, "missing": 1100 , "children": [
+                      { "nodeid": 1099, "leaf": -0.131703883 }, 
+                      { "nodeid": 1100, "leaf": 0.0486998335 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 198, "depth": 7, "split": "SchoolConnect", "split_condition": 0.408055305, "yes": 377, "no": 378, "missing": 378 , "children": [
+                  { "nodeid": 377, "depth": 8, "split": "SchoolConnect", "split_condition": 0.204032049, "yes": 663, "no": 664, "missing": 664 , "children": [
+                    { "nodeid": 663, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.185933128, "yes": 1101, "no": 1102, "missing": 1102 , "children": [
+                      { "nodeid": 1101, "leaf": -0.132942885 }, 
+                      { "nodeid": 1102, "leaf": -0.130889073 }
+                    ]}, 
+                    { "nodeid": 664, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.436672419, "yes": 1103, "no": 1104, "missing": 1104 , "children": [
+                      { "nodeid": 1103, "leaf": -0.132257625 }, 
+                      { "nodeid": 1104, "leaf": -0.129780903 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 378, "depth": 8, "split": "SchoolConnect", "split_condition": 0.411628336, "yes": 665, "no": 666, "missing": 666 , "children": [
+                    { "nodeid": 665, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1105, "no": 1106, "missing": 1106 , "children": [
+                      { "nodeid": 1105, "leaf": 0.102657855 }, 
+                      { "nodeid": 1106, "leaf": 0.404451996 }
+                    ]}, 
+                    { "nodeid": 666, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.307747811, "yes": 1107, "no": 1108, "missing": 1108 , "children": [
+                      { "nodeid": 1107, "leaf": -0.132860035 }, 
+                      { "nodeid": 1108, "leaf": -0.130445659 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 100, "depth": 6, "split": "SchoolConnect", "split_condition": -0.211456984, "yes": 199, "no": 200, "missing": 200 , "children": [
+                { "nodeid": 199, "depth": 7, "split": "SchoolConnect", "split_condition": -0.376423359, "yes": 379, "no": 380, "missing": 380 , "children": [
+                  { "nodeid": 379, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.318054199, "yes": 667, "no": 668, "missing": 668 , "children": [
+                    { "nodeid": 667, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.464397997, "yes": 1109, "no": 1110, "missing": 1110 , "children": [
+                      { "nodeid": 1109, "leaf": -0.129735157 }, 
+                      { "nodeid": 1110, "leaf": -0.131773278 }
+                    ]}, 
+                    { "nodeid": 668, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0104749836, "yes": 1111, "no": 1112, "missing": 1112 , "children": [
+                      { "nodeid": 1111, "leaf": 0.358977437 }, 
+                      { "nodeid": 1112, "leaf": -0.0154355271 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 380, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.548313141, "yes": 669, "no": 670, "missing": 670 , "children": [
+                    { "nodeid": 669, "leaf": 0.38945815 }, 
+                    { "nodeid": 670, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.363786846, "yes": 1113, "no": 1114, "missing": 1114 , "children": [
+                      { "nodeid": 1113, "leaf": 0.361681789 }, 
+                      { "nodeid": 1114, "leaf": 0.350894064 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 200, "depth": 7, "split": "SchoolConnect", "split_condition": 0.111009277, "yes": 381, "no": 382, "missing": 382 , "children": [
+                  { "nodeid": 381, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.105679125, "yes": 671, "no": 672, "missing": 672 , "children": [
+                    { "nodeid": 671, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1115, "no": 1116, "missing": 1116 , "children": [
+                      { "nodeid": 1115, "leaf": -0.0307987686 }, 
+                      { "nodeid": 1116, "leaf": -0.109403193 }
+                    ]}, 
+                    { "nodeid": 672, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.323469073, "yes": 1117, "no": 1118, "missing": 1118 , "children": [
+                      { "nodeid": 1117, "leaf": 0.137495801 }, 
+                      { "nodeid": 1118, "leaf": -0.0815484151 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 382, "depth": 8, "split": "SchoolConnect", "split_condition": 0.408055305, "yes": 673, "no": 674, "missing": 674 , "children": [
+                    { "nodeid": 673, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.272276908, "yes": 1119, "no": 1120, "missing": 1120 , "children": [
+                      { "nodeid": 1119, "leaf": -0.133699909 }, 
+                      { "nodeid": 1120, "leaf": -0.131458923 }
+                    ]}, 
+                    { "nodeid": 674, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.744039536, "yes": 1121, "no": 1122, "missing": 1122 , "children": [
+                      { "nodeid": 1121, "leaf": 0.397736341 }, 
+                      { "nodeid": 1122, "leaf": -0.0223985352 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}, 
+        { "nodeid": 12, "depth": 3, "split": "SchoolConnect", "split_condition": -0.988510728, "yes": 25, "no": 26, "missing": 26 , "children": [
+          { "nodeid": 25, "depth": 4, "split": "NeighborConnect", "split_condition": -0.458308786, "yes": 51, "no": 52, "missing": 52 , "children": [
+            { "nodeid": 51, "depth": 5, "split": "NeighborConnect", "split_condition": -1.235659, "yes": 101, "no": 102, "missing": 102 , "children": [
+              { "nodeid": 101, "depth": 6, "split": "SchoolConnect", "split_condition": -1.27938509, "yes": 201, "no": 202, "missing": 202 , "children": [
+                { "nodeid": 201, "depth": 7, "split": "SchoolConnect", "split_condition": -1.47710991, "yes": 383, "no": 384, "missing": 384 , "children": [
+                  { "nodeid": 383, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 675, "no": 676, "missing": 676 , "children": [
+                    { "nodeid": 675, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.154536903, "yes": 1123, "no": 1124, "missing": 1124 , "children": [
+                      { "nodeid": 1123, "leaf": -0.0370561592 }, 
+                      { "nodeid": 1124, "leaf": -0.129045144 }
+                    ]}, 
+                    { "nodeid": 676, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.403984666, "yes": 1125, "no": 1126, "missing": 1126 , "children": [
+                      { "nodeid": 1125, "leaf": 0.280475497 }, 
+                      { "nodeid": 1126, "leaf": 0.0805957615 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 384, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.074884899, "yes": 677, "no": 678, "missing": 678 , "children": [
+                    { "nodeid": 677, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.744039536, "yes": 1127, "no": 1128, "missing": 1128 , "children": [
+                      { "nodeid": 1127, "leaf": 0.277016401 }, 
+                      { "nodeid": 1128, "leaf": -0.0407716893 }
+                    ]}, 
+                    { "nodeid": 678, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.346439093, "yes": 1129, "no": 1130, "missing": 1130 , "children": [
+                      { "nodeid": 1129, "leaf": 0.289539129 }, 
+                      { "nodeid": 1130, "leaf": 0.179212168 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 202, "depth": 7, "split": "SchoolConnect", "split_condition": -1.21543932, "yes": 385, "no": 386, "missing": 386 , "children": [
+                  { "nodeid": 385, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.258317649, "yes": 679, "no": 680, "missing": 680 , "children": [
+                    { "nodeid": 679, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.074884899, "yes": 1131, "no": 1132, "missing": 1132 , "children": [
+                      { "nodeid": 1131, "leaf": -0.132138833 }, 
+                      { "nodeid": 1132, "leaf": -0.12998645 }
+                    ]}, 
+                    { "nodeid": 680, "leaf": 0.276304483 }
+                  ]}, 
+                  { "nodeid": 386, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.185933128, "yes": 681, "no": 682, "missing": 682 , "children": [
+                    { "nodeid": 681, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.00122001837, "yes": 1133, "no": 1134, "missing": 1134 , "children": [
+                      { "nodeid": 1133, "leaf": -0.0787450522 }, 
+                      { "nodeid": 1134, "leaf": 0.278638214 }
+                    ]}, 
+                    { "nodeid": 682, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 1135, "no": 1136, "missing": 1136 , "children": [
+                      { "nodeid": 1135, "leaf": -0.127479151 }, 
+                      { "nodeid": 1136, "leaf": -0.133523047 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 102, "depth": 6, "split": "SchoolConnect", "split_condition": -1.25365973, "yes": 203, "no": 204, "missing": 204 , "children": [
+                { "nodeid": 203, "depth": 7, "split": "SchoolConnect", "split_condition": -1.40026903, "yes": 387, "no": 388, "missing": 388 , "children": [
+                  { "nodeid": 387, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.113835059, "yes": 683, "no": 684, "missing": 684 , "children": [
+                    { "nodeid": 683, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.238947332, "yes": 1137, "no": 1138, "missing": 1138 , "children": [
+                      { "nodeid": 1137, "leaf": -0.0517506972 }, 
+                      { "nodeid": 1138, "leaf": 0.129564017 }
+                    ]}, 
+                    { "nodeid": 684, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.105679125, "yes": 1139, "no": 1140, "missing": 1140 , "children": [
+                      { "nodeid": 1139, "leaf": -0.0930418894 }, 
+                      { "nodeid": 1140, "leaf": -0.129810706 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 388, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.501760244, "yes": 685, "no": 686, "missing": 686 , "children": [
+                    { "nodeid": 685, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.571230412, "yes": 1141, "no": 1142, "missing": 1142 , "children": [
+                      { "nodeid": 1141, "leaf": -0.0426311456 }, 
+                      { "nodeid": 1142, "leaf": 0.242937714 }
+                    ]}, 
+                    { "nodeid": 686, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0290643163, "yes": 1143, "no": 1144, "missing": 1144 , "children": [
+                      { "nodeid": 1143, "leaf": -0.129300401 }, 
+                      { "nodeid": 1144, "leaf": 0.169490486 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 204, "depth": 7, "split": "SchoolConnect", "split_condition": -1.13383365, "yes": 389, "no": 390, "missing": 390 , "children": [
+                  { "nodeid": 389, "depth": 8, "split": "SchoolConnect", "split_condition": -1.20336199, "yes": 687, "no": 688, "missing": 688 , "children": [
+                    { "nodeid": 687, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.452293903, "yes": 1145, "no": 1146, "missing": 1146 , "children": [
+                      { "nodeid": 1145, "leaf": -0.0544234328 }, 
+                      { "nodeid": 1146, "leaf": -0.135101616 }
+                    ]}, 
+                    { "nodeid": 688, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.513633788, "yes": 1147, "no": 1148, "missing": 1148 , "children": [
+                      { "nodeid": 1147, "leaf": -0.128590375 }, 
+                      { "nodeid": 1148, "leaf": -0.130799547 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 390, "depth": 8, "split": "SchoolConnect", "split_condition": -1.03188443, "yes": 689, "no": 690, "missing": 690 , "children": [
+                    { "nodeid": 689, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.113835059, "yes": 1149, "no": 1150, "missing": 1150 , "children": [
+                      { "nodeid": 1149, "leaf": 0.0035786205 }, 
+                      { "nodeid": 1150, "leaf": 0.282130331 }
+                    ]}, 
+                    { "nodeid": 690, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.135919422, "yes": 1151, "no": 1152, "missing": 1152 , "children": [
+                      { "nodeid": 1151, "leaf": -0.13120468 }, 
+                      { "nodeid": 1152, "leaf": -0.00673918892 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 52, "depth": 5, "split": "NeighborConnect", "split_condition": 0.413056552, "yes": 103, "no": 104, "missing": 104 , "children": [
+              { "nodeid": 103, "depth": 6, "split": "SchoolConnect", "split_condition": -1.62251246, "yes": 205, "no": 206, "missing": 206 , "children": [
+                { "nodeid": 205, "depth": 7, "split": "SchoolConnect", "split_condition": -1.92126918, "yes": 391, "no": 392, "missing": 392 , "children": [
+                  { "nodeid": 391, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.609512031, "yes": 691, "no": 692, "missing": 692 , "children": [
+                    { "nodeid": 691, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.744039536, "yes": 1153, "no": 1154, "missing": 1154 , "children": [
+                      { "nodeid": 1153, "leaf": 0.281832755 }, 
+                      { "nodeid": 1154, "leaf": 0.305395931 }
+                    ]}, 
+                    { "nodeid": 692, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0578922741, "yes": 1155, "no": 1156, "missing": 1156 , "children": [
+                      { "nodeid": 1155, "leaf": 0.0645574853 }, 
+                      { "nodeid": 1156, "leaf": -0.12868537 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 392, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.744039536, "yes": 693, "no": 694, "missing": 694 , "children": [
+                    { "nodeid": 693, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.770475566, "yes": 1157, "no": 1158, "missing": 1158 , "children": [
+                      { "nodeid": 1157, "leaf": 0.364035934 }, 
+                      { "nodeid": 1158, "leaf": 0.281832755 }
+                    ]}, 
+                    { "nodeid": 694, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.501760244, "yes": 1159, "no": 1160, "missing": 1160 , "children": [
+                      { "nodeid": 1159, "leaf": -0.0125460494 }, 
+                      { "nodeid": 1160, "leaf": -0.115079381 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 206, "depth": 7, "split": "SchoolConnect", "split_condition": -1.17736101, "yes": 393, "no": 394, "missing": 394 , "children": [
+                  { "nodeid": 393, "depth": 8, "split": "SchoolConnect", "split_condition": -1.23482013, "yes": 695, "no": 696, "missing": 696 , "children": [
+                    { "nodeid": 695, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.654806674, "yes": 1161, "no": 1162, "missing": 1162 , "children": [
+                      { "nodeid": 1161, "leaf": 1.03839175e-05 }, 
+                      { "nodeid": 1162, "leaf": 0.09057004 }
+                    ]}, 
+                    { "nodeid": 696, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.302370697, "yes": 1163, "no": 1164, "missing": 1164 , "children": [
+                      { "nodeid": 1163, "leaf": -0.00625264645 }, 
+                      { "nodeid": 1164, "leaf": -0.0723962113 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 394, "depth": 8, "split": "SchoolConnect", "split_condition": -0.996407986, "yes": 697, "no": 698, "missing": 698 , "children": [
+                    { "nodeid": 697, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0611924045, "yes": 1165, "no": 1166, "missing": 1166 , "children": [
+                      { "nodeid": 1165, "leaf": 0.171855018 }, 
+                      { "nodeid": 1166, "leaf": 0.0815401524 }
+                    ]}, 
+                    { "nodeid": 698, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1167, "no": 1168, "missing": 1168 , "children": [
+                      { "nodeid": 1167, "leaf": -0.0377055071 }, 
+                      { "nodeid": 1168, "leaf": 0.362153023 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 104, "depth": 6, "split": "SchoolConnect", "split_condition": -1.25365973, "yes": 207, "no": 208, "missing": 208 , "children": [
+                { "nodeid": 207, "depth": 7, "split": "SchoolConnect", "split_condition": -1.39432073, "yes": 395, "no": 396, "missing": 396 , "children": [
+                  { "nodeid": 395, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.0199233033, "yes": 699, "no": 700, "missing": 700 , "children": [
+                    { "nodeid": 699, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.571230412, "yes": 1169, "no": 1170, "missing": 1170 , "children": [
+                      { "nodeid": 1169, "leaf": -0.130189002 }, 
+                      { "nodeid": 1170, "leaf": -0.131893754 }
+                    ]}, 
+                    { "nodeid": 700, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.178534001, "yes": 1171, "no": 1172, "missing": 1172 , "children": [
+                      { "nodeid": 1171, "leaf": -0.127759665 }, 
+                      { "nodeid": 1172, "leaf": -0.126347318 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 396, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.0736397952, "yes": 701, "no": 702, "missing": 702 , "children": [
+                    { "nodeid": 701, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0578922741, "yes": 1173, "no": 1174, "missing": 1174 , "children": [
+                      { "nodeid": 1173, "leaf": 0.132037669 }, 
+                      { "nodeid": 1174, "leaf": -0.1315732 }
+                    ]}, 
+                    { "nodeid": 702, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.403984666, "yes": 1175, "no": 1176, "missing": 1176 , "children": [
+                      { "nodeid": 1175, "leaf": 0.348927975 }, 
+                      { "nodeid": 1176, "leaf": 0.408655941 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 208, "depth": 7, "split": "SchoolConnect", "split_condition": -1.10914385, "yes": 397, "no": 398, "missing": 398 , "children": [
+                  { "nodeid": 397, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.64935863, "yes": 703, "no": 704, "missing": 704 , "children": [
+                    { "nodeid": 703, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.654806674, "yes": 1177, "no": 1178, "missing": 1178 , "children": [
+                      { "nodeid": 1177, "leaf": -0.1312242 }, 
+                      { "nodeid": 1178, "leaf": -0.129440665 }
+                    ]}, 
+                    { "nodeid": 704, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.615938663, "yes": 1179, "no": 1180, "missing": 1180 , "children": [
+                      { "nodeid": 1179, "leaf": -0.132371128 }, 
+                      { "nodeid": 1180, "leaf": -0.134076446 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 398, "depth": 8, "split": "SchoolConnect", "split_condition": -0.996407986, "yes": 705, "no": 706, "missing": 706 , "children": [
+                    { "nodeid": 705, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.654806674, "yes": 1181, "no": 1182, "missing": 1182 , "children": [
+                      { "nodeid": 1181, "leaf": -0.130891949 }, 
+                      { "nodeid": 1182, "leaf": -0.130114213 }
+                    ]}, 
+                    { "nodeid": 706, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.762593389, "yes": 1183, "no": 1184, "missing": 1184 , "children": [
+                      { "nodeid": 1183, "leaf": -0.13024731 }, 
+                      { "nodeid": 1184, "leaf": -0.134076446 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 26, "depth": 4, "split": "NeighborConnect", "split_condition": -0.684023082, "yes": 53, "no": 54, "missing": 54 , "children": [
+            { "nodeid": 53, "depth": 5, "split": "NeighborConnect", "split_condition": -1.65017295, "yes": 105, "no": 106, "missing": 106 , "children": [
+              { "nodeid": 105, "depth": 6, "split": "SchoolConnect", "split_condition": -0.751280308, "yes": 209, "no": 210, "missing": 210 , "children": [
+                { "nodeid": 209, "depth": 7, "split": "SchoolConnect", "split_condition": -0.803582191, "yes": 399, "no": 400, "missing": 400 , "children": [
+                  { "nodeid": 399, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.609512031, "yes": 707, "no": 708, "missing": 708 , "children": [
+                    { "nodeid": 707, "leaf": -0.126409009 }, 
+                    { "nodeid": 708, "leaf": -0.129786491 }
+                  ]}, 
+                  { "nodeid": 400, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 709, "no": 710, "missing": 710 , "children": [
+                    { "nodeid": 709, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0578922741, "yes": 1185, "no": 1186, "missing": 1186 , "children": [
+                      { "nodeid": 1185, "leaf": 0.381945461 }, 
+                      { "nodeid": 1186, "leaf": 0.362803906 }
+                    ]}, 
+                    { "nodeid": 710, "leaf": -0.127690479 }
+                  ]}
+                ]}, 
+                { "nodeid": 210, "depth": 7, "split": "SchoolConnect", "split_condition": 0.867842972, "yes": 401, "no": 402, "missing": 402 , "children": [
+                  { "nodeid": 401, "depth": 8, "split": "SchoolConnect", "split_condition": -0.10512758, "yes": 711, "no": 712, "missing": 712 , "children": [
+                    { "nodeid": 711, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 1187, "no": 1188, "missing": 1188 , "children": [
+                      { "nodeid": 1187, "leaf": -0.133258566 }, 
+                      { "nodeid": 1188, "leaf": 0.0948907807 }
+                    ]}, 
+                    { "nodeid": 712, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.149716899, "yes": 1189, "no": 1190, "missing": 1190 , "children": [
+                      { "nodeid": 1189, "leaf": -0.134872824 }, 
+                      { "nodeid": 1190, "leaf": -0.131249264 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 402, "leaf": 0.376062602 }
+                ]}
+              ]}, 
+              { "nodeid": 106, "depth": 6, "split": "SchoolConnect", "split_condition": -0.293611705, "yes": 211, "no": 212, "missing": 212 , "children": [
+                { "nodeid": 211, "depth": 7, "split": "SchoolConnect", "split_condition": -0.479470581, "yes": 403, "no": 404, "missing": 404 , "children": [
+                  { "nodeid": 403, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.350639433, "yes": 713, "no": 714, "missing": 714 , "children": [
+                    { "nodeid": 713, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.762593389, "yes": 1191, "no": 1192, "missing": 1192 , "children": [
+                      { "nodeid": 1191, "leaf": -0.131053105 }, 
+                      { "nodeid": 1192, "leaf": -0.0490910597 }
+                    ]}, 
+                    { "nodeid": 714, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.36225006, "yes": 1193, "no": 1194, "missing": 1194 , "children": [
+                      { "nodeid": 1193, "leaf": 0.115200043 }, 
+                      { "nodeid": 1194, "leaf": 0.0229588598 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 404, "depth": 8, "split": "SchoolConnect", "split_condition": -0.313310683, "yes": 715, "no": 716, "missing": 716 , "children": [
+                    { "nodeid": 715, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1195, "no": 1196, "missing": 1196 , "children": [
+                      { "nodeid": 1195, "leaf": -0.0684302524 }, 
+                      { "nodeid": 1196, "leaf": -0.0187158994 }
+                    ]}, 
+                    { "nodeid": 716, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0350747555, "yes": 1197, "no": 1198, "missing": 1198 , "children": [
+                      { "nodeid": 1197, "leaf": 0.0675268546 }, 
+                      { "nodeid": 1198, "leaf": -0.134723723 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 212, "depth": 7, "split": "SchoolConnect", "split_condition": 0.411628336, "yes": 405, "no": 406, "missing": 406 , "children": [
+                  { "nodeid": 405, "depth": 8, "split": "SchoolConnect", "split_condition": 0.315917581, "yes": 717, "no": 718, "missing": 718 , "children": [
+                    { "nodeid": 717, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.368550718, "yes": 1199, "no": 1200, "missing": 1200 , "children": [
+                      { "nodeid": 1199, "leaf": 0.012942669 }, 
+                      { "nodeid": 1200, "leaf": 0.0821300745 }
+                    ]}, 
+                    { "nodeid": 718, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.701821387, "yes": 1201, "no": 1202, "missing": 1202 , "children": [
+                      { "nodeid": 1201, "leaf": 0.385986596 }, 
+                      { "nodeid": 1202, "leaf": 0.129631862 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 406, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.24376899, "yes": 719, "no": 720, "missing": 720 , "children": [
+                    { "nodeid": 719, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0289882794, "yes": 1203, "no": 1204, "missing": 1204 , "children": [
+                      { "nodeid": 1203, "leaf": 0.00764773367 }, 
+                      { "nodeid": 1204, "leaf": 0.138503924 }
+                    ]}, 
+                    { "nodeid": 720, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.272276908, "yes": 1205, "no": 1206, "missing": 1206 , "children": [
+                      { "nodeid": 1205, "leaf": -0.129571617 }, 
+                      { "nodeid": 1206, "leaf": -0.108938828 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 54, "depth": 5, "split": "NeighborConnect", "split_condition": 0.581795096, "yes": 107, "no": 108, "missing": 108 , "children": [
+              { "nodeid": 107, "depth": 6, "split": "SchoolConnect", "split_condition": 0.973843396, "yes": 213, "no": 214, "missing": 214 , "children": [
+                { "nodeid": 213, "depth": 7, "split": "SchoolConnect", "split_condition": -0.208118662, "yes": 407, "no": 408, "missing": 408 , "children": [
+                  { "nodeid": 407, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.629435301, "yes": 721, "no": 722, "missing": 722 , "children": [
+                    { "nodeid": 721, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.714712441, "yes": 1207, "no": 1208, "missing": 1208 , "children": [
+                      { "nodeid": 1207, "leaf": -0.0134786619 }, 
+                      { "nodeid": 1208, "leaf": 0.0349037163 }
+                    ]}, 
+                    { "nodeid": 722, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.172107369, "yes": 1209, "no": 1210, "missing": 1210 , "children": [
+                      { "nodeid": 1209, "leaf": 0.10743355 }, 
+                      { "nodeid": 1210, "leaf": 0.155679643 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 408, "depth": 8, "split": "SchoolConnect", "split_condition": -0.18482621, "yes": 723, "no": 724, "missing": 724 , "children": [
+                    { "nodeid": 723, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0289882794, "yes": 1211, "no": 1212, "missing": 1212 , "children": [
+                      { "nodeid": 1211, "leaf": 0.0321948826 }, 
+                      { "nodeid": 1212, "leaf": -0.0548838638 }
+                    ]}, 
+                    { "nodeid": 724, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.363786846, "yes": 1213, "no": 1214, "missing": 1214 , "children": [
+                      { "nodeid": 1213, "leaf": 0.0788562521 }, 
+                      { "nodeid": 1214, "leaf": 0.105139017 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 214, "depth": 7, "split": "SchoolConnect", "split_condition": 1.01215184, "yes": 409, "no": 410, "missing": 410 , "children": [
+                  { "nodeid": 409, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.524594069, "yes": 725, "no": 726, "missing": 726 , "children": [
+                    { "nodeid": 725, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.750552237, "yes": 1215, "no": 1216, "missing": 1216 , "children": [
+                      { "nodeid": 1215, "leaf": -0.128551319 }, 
+                      { "nodeid": 1216, "leaf": -0.132157981 }
+                    ]}, 
+                    { "nodeid": 726, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.383375317, "yes": 1217, "no": 1218, "missing": 1218 , "children": [
+                      { "nodeid": 1217, "leaf": 0.418732017 }, 
+                      { "nodeid": 1218, "leaf": -0.0816285834 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 410, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.403984666, "yes": 727, "no": 728, "missing": 728 , "children": [
+                    { "nodeid": 727, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 1219, "no": 1220, "missing": 1220 , "children": [
+                      { "nodeid": 1219, "leaf": -0.0214814227 }, 
+                      { "nodeid": 1220, "leaf": 0.164997384 }
+                    ]}, 
+                    { "nodeid": 728, "leaf": -0.0778901279 }
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 108, "depth": 6, "split": "SchoolConnect", "split_condition": -0.00847982429, "yes": 215, "no": 216, "missing": 216 , "children": [
+                { "nodeid": 215, "depth": 7, "split": "SchoolConnect", "split_condition": -0.18482621, "yes": 411, "no": 412, "missing": 412 , "children": [
+                  { "nodeid": 411, "depth": 8, "split": "SchoolConnect", "split_condition": -0.830007195, "yes": 729, "no": 730, "missing": 730 , "children": [
+                    { "nodeid": 729, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.591941535, "yes": 1221, "no": 1222, "missing": 1222 , "children": [
+                      { "nodeid": 1221, "leaf": -0.12941055 }, 
+                      { "nodeid": 1222, "leaf": -0.126511201 }
+                    ]}, 
+                    { "nodeid": 730, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.603489876, "yes": 1223, "no": 1224, "missing": 1224 , "children": [
+                      { "nodeid": 1223, "leaf": 0.327825069 }, 
+                      { "nodeid": 1224, "leaf": 0.0107567171 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 412, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.261878103, "yes": 731, "no": 732, "missing": 732 , "children": [
+                    { "nodeid": 731, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.701821387, "yes": 1225, "no": 1226, "missing": 1226 , "children": [
+                      { "nodeid": 1225, "leaf": 0.412675053 }, 
+                      { "nodeid": 1226, "leaf": 0.357740968 }
+                    ]}, 
+                    { "nodeid": 732, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1227, "no": 1228, "missing": 1228 , "children": [
+                      { "nodeid": 1227, "leaf": -0.134563431 }, 
+                      { "nodeid": 1228, "leaf": 0.184694871 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 216, "depth": 7, "split": "SchoolConnect", "split_condition": 0.867842972, "yes": 413, "no": 414, "missing": 414 , "children": [
+                  { "nodeid": 413, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.185933128, "yes": 733, "no": 734, "missing": 734 , "children": [
+                    { "nodeid": 733, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.149716899, "yes": 1229, "no": 1230, "missing": 1230 , "children": [
+                      { "nodeid": 1229, "leaf": -0.0769573227 }, 
+                      { "nodeid": 1230, "leaf": 0.0887948275 }
+                    ]}, 
+                    { "nodeid": 734, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1231, "no": 1232, "missing": 1232 , "children": [
+                      { "nodeid": 1231, "leaf": -0.131610513 }, 
+                      { "nodeid": 1232, "leaf": -0.0858106613 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 414, "depth": 8, "split": "SchoolConnect", "split_condition": 0.973843396, "yes": 735, "no": 736, "missing": 736 , "children": [
+                    { "nodeid": 735, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.440691829, "yes": 1233, "no": 1234, "missing": 1234 , "children": [
+                      { "nodeid": 1233, "leaf": 0.306239367 }, 
+                      { "nodeid": 1234, "leaf": 0.35486123 }
+                    ]}, 
+                    { "nodeid": 736, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0999732614, "yes": 1235, "no": 1236, "missing": 1236 , "children": [
+                      { "nodeid": 1235, "leaf": 0.0508743413 }, 
+                      { "nodeid": 1236, "leaf": -0.0825566649 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}
+      ]}, 
+      { "nodeid": 6, "depth": 2, "split": "NeighborConnect", "split_condition": 0.191490903, "yes": 13, "no": 14, "missing": 14 , "children": [
+        { "nodeid": 13, "depth": 3, "split": "SchoolConnect", "split_condition": -0.199596733, "yes": 27, "no": 28, "missing": 28 , "children": [
+          { "nodeid": 27, "depth": 4, "split": "Is_Male", "split_condition": 1, "yes": 55, "no": 56, "missing": 56 , "children": [
+            { "nodeid": 55, "depth": 5, "split": "NeighborConnect", "split_condition": -1.95327687, "yes": 109, "no": 110, "missing": 110 , "children": [
+              { "nodeid": 109, "depth": 6, "split": "SchoolConnect", "split_condition": -1.59704268, "yes": 217, "no": 218, "missing": 218 , "children": [
+                { "nodeid": 217, "leaf": -0.127157733 }, 
+                { "nodeid": 218, "leaf": 0.367177308 }
+              ]}, 
+              { "nodeid": 110, "depth": 6, "split": "SchoolConnect", "split_condition": -0.799495578, "yes": 219, "no": 220, "missing": 220 , "children": [
+                { "nodeid": 219, "depth": 7, "split": "SchoolConnect", "split_condition": -1.40026903, "yes": 415, "no": 416, "missing": 416 , "children": [
+                  { "nodeid": 415, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 737, "no": 738, "missing": 738 , "children": [
+                    { "nodeid": 737, "leaf": -0.126943097 }, 
+                    { "nodeid": 738, "leaf": -0.126448438 }
+                  ]}, 
+                  { "nodeid": 416, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 739, "no": 740, "missing": 740 , "children": [
+                    { "nodeid": 739, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.781589687, "yes": 1237, "no": 1238, "missing": 1238 , "children": [
+                      { "nodeid": 1237, "leaf": -0.126568645 }, 
+                      { "nodeid": 1238, "leaf": -0.129899621 }
+                    ]}, 
+                    { "nodeid": 740, "leaf": -0.126907751 }
+                  ]}
+                ]}, 
+                { "nodeid": 220, "depth": 7, "split": "SchoolConnect", "split_condition": -0.795366943, "yes": 417, "no": 418, "missing": 418 , "children": [
+                  { "nodeid": 417, "leaf": -0.136202261 }, 
+                  { "nodeid": 418, "depth": 8, "split": "SchoolConnect", "split_condition": -0.399184644, "yes": 741, "no": 742, "missing": 742 , "children": [
+                    { "nodeid": 741, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1239, "no": 1240, "missing": 1240 , "children": [
+                      { "nodeid": 1239, "leaf": -0.133013323 }, 
+                      { "nodeid": 1240, "leaf": -0.130511254 }
+                    ]}, 
+                    { "nodeid": 742, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.20552735, "yes": 1241, "no": 1242, "missing": 1242 , "children": [
+                      { "nodeid": 1241, "leaf": -0.130194053 }, 
+                      { "nodeid": 1242, "leaf": -0.133288071 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 56, "depth": 5, "split": "NeighborConnect", "split_condition": -0.0276511572, "yes": 111, "no": 112, "missing": 112 , "children": [
+              { "nodeid": 111, "depth": 6, "split": "SchoolConnect", "split_condition": -0.671675742, "yes": 221, "no": 222, "missing": 222 , "children": [
+                { "nodeid": 221, "depth": 7, "split": "SchoolConnect", "split_condition": -0.988510728, "yes": 419, "no": 420, "missing": 420 , "children": [
+                  { "nodeid": 419, "depth": 8, "split": "SchoolConnect", "split_condition": -1.77171457, "yes": 743, "no": 744, "missing": 744 , "children": [
+                    { "nodeid": 743, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.440691829, "yes": 1243, "no": 1244, "missing": 1244 , "children": [
+                      { "nodeid": 1243, "leaf": -0.128814101 }, 
+                      { "nodeid": 1244, "leaf": 0.132464811 }
+                    ]}, 
+                    { "nodeid": 744, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.39216581, "yes": 1245, "no": 1246, "missing": 1246 , "children": [
+                      { "nodeid": 1245, "leaf": -0.130077571 }, 
+                      { "nodeid": 1246, "leaf": -0.138357803 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 420, "depth": 8, "split": "SchoolConnect", "split_condition": -0.799495578, "yes": 745, "no": 746, "missing": 746 , "children": [
+                    { "nodeid": 745, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 1247, "no": 1248, "missing": 1248 , "children": [
+                      { "nodeid": 1247, "leaf": 0.356235176 }, 
+                      { "nodeid": 1248, "leaf": 0.330445826 }
+                    ]}, 
+                    { "nodeid": 746, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0999732614, "yes": 1249, "no": 1250, "missing": 1250 , "children": [
+                      { "nodeid": 1249, "leaf": 0.111066595 }, 
+                      { "nodeid": 1250, "leaf": -0.140368447 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 222, "depth": 7, "split": "SchoolConnect", "split_condition": -0.403619975, "yes": 421, "no": 422, "missing": 422 , "children": [
+                  { "nodeid": 421, "depth": 8, "split": "SchoolConnect", "split_condition": -0.60692507, "yes": 747, "no": 748, "missing": 748 , "children": [
+                    { "nodeid": 747, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.422185421, "yes": 1251, "no": 1252, "missing": 1252 , "children": [
+                      { "nodeid": 1251, "leaf": -0.133237854 }, 
+                      { "nodeid": 1252, "leaf": -0.146317661 }
+                    ]}, 
+                    { "nodeid": 748, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.781589687, "yes": 1253, "no": 1254, "missing": 1254 , "children": [
+                      { "nodeid": 1253, "leaf": -0.130619124 }, 
+                      { "nodeid": 1254, "leaf": -0.132995486 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 422, "depth": 8, "split": "SchoolConnect", "split_condition": -0.399184644, "yes": 749, "no": 750, "missing": 750 , "children": [
+                    { "nodeid": 749, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.744039536, "yes": 1255, "no": 1256, "missing": 1256 , "children": [
+                      { "nodeid": 1255, "leaf": -0.135889679 }, 
+                      { "nodeid": 1256, "leaf": 0.132176831 }
+                    ]}, 
+                    { "nodeid": 750, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.383375317, "yes": 1257, "no": 1258, "missing": 1258 , "children": [
+                      { "nodeid": 1257, "leaf": -0.126448438 }, 
+                      { "nodeid": 1258, "leaf": -0.133227989 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 112, "depth": 6, "split": "SchoolConnect", "split_condition": -0.435253531, "yes": 223, "no": 224, "missing": 224 , "children": [
+                { "nodeid": 223, "depth": 7, "split": "SchoolConnect", "split_condition": -0.573247373, "yes": 423, "no": 424, "missing": 424 , "children": [
+                  { "nodeid": 423, "depth": 8, "split": "SchoolConnect", "split_condition": -1.59704268, "yes": 751, "no": 752, "missing": 752 , "children": [
+                    { "nodeid": 751, "leaf": 0.287499547 }, 
+                    { "nodeid": 752, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.596015334, "yes": 1259, "no": 1260, "missing": 1260 , "children": [
+                      { "nodeid": 1259, "leaf": -0.121940151 }, 
+                      { "nodeid": 1260, "leaf": -0.1379852 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 424, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.159641564, "yes": 753, "no": 754, "missing": 754 , "children": [
+                    { "nodeid": 753, "leaf": 0.317096382 }, 
+                    { "nodeid": 754, "leaf": 0.314039767 }
+                  ]}
+                ]}, 
+                { "nodeid": 224, "depth": 7, "split": "SchoolConnect", "split_condition": -0.407081902, "yes": 425, "no": 426, "missing": 426 , "children": [
+                  { "nodeid": 425, "leaf": -0.146062478 }, 
+                  { "nodeid": 426, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 755, "no": 756, "missing": 756 , "children": [
+                    { "nodeid": 755, "leaf": -0.146062478 }, 
+                    { "nodeid": 756, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.105679125, "yes": 1261, "no": 1262, "missing": 1262 , "children": [
+                      { "nodeid": 1261, "leaf": -0.136577785 }, 
+                      { "nodeid": 1262, "leaf": -0.134086177 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 28, "depth": 4, "split": "NeighborConnect", "split_condition": 0.129322156, "yes": 57, "no": 58, "missing": 58 , "children": [
+            { "nodeid": 57, "depth": 5, "split": "NeighborConnect", "split_condition": 0.106682219, "yes": 113, "no": 114, "missing": 114 , "children": [
+              { "nodeid": 113, "depth": 6, "split": "SchoolConnect", "split_condition": -0.0297874659, "yes": 225, "no": 226, "missing": 226 , "children": [
+                { "nodeid": 225, "depth": 7, "split": "SchoolConnect", "split_condition": -0.125415951, "yes": 427, "no": 428, "missing": 428 , "children": [
+                  { "nodeid": 427, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.220014229, "yes": 757, "no": 758, "missing": 758 , "children": [
+                    { "nodeid": 757, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.436672419, "yes": 1263, "no": 1264, "missing": 1264 , "children": [
+                      { "nodeid": 1263, "leaf": 0.0454752408 }, 
+                      { "nodeid": 1264, "leaf": -0.141855195 }
+                    ]}, 
+                    { "nodeid": 758, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0350747555, "yes": 1265, "no": 1266, "missing": 1266 , "children": [
+                      { "nodeid": 1265, "leaf": 0.380645603 }, 
+                      { "nodeid": 1266, "leaf": 0.0475379825 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 428, "depth": 8, "split": "SchoolConnect", "split_condition": -0.0614913814, "yes": 759, "no": 760, "missing": 760 , "children": [
+                    { "nodeid": 759, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.258317649, "yes": 1267, "no": 1268, "missing": 1268 , "children": [
+                      { "nodeid": 1267, "leaf": 0.365590543 }, 
+                      { "nodeid": 1268, "leaf": 0.372873157 }
+                    ]}, 
+                    { "nodeid": 760, "leaf": 0.333227068 }
+                  ]}
+                ]}, 
+                { "nodeid": 226, "depth": 7, "split": "SchoolConnect", "split_condition": 0.215595856, "yes": 429, "no": 430, "missing": 430 , "children": [
+                  { "nodeid": 429, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.318054199, "yes": 761, "no": 762, "missing": 762 , "children": [
+                    { "nodeid": 761, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 1269, "no": 1270, "missing": 1270 , "children": [
+                      { "nodeid": 1269, "leaf": -0.0791231915 }, 
+                      { "nodeid": 1270, "leaf": 0.0930061564 }
+                    ]}, 
+                    { "nodeid": 762, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 1271, "no": 1272, "missing": 1272 , "children": [
+                      { "nodeid": 1271, "leaf": -0.134646267 }, 
+                      { "nodeid": 1272, "leaf": -0.0829404667 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 430, "depth": 8, "split": "SchoolConnect", "split_condition": 0.348812819, "yes": 763, "no": 764, "missing": 764 , "children": [
+                    { "nodeid": 763, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 1273, "no": 1274, "missing": 1274 , "children": [
+                      { "nodeid": 1273, "leaf": 0.0980719328 }, 
+                      { "nodeid": 1274, "leaf": 0.3750678 }
+                    ]}, 
+                    { "nodeid": 764, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 1275, "no": 1276, "missing": 1276 , "children": [
+                      { "nodeid": 1275, "leaf": 0.0423851274 }, 
+                      { "nodeid": 1276, "leaf": -0.0198170673 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 114, "depth": 6, "split": "SchoolConnect", "split_condition": -0.0513229519, "yes": 227, "no": 228, "missing": 228 , "children": [
+                { "nodeid": 227, "depth": 7, "split": "SchoolConnect", "split_condition": -0.19160597, "yes": 431, "no": 432, "missing": 432 , "children": [
+                  { "nodeid": 431, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.20552735, "yes": 765, "no": 766, "missing": 766 , "children": [
+                    { "nodeid": 765, "leaf": -0.134486422 }, 
+                    { "nodeid": 766, "leaf": -0.130466148 }
+                  ]}, 
+                  { "nodeid": 432, "leaf": 0.333233565 }
+                ]}, 
+                { "nodeid": 228, "depth": 7, "split": "SchoolConnect", "split_condition": 1.39342189, "yes": 433, "no": 434, "missing": 434 , "children": [
+                  { "nodeid": 433, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 767, "no": 768, "missing": 768 , "children": [
+                    { "nodeid": 767, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1277, "no": 1278, "missing": 1278 , "children": [
+                      { "nodeid": 1277, "leaf": -0.132878765 }, 
+                      { "nodeid": 1278, "leaf": -0.12962395 }
+                    ]}, 
+                    { "nodeid": 768, "depth": 9, "split": "Is_Male", "split_condition": 1, "yes": 1279, "no": 1280, "missing": 1280 , "children": [
+                      { "nodeid": 1279, "leaf": -0.131555706 }, 
+                      { "nodeid": 1280, "leaf": -0.135196209 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 434, "leaf": -0.126191959 }
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 58, "depth": 5, "split": "NeighborConnect", "split_condition": 0.169973075, "yes": 115, "no": 116, "missing": 116 , "children": [
+              { "nodeid": 115, "depth": 6, "split": "Is_Male", "split_condition": 1, "yes": 229, "no": 230, "missing": 230 , "children": [
+                { "nodeid": 229, "depth": 7, "split": "SchoolConnect", "split_condition": 0.247716516, "yes": 435, "no": 436, "missing": 436 , "children": [
+                  { "nodeid": 435, "leaf": 0.407679081 }, 
+                  { "nodeid": 436, "leaf": 0.373816967 }
+                ]}, 
+                { "nodeid": 230, "depth": 7, "split": "SchoolConnect", "split_condition": 0.153143853, "yes": 437, "no": 438, "missing": 438 , "children": [
+                  { "nodeid": 437, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.427428037, "yes": 769, "no": 770, "missing": 770 , "children": [
+                    { "nodeid": 769, "leaf": 0.377155334 }, 
+                    { "nodeid": 770, "leaf": 0.333227068 }
+                  ]}, 
+                  { "nodeid": 438, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.596015334, "yes": 771, "no": 772, "missing": 772 , "children": [
+                    { "nodeid": 771, "leaf": 0.321797192 }, 
+                    { "nodeid": 772, "leaf": 0.322905123 }
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 116, "depth": 6, "split": "SchoolConnect", "split_condition": -0.114966735, "yes": 231, "no": 232, "missing": 232 , "children": [
+                { "nodeid": 231, "depth": 7, "split": "SchoolConnect", "split_condition": -0.137546718, "yes": 439, "no": 440, "missing": 440 , "children": [
+                  { "nodeid": 439, "leaf": 0.350214213 }, 
+                  { "nodeid": 440, "leaf": 0.333230317 }
+                ]}, 
+                { "nodeid": 232, "depth": 7, "split": "SchoolConnect", "split_condition": 0.449545711, "yes": 441, "no": 442, "missing": 442 , "children": [
+                  { "nodeid": 441, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.636984229, "yes": 773, "no": 774, "missing": 774 , "children": [
+                    { "nodeid": 773, "leaf": -0.133937627 }, 
+                    { "nodeid": 774, "leaf": -0.131285056 }
+                  ]}, 
+                  { "nodeid": 442, "leaf": -0.134751722 }
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}, 
+        { "nodeid": 14, "depth": 3, "split": "Is_Male", "split_condition": 1, "yes": 29, "no": 30, "missing": 30 , "children": [
+          { "nodeid": 29, "depth": 4, "split": "NeighborConnect", "split_condition": 0.37400502, "yes": 59, "no": 60, "missing": 60 , "children": [
+            { "nodeid": 59, "depth": 5, "split": "NeighborConnect", "split_condition": 0.317367733, "yes": 117, "no": 118, "missing": 118 , "children": [
+              { "nodeid": 117, "depth": 6, "split": "SchoolConnect", "split_condition": 1.01215184, "yes": 233, "no": 234, "missing": 234 , "children": [
+                { "nodeid": 233, "depth": 7, "split": "SchoolConnect", "split_condition": 0.195399016, "yes": 443, "no": 444, "missing": 444 , "children": [
+                  { "nodeid": 443, "depth": 8, "split": "SchoolConnect", "split_condition": -0.346462458, "yes": 775, "no": 776, "missing": 776 , "children": [
+                    { "nodeid": 775, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1281, "no": 1282, "missing": 1282 , "children": [
+                      { "nodeid": 1281, "leaf": -0.129174367 }, 
+                      { "nodeid": 1282, "leaf": -0.130137682 }
+                    ]}, 
+                    { "nodeid": 776, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 1283, "no": 1284, "missing": 1284 , "children": [
+                      { "nodeid": 1283, "leaf": -0.135037228 }, 
+                      { "nodeid": 1284, "leaf": -0.131591603 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 444, "depth": 8, "split": "SchoolConnect", "split_condition": 0.220031187, "yes": 777, "no": 778, "missing": 778 , "children": [
+                    { "nodeid": 777, "leaf": 0.395428956 }, 
+                    { "nodeid": 778, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.609512031, "yes": 1285, "no": 1286, "missing": 1286 , "children": [
+                      { "nodeid": 1285, "leaf": -0.137548268 }, 
+                      { "nodeid": 1286, "leaf": -0.130748406 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 234, "depth": 7, "split": "SchoolConnect", "split_condition": 1.13062096, "yes": 445, "no": 446, "missing": 446 , "children": [
+                  { "nodeid": 445, "leaf": 0.374444962 }, 
+                  { "nodeid": 446, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.0151643818, "yes": 779, "no": 780, "missing": 780 , "children": [
+                    { "nodeid": 779, "leaf": -0.138843402 }, 
+                    { "nodeid": 780, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1287, "no": 1288, "missing": 1288 , "children": [
+                      { "nodeid": 1287, "leaf": -0.126809195 }, 
+                      { "nodeid": 1288, "leaf": -0.128572613 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 118, "depth": 6, "split": "SchoolConnect", "split_condition": 0.124260291, "yes": 235, "no": 236, "missing": 236 , "children": [
+                { "nodeid": 235, "leaf": -0.131241813 }, 
+                { "nodeid": 236, "depth": 7, "split": "SchoolConnect", "split_condition": 0.529314935, "yes": 447, "no": 448, "missing": 448 , "children": [
+                  { "nodeid": 447, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.0867379382, "yes": 781, "no": 782, "missing": 782 , "children": [
+                    { "nodeid": 781, "leaf": 0.368533492 }, 
+                    { "nodeid": 782, "leaf": 0.407679081 }
+                  ]}, 
+                  { "nodeid": 448, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.398299217, "yes": 783, "no": 784, "missing": 784 , "children": [
+                    { "nodeid": 783, "leaf": -0.131198615 }, 
+                    { "nodeid": 784, "leaf": -0.134722903 }
+                  ]}
+                ]}
+              ]}
+            ]}, 
+            { "nodeid": 60, "depth": 5, "split": "NeighborConnect", "split_condition": 0.581795096, "yes": 119, "no": 120, "missing": 120 , "children": [
+              { "nodeid": 119, "depth": 6, "split": "SchoolConnect", "split_condition": -0.00293957512, "yes": 237, "no": 238, "missing": 238 , "children": [
+                { "nodeid": 237, "depth": 7, "split": "SchoolConnect", "split_condition": -0.0115550011, "yes": 449, "no": 450, "missing": 450 , "children": [
+                  { "nodeid": 449, "depth": 8, "split": "SchoolConnect", "split_condition": -0.972372591, "yes": 785, "no": 786, "missing": 786 , "children": [
+                    { "nodeid": 785, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.220014229, "yes": 1289, "no": 1290, "missing": 1290 , "children": [
+                      { "nodeid": 1289, "leaf": -0.127982855 }, 
+                      { "nodeid": 1290, "leaf": -0.139010593 }
+                    ]}, 
+                    { "nodeid": 786, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0736397952, "yes": 1291, "no": 1292, "missing": 1292 , "children": [
+                      { "nodeid": 1291, "leaf": -0.133018464 }, 
+                      { "nodeid": 1292, "leaf": -0.13153027 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 450, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.383375317, "yes": 787, "no": 788, "missing": 788 , "children": [
+                    { "nodeid": 787, "leaf": 0.35136053 }, 
+                    { "nodeid": 788, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.20552735, "yes": 1293, "no": 1294, "missing": 1294 , "children": [
+                      { "nodeid": 1293, "leaf": -0.128865495 }, 
+                      { "nodeid": 1294, "leaf": -0.129961252 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 238, "depth": 7, "split": "SchoolConnect", "split_condition": 0.41507268, "yes": 451, "no": 452, "missing": 452 , "children": [
+                  { "nodeid": 451, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.383375317, "yes": 789, "no": 790, "missing": 790 , "children": [
+                    { "nodeid": 789, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.427428037, "yes": 1295, "no": 1296, "missing": 1296 , "children": [
+                      { "nodeid": 1295, "leaf": -0.133688271 }, 
+                      { "nodeid": 1296, "leaf": -0.132649928 }
+                    ]}, 
+                    { "nodeid": 790, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1297, "no": 1298, "missing": 1298 , "children": [
+                      { "nodeid": 1297, "leaf": -0.129738018 }, 
+                      { "nodeid": 1298, "leaf": -0.132136866 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 452, "depth": 8, "split": "SchoolConnect", "split_condition": 0.992946029, "yes": 791, "no": 792, "missing": 792 , "children": [
+                    { "nodeid": 791, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.403984666, "yes": 1299, "no": 1300, "missing": 1300 , "children": [
+                      { "nodeid": 1299, "leaf": -0.136201188 }, 
+                      { "nodeid": 1300, "leaf": -0.131808579 }
+                    ]}, 
+                    { "nodeid": 792, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.220014229, "yes": 1301, "no": 1302, "missing": 1302 , "children": [
+                      { "nodeid": 1301, "leaf": -0.13753888 }, 
+                      { "nodeid": 1302, "leaf": -0.131115422 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 120, "depth": 6, "split": "SchoolConnect", "split_condition": 0.396509111, "yes": 239, "no": 240, "missing": 240 , "children": [
+                { "nodeid": 239, "depth": 7, "split": "SchoolConnect", "split_condition": -0.203920946, "yes": 453, "no": 454, "missing": 454 , "children": [
+                  { "nodeid": 453, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.0151643818, "yes": 793, "no": 794, "missing": 794 , "children": [
+                    { "nodeid": 793, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.368550718, "yes": 1303, "no": 1304, "missing": 1304 , "children": [
+                      { "nodeid": 1303, "leaf": -0.131540671 }, 
+                      { "nodeid": 1304, "leaf": -0.12843959 }
+                    ]}, 
+                    { "nodeid": 794, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0410896055, "yes": 1305, "no": 1306, "missing": 1306 , "children": [
+                      { "nodeid": 1305, "leaf": -0.134703293 }, 
+                      { "nodeid": 1306, "leaf": -0.132536277 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 454, "depth": 8, "split": "SchoolConnect", "split_condition": 0.0199559424, "yes": 795, "no": 796, "missing": 796 , "children": [
+                    { "nodeid": 795, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 1307, "no": 1308, "missing": 1308 , "children": [
+                      { "nodeid": 1307, "leaf": -0.12791419 }, 
+                      { "nodeid": 1308, "leaf": -0.128498003 }
+                    ]}, 
+                    { "nodeid": 796, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1309, "no": 1310, "missing": 1310 , "children": [
+                      { "nodeid": 1309, "leaf": -0.128713951 }, 
+                      { "nodeid": 1310, "leaf": -0.131852433 }
+                    ]}
+                  ]}
+                ]}, 
+                { "nodeid": 240, "depth": 7, "split": "SchoolConnect", "split_condition": 0.411628336, "yes": 455, "no": 456, "missing": 456 , "children": [
+                  { "nodeid": 455, "leaf": 0.407679081 }, 
+                  { "nodeid": 456, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.501760244, "yes": 797, "no": 798, "missing": 798 , "children": [
+                    { "nodeid": 797, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.623008668, "yes": 1311, "no": 1312, "missing": 1312 , "children": [
+                      { "nodeid": 1311, "leaf": 0.152361855 }, 
+                      { "nodeid": 1312, "leaf": 0.431548983 }
+                    ]}, 
+                    { "nodeid": 798, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 1313, "no": 1314, "missing": 1314 , "children": [
+                      { "nodeid": 1313, "leaf": -0.0227469057 }, 
+                      { "nodeid": 1314, "leaf": -0.13060756 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}, 
+          { "nodeid": 30, "depth": 4, "split": "NeighborConnect", "split_condition": 0.214295506, "yes": 61, "no": 62, "missing": 62 , "children": [
+            { "nodeid": 61, "depth": 5, "split": "NeighborConnect", "split_condition": 0.20566009, "yes": 121, "no": 122, "missing": 122 , "children": [
+              { "nodeid": 121, "depth": 6, "split": "SchoolConnect", "split_condition": -0.383551836, "yes": 241, "no": 242, "missing": 242 , "children": [
+                { "nodeid": 241, "depth": 7, "split": "SchoolConnect", "split_condition": -0.773016989, "yes": 457, "no": 458, "missing": 458 , "children": [
+                  { "nodeid": 457, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.272276908, "yes": 799, "no": 800, "missing": 800 , "children": [
+                    { "nodeid": 799, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.00122001837, "yes": 1315, "no": 1316, "missing": 1316 , "children": [
+                      { "nodeid": 1315, "leaf": -0.130407542 }, 
+                      { "nodeid": 1316, "leaf": 0.294430465 }
+                    ]}, 
+                    { "nodeid": 800, "leaf": -0.131317005 }
+                  ]}, 
+                  { "nodeid": 458, "leaf": 0.392032951 }
+                ]}, 
+                { "nodeid": 242, "depth": 7, "split": "SchoolConnect", "split_condition": 0.204380766, "yes": 459, "no": 460, "missing": 460 , "children": [
+                  { "nodeid": 459, "depth": 8, "split": "SchoolConnect", "split_condition": 0.197252288, "yes": 801, "no": 802, "missing": 802 , "children": [
+                    { "nodeid": 801, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0104749836, "yes": 1317, "no": 1318, "missing": 1318 , "children": [
+                      { "nodeid": 1317, "leaf": -0.0560318828 }, 
+                      { "nodeid": 1318, "leaf": -0.135853201 }
+                    ]}, 
+                    { "nodeid": 802, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1319, "no": 1320, "missing": 1320 , "children": [
+                      { "nodeid": 1319, "leaf": 0.383753687 }, 
+                      { "nodeid": 1320, "leaf": -0.126993433 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 460, "depth": 8, "split": "SchoolConnect", "split_condition": 0.615540504, "yes": 803, "no": 804, "missing": 804 , "children": [
+                    { "nodeid": 803, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.164802864, "yes": 1321, "no": 1322, "missing": 1322 , "children": [
+                      { "nodeid": 1321, "leaf": -0.133772761 }, 
+                      { "nodeid": 1322, "leaf": -0.137467936 }
+                    ]}, 
+                    { "nodeid": 804, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.0289882794, "yes": 1323, "no": 1324, "missing": 1324 , "children": [
+                      { "nodeid": 1323, "leaf": -0.130836204 }, 
+                      { "nodeid": 1324, "leaf": -0.132149935 }
+                    ]}
+                  ]}
+                ]}
+              ]}, 
+              { "nodeid": 122, "leaf": -0.127545431 }
+            ]}, 
+            { "nodeid": 62, "depth": 5, "split": "NeighborConnect", "split_condition": 0.232754588, "yes": 123, "no": 124, "missing": 124 , "children": [
+              { "nodeid": 123, "depth": 6, "split": "SchoolConnect", "split_condition": -0.191954687, "yes": 243, "no": 244, "missing": 244 , "children": [
+                { "nodeid": 243, "leaf": 0.333227068 }, 
+                { "nodeid": 244, "leaf": 0.336048096 }
+              ]}, 
+              { "nodeid": 124, "depth": 6, "split": "SchoolConnect", "split_condition": -0.501651168, "yes": 245, "no": 246, "missing": 246 , "children": [
+                { "nodeid": 245, "depth": 7, "split": "SchoolConnect", "split_condition": -1.16559255, "yes": 461, "no": 462, "missing": 462 , "children": [
+                  { "nodeid": 461, "depth": 8, "split": "DelinquentPeer", "split_condition": -0.22545065, "yes": 805, "no": 806, "missing": 806 , "children": [
+                    { "nodeid": 805, "leaf": -0.125878826 }, 
+                    { "nodeid": 806, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.185933128, "yes": 1325, "no": 1326, "missing": 1326 , "children": [
+                      { "nodeid": 1325, "leaf": -0.127525628 }, 
+                      { "nodeid": 1326, "leaf": -0.126997039 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 462, "depth": 8, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 807, "no": 808, "missing": 808 , "children": [
+                    { "nodeid": 807, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.0999732614, "yes": 1327, "no": 1328, "missing": 1328 , "children": [
+                      { "nodeid": 1327, "leaf": -0.134611681 }, 
+                      { "nodeid": 1328, "leaf": -0.137416348 }
+                    ]}, 
+                    { "nodeid": 808, "leaf": -0.13164781 }
+                  ]}
+                ]}, 
+                { "nodeid": 246, "depth": 7, "split": "SchoolConnect", "split_condition": 0.785349727, "yes": 463, "no": 464, "missing": 464 , "children": [
+                  { "nodeid": 463, "depth": 8, "split": "SchoolConnect", "split_condition": 0.627728939, "yes": 809, "no": 810, "missing": 810 , "children": [
+                    { "nodeid": 809, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.501760244, "yes": 1329, "no": 1330, "missing": 1330 , "children": [
+                      { "nodeid": 1329, "leaf": 0.19208239 }, 
+                      { "nodeid": 1330, "leaf": -0.000134463378 }
+                    ]}, 
+                    { "nodeid": 810, "depth": 9, "split": "DelinquentPeer", "split_condition": -0.261878103, "yes": 1331, "no": 1332, "missing": 1332 , "children": [
+                      { "nodeid": 1331, "leaf": 0.402687281 }, 
+                      { "nodeid": 1332, "leaf": 0.363120943 }
+                    ]}
+                  ]}, 
+                  { "nodeid": 464, "depth": 8, "split": "SchoolConnect", "split_condition": 1.21199501, "yes": 811, "no": 812, "missing": 812 , "children": [
+                    { "nodeid": 811, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.225020334, "yes": 1333, "no": 1334, "missing": 1334 , "children": [
+                      { "nodeid": 1333, "leaf": -0.11155688 }, 
+                      { "nodeid": 1334, "leaf": -0.0473774932 }
+                    ]}, 
+                    { "nodeid": 812, "depth": 9, "split": "DelinquentPeer", "split_condition": 0.198196009, "yes": 1335, "no": 1336, "missing": 1336 , "children": [
+                      { "nodeid": 1335, "leaf": 0.188655362 }, 
+                      { "nodeid": 1336, "leaf": -0.0503845774 }
+                    ]}
+                  ]}
+                ]}
+              ]}
+            ]}
+          ]}
+        ]}
+      ]}
+    ]}
+  ]}

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from Phase_1.project_scripts import get_path_from_root
+from utility.path_utils import get_path_from_root
 
 # Define the file paths
 files = [

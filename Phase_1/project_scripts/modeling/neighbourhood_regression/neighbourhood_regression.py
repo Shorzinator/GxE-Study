@@ -122,17 +122,20 @@ def neighborhood_regression(target):
                    graph.nodes()]
     node_sizes = [500 + 10 * graph.degree(node) for node in graph.nodes()]  # Adjust size based on degree
 
-    plt.figure(figsize=(12, 12))
-    nx.draw(graph, pos, with_labels=True, node_size=600, node_color=node_colors, font_size=20,
+    plt.figure(figsize=(15, 16))  # Adjust the figure size as needed
+    nx.draw(graph, pos, with_labels=True, node_size=2000, node_color=node_colors, font_size=20,
             width=edge_weights, edge_color=edge_colors, edge_cmap=plt.cm.Blues, edge_vmin=0, edge_vmax=1,
             font_weight="bold", alpha=0.9)
     nx.draw_networkx_edge_labels(graph, pos, edge_labels=edge_labels, font_size=10, alpha=0.7)
-    plt.title(f"Feature Relationships Graph for {target}")
-    plt.savefig(f"{target}_neighborhood_regression_layers.png")
+    for node in graph.nodes():
+        print("Node:", node)
+    plt.title(f"Feature Relationships Graph for {target}", pad=10)
+    plt.tight_layout()
+    plt.savefig(f"{target}_neighborhood_regression_layers_alt.png", bbox_inches="tight")
     plt.show()
 
 
 if __name__ == '__main__':
     target_1 = "AntisocialTrajectory"
     target_2 = "SubstanceUseTrajectory"
-    neighborhood_regression(target_1)
+    neighborhood_regression(target_2)

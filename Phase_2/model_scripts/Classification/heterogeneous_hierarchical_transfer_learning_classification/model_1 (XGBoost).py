@@ -3,11 +3,7 @@ import pickle
 from copy import deepcopy
 
 import numpy as np
-import pandas as pd
-from catboost import CatBoostClassifier
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import accuracy_score
-from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 
 from Phase_2.model_scripts.model_utils import get_transfer_strategy, load_data_splits, \

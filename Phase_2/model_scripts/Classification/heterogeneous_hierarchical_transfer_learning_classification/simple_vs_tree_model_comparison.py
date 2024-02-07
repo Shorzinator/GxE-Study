@@ -1,8 +1,10 @@
 import matplotlib.pyplot as plt
+import numpy as np
 import statsmodels.api as sm
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.metrics import accuracy_score, log_loss
+from sklearn.preprocessing import label_binarize
 from xgboost import XGBClassifier
 from Phase_2.model_scripts.model_utils import load_data_splits
 import seaborn as sns  # For better color palettes and themes
@@ -62,22 +64,25 @@ def evaluate_models(target_variable):
     y_train = y_train.values.ravel()
     y_test = y_test.values.ravel()
 
+    # Binarize the output labels for multiclass ROC AUC
+    y_test_binarized = label_binarize(y_test, classes=np.unique(y_test))
+
     # Define the models to be evaluated
     models = {
         "Logistic Regression": LogisticRegression(max_iter=1000),
         "LDA": LinearDiscriminantAnalysis(),
-        "Ridge Classifier": RidgeClassifier(),
         "XGBClassifier": XGBClassifier(subsample=1.0, reg_lambda=0, reg_alpha=0, n_estimators=100, min_child_weight=0,
                                        max_depth=10, max_delta_step=5, learning_rate=0.2, gamma=0, colsample_bytree=0.5,
                                        colsample_bylevel=0.5, eval_metric='mlogloss'),
-        "GLM Logistic": sm.MNLogit(y_train, X_train_glm)
+        "GLM Logistic": sm.MNLogit(y_train, X_train_glm),
+        "Ridge Classifier": RidgeClassifier(),
     }
 
     # Initialize dictionary to hold evaluation results
     results = {
         "Model": [],
         "Accuracy": [],
-        "Log Loss": []
+        "Log Loss": [],
     }
 
     # Evaluate each model
@@ -99,6 +104,7 @@ def evaluate_models(target_variable):
                 probas = model.predict_proba(X_test)
                 logloss = log_loss(y_test, probas)
                 results["Log Loss"].append(logloss)
+
             else:
                 # Append None or a placeholder if log loss can't be computed
                 results["Log Loss"].append(None)
@@ -121,6 +127,7 @@ def evaluate_models(target_variable):
             results["Accuracy"].append(accuracy)
             results["Log Loss"].append(logloss)
 
+
     # Visualization
     fig, ax1 = plt.subplots()
 
@@ -138,7 +145,7 @@ def evaluate_models(target_variable):
 
     fig.tight_layout()
     plt.xticks(rotation=45)
-    plt.savefig("comparing_simpler_models_with_xgb_AST.png")
+    # plt.savefig("comparing_simpler_models_with_xgb_AST.png")
     plt.show()
 
     # Call the new plotting functions

@@ -110,14 +110,14 @@ def train_and_evaluate_race_specific_models(
     return race_models, race_best_params, performance_metrics
 
 
-def main(target_variable, race_column="Race", tune_base=False, tune_interim=False):
+def main(target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_base=False, tune_interim=False):
     if target_variable == "AntisocialTrajectory":
         tag = "AST"
     else:
         tag = "SUT"
 
     X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old = (
-        load_data_splits(target_variable))
+        load_data_splits(target_variable, pgs_old , pgs_new))
 
     # Ensure directories exist
     os.makedirs("../../../results/models/classification/HetHieTL", exist_ok=True)
@@ -196,10 +196,10 @@ def main(target_variable, race_column="Race", tune_base=False, tune_interim=Fals
         "XGBClassifier", feature_based_transfer=True)
 
     # Save race-specific models, their best parameters, and performance metrics
-    for (race, model_name), model in final_models.items():
-        pickle.dump(model, open(
-            f"../../../results/models/classification/HetHieTL/{tag}/{model_name}/{model_name}_wPGS_race_{race}.pkl",
-            "wb"))
+    # for (race, model_name), model in final_models.items():
+    #     pickle.dump(model, open(
+    #         f"../../../results/models/classification/HetHieTL/{tag}/{model_name}/{model_name}_wPGS_race_{race}.pkl",
+    #         "wb"))
 
     print(f"Performance metrics for final models: {performance_metrics}")
     print(f"Best Parameters for final models: {race_best_params}")
@@ -210,4 +210,4 @@ if __name__ == "__main__":
     target_2 = "SubstanceUseTrajectory"
 
     # Run the main function
-    main(target_1)
+    main(target_1, "Race", "with", "with")

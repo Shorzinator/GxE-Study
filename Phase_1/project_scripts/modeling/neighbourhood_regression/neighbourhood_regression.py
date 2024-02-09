@@ -1,5 +1,4 @@
 import logging
-import os
 
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -11,7 +10,6 @@ from config import FEATURES_FOR_AST_old, FEATURES_FOR_SUT_old
 from Phase_1.project_scripts.preprocessing.additional_preprocessing import primary_preprocessing_mrf, \
     secondary_preprocessing
 from utility.data_loader import load_data_old
-from utility.model_utils import ensure_directory_exists
 from utility.path_utils import get_path_from_root
 
 logging.basicConfig(level=logging.DEBUG)
@@ -43,9 +41,6 @@ def evaluate_model(y_true, y_pred, model_type='regression'):
 def neighborhood_regression(target):
     logger.info(f"Starting Neighborhood Regression for {target}...\n")
 
-    # Subdirectories for metrics
-    metrics_dir = os.path.join(RESULTS_DIR, "metrics")
-    ensure_directory_exists(metrics_dir)
 
     # Load the data
     df = load_data_old()

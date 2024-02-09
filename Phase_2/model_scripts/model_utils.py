@@ -115,28 +115,28 @@ def load_data(file_path):
 
 
 # Function to load the data splits
-def load_data_splits(target_variable, pgs_1="with", pgs_2="without"):
+def load_data_splits(target_variable, pgs_old="with", pgs_new="without"):
     if target_variable == "AntisocialTrajectory":
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/X_train_old_AST.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/X_test_old_AST.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/y_train_old_AST.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_old/y_test_old_AST.csv")
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_train_old_AST.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_test_old_AST.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_train_old_AST.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_test_old_AST.csv")
 
-        X_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/X_train_new_AST.csv")
-        X_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/X_test_new_AST.csv")
-        y_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/y_train_new_AST.csv")
-        y_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/AST_new/y_test_new_AST.csv")
+        X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_train_new_AST.csv")
+        X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_test_new_AST.csv")
+        y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_train_new_AST.csv")
+        y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_test_new_AST.csv")
 
     else:
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/X_train_old_SUT.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/X_test_old_SUT.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/y_train_old_SUT.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_old/y_test_old_SUT.csv")
+        X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_train_old_SUT.csv")
+        X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_test_old_SUT.csv")
+        y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_train_old_SUT.csv")
+        y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_test_old_SUT.csv")
 
-        X_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_train_new_SUT.csv")
-        X_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/X_test_new_SUT.csv")
-        y_train_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/y_train_new_SUT.csv")
-        y_test_new = load_data(f"../../../preprocessed_data/{pgs_1}_PGS/SUT_new/y_test_new_SUT.csv")
+        X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_train_new_SUT.csv")
+        X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_test_new_SUT.csv")
+        y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_train_new_SUT.csv")
+        y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_test_new_SUT.csv")
 
     return X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old
 

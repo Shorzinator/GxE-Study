@@ -40,6 +40,7 @@ def preprocessing_pipeline(features, target, file_path_to_save):
 
     # Apply encoding
     if target == 'AntisocialTrajectory':
+        # pass
         # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'SubstanceUseTrajectory', baseline=3)
         # X_train.fillna(0, inplace=True)
         # X_test.fillna(0, inplace=True)
@@ -49,9 +50,9 @@ def preprocessing_pipeline(features, target, file_path_to_save):
         categorical_indices = [X_train.columns.get_loc(col) for col in
                                ["SubstanceUseTrajectory"]]
         X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
-        # X_train, y_train = apply_smote(X_train, y_train)
 
     elif target == 'SubstanceUseTrajectory':
+        pass
         # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'AntisocialTrajectory', baseline=4)
         # X_train.fillna(0, inplace=True)
         # X_test.fillna(0, inplace=True)

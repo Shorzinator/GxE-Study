@@ -37,51 +37,36 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
     df = handle_family_clusters(df)
 
     # Splitting the datasets to prevent data/information leakage
-    X_train, X_test, y_train, y_test = split_data(df, target)
+    X_train, X_val, X_test, y_train, y_val, y_test = split_data(df, target)
 
     # Apply Scaling
-    X_train, X_test = robust_scaling_continuous_variables_new(X_train, X_test, feature_cols, target)
-
-    # Encoding the Race feature
-    # categorical_features = ["Race"]
-    # X_train, X_test = encode_categorical_variables(X_train, X_test, categorical_features)
+    X_train, X_val, X_test = robust_scaling_continuous_variables_new(X_train, X_val, X_test, feature_cols, target)
 
     # Apply encoding
-    if target == 'AntisocialTrajectory':
-        # pass
-        # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'SubstanceUseTrajectory', baseline=3)
-        # X_train.fillna(0, inplace=True)
-        # X_test.fillna(0, inplace=True)
-
-        if resampling:
-            categorical_indices = [X_train.columns.get_loc(col) for col in
-                                   ["Race", "SubstanceUseTrajectory"]]
+    if resampling:
+        if target == 'AntisocialTrajectory':
+            categorical_indices = [X_train.columns.get_loc(col) for col in ["Race", "SubstanceUseTrajectory"]]
             X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
-
-    elif target == 'SubstanceUseTrajectory':
-        # pass
-        # X_train, X_test = encode_ast_sut_variable(X_train, X_test, target, 'AntisocialTrajectory', baseline=4)
-        # X_train.fillna(0, inplace=True)
-        # X_test.fillna(0, inplace=True)
-
-        if resampling:
-            categorical_indices = [X_train.columns.get_loc(col) for col in
-                                   ["Race", "AntisocialTrajectory"]]
+        elif target == 'SubstanceUseTrajectory':
+            categorical_indices = [X_train.columns.get_loc(col) for col in ["Race", "AntisocialTrajectory"]]
             X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
 
     # Saving the splits
+    suffix = "AST" if target == "AntisocialTrajectory" else "SUT"
     if target == "AntisocialTrajectory":
-        temp = "AST"
-        save_preprocessed_data(X_train, f"{file_path_to_save}X_train_new_{temp}.csv", "X_train")
-        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_new_{temp}.csv", "X_test")
-        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_new_{temp}.csv", "y_train")
-        save_preprocessed_data(y_test, f"{file_path_to_save}y_test_new_{temp}.csv", "y_test")
+        save_preprocessed_data(X_train, f"{file_path_to_save}X_train_new_{suffix}.csv", "X_train")
+        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_new_{suffix}.csv", "X_test")
+        save_preprocessed_data(X_val, f"{file_path_to_save}X_val_new_{suffix}.csv", "X_val")
+        save_preprocessed_data(y_val, f"{file_path_to_save}y_val_new_{suffix}.csv", "y_val")
+        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_new_{suffix}.csv", "y_train")
+        save_preprocessed_data(y_test, f"{file_path_to_save}y_test_new_{suffix}.csv", "y_test")
     else:
-        temp = "SUT"
-        save_preprocessed_data(X_train, f"{file_path_to_save}X_train_new_{temp}.csv", "X_train")
-        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_new_{temp}.csv", "X_test")
-        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_new_{temp}.csv", "y_train")
-        save_preprocessed_data(y_test, f"{file_path_to_save}y_test_new_{temp}.csv", "y_test")
+        save_preprocessed_data(X_train, f"{file_path_to_save}X_train_new_{suffix}.csv", "X_train")
+        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_new_{suffix}.csv", "X_test")
+        save_preprocessed_data(X_val, f"{file_path_to_save}X_val_new_{suffix}.csv", "X_val")
+        save_preprocessed_data(y_val, f"{file_path_to_save}y_val_new_{suffix}.csv", "y_val")
+        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_new_{suffix}.csv", "y_train")
+        save_preprocessed_data(y_test, f"{file_path_to_save}y_test_new_{suffix}.csv", "y_test")
 
 
 def main(TARGET, resampling):
@@ -97,8 +82,6 @@ def main(TARGET, resampling):
 
 
 if __name__ == '__main__':
-    target_1 = "AntisocialTrajectory"
-    target_2 = "SubstanceUseTrajectory"
-
     resampling = True
-    main(target_2, resampling)
+    main("AntisocialTrajectory", resampling)
+    main("SubstanceUseTrajectory", resampling)

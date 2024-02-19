@@ -225,11 +225,14 @@ def encode_ast_sut_variable(X_train, X_test, target, column, baseline):
         return X_train, X_test
 
 
-def standard_scaling_continuous_variables_old(X_train, X_test, feature_cols, target):
+def robust_scaling_continuous_variables_old(X_train, X_val, X_test, feature_cols, target):
     f = feature_cols.copy()
-    f.remove("Is_Male")
+
+    f.remove("Sex")
+    f.remove("Age")
     f.remove("PolygenicScoreEXT")
-    # f.remove("PolygenicScoreEXT_x_Is_Male")
+    f.remove("PolygenicScoreEXT_x_Sex")
+    f.remove("PolygenicScoreEXT_x_Age")
 
     if target == "AntisocialTrajectory":
         f.remove("SubstanceUseTrajectory")
@@ -242,36 +245,10 @@ def standard_scaling_continuous_variables_old(X_train, X_test, feature_cols, tar
         logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
         return X_train  # or handle the missing columns as appropriate
 
-    missing_cols = [col for col in f if col not in X_test.columns]
+    missing_cols = [col for col in f if col not in X_val.columns]
     if missing_cols:
         logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
-        return X_test  # or handle the missing columns as appropriate
-
-    scaler = StandardScaler()
-    X_train[f] = scaler.fit_transform(X_train[f])
-    X_test[f] = scaler.transform(X_test[f])
-
-    logger.info("Continuous variables normalized in both training and test set.")
-
-    return X_train, X_test
-
-
-def robust_scaling_continuous_variables_old(X_train, X_test, feature_cols, target):
-    f = feature_cols.copy()
-    f.remove("Is_Male")
-    f.remove("PolygenicScoreEXT")
-    # f.remove("PolygenicScoreEXT_x_Is_Male")
-
-    if target == "AntisocialTrajectory":
-        f.remove("SubstanceUseTrajectory")
-    else:
-        f.remove("AntisocialTrajectory")
-
-    # Add a check to ensure all columns are present
-    missing_cols = [col for col in f if col not in X_train.columns]
-    if missing_cols:
-        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
-        return X_train  # or handle the missing columns as appropriate
+        return X_val  # or handle the missing columns as appropriate
 
     missing_cols = [col for col in f if col not in X_test.columns]
     if missing_cols:
@@ -280,19 +257,22 @@ def robust_scaling_continuous_variables_old(X_train, X_test, feature_cols, targe
 
     scaler = RobustScaler()
     X_train[f] = scaler.fit_transform(X_train[f])
+    X_val[f] = scaler.transform(X_val[f])
     X_test[f] = scaler.transform(X_test[f])
 
     logger.info("Continuous variables normalized in both training and test set.")
 
-    return X_train, X_test
+    return X_train, X_val, X_test
 
 
-def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, target):
+def robust_scaling_continuous_variables_new(X_train, X_val, X_test, feature_cols, target):
     f = feature_cols.copy()
 
-    f.remove("Is_Male")
     f.remove("Race")
-    # f.remove("PolygenicScoreEXT_x_Is_Male")
+    f.remove("Sex")
+    f.remove("Age")
+    f.remove("PolygenicScoreEXT_x_Sex")
+    f.remove("PolygenicScoreEXT_x_Age")
     f.remove("PolygenicScoreEXT")
 
     if target == "AntisocialTrajectory":
@@ -306,39 +286,10 @@ def standard_scaling_continuous_variables_new(X_train, X_test, feature_cols, tar
         logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
         return X_train  # or handle the missing columns as appropriate
 
-    # Add a check to ensure all columns are present in X_test
-    missing_cols = [col for col in f if col not in X_test.columns]
+    missing_cols = [col for col in f if col not in X_val.columns]
     if missing_cols:
         logger.error(f"Missing columns in X_test for normalization: {missing_cols}")
-        return X_test  # or handle the missing columns as appropriate
-
-    scaler = StandardScaler()
-    X_train[f] = scaler.fit_transform(X_train[f])
-    X_test[f] = scaler.transform(X_test[f])
-
-    logger.info("Continuous variables normalized in both training and test set.")
-
-    return X_train, X_test
-
-
-def robust_scaling_continuous_variables_new(X_train, X_test, feature_cols, target):
-    f = feature_cols.copy()
-
-    f.remove("Is_Male")
-    f.remove("Race")
-    # f.remove("PolygenicScoreEXT_x_Is_Male")
-    f.remove("PolygenicScoreEXT")
-
-    if target == "AntisocialTrajectory":
-        f.remove("SubstanceUseTrajectory")
-    else:
-        f.remove("AntisocialTrajectory")
-
-    # Add a check to ensure all columns are present in X_train
-    missing_cols = [col for col in f if col not in X_train.columns]
-    if missing_cols:
-        logger.error(f"Missing columns in X_train for normalization: {missing_cols}")
-        return X_train  # or handle the missing columns as appropriate
+        return X_val  # or handle the missing columns as appropriate
 
     # Add a check to ensure all columns are present in X_test
     missing_cols = [col for col in f if col not in X_test.columns]
@@ -348,11 +299,12 @@ def robust_scaling_continuous_variables_new(X_train, X_test, feature_cols, targe
 
     scaler = RobustScaler()
     X_train[f] = scaler.fit_transform(X_train[f])
+    X_val[f] = scaler.fit_transform(X_val[f])
     X_test[f] = scaler.transform(X_test[f])
 
     logger.info("Continuous variables normalized in both training and test set.")
 
-    return X_train, X_test
+    return X_train, X_val, X_test
 
 
 def impute_missing_values(df, strategy='mean'):
@@ -415,8 +367,8 @@ def handle_family_clusters(df):
 def initial_cleaning(df, features, target):
     df.drop("ID", axis=1, inplace=True)
 
-    df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
-    df.drop("Sex", inplace=True, axis=1)
+    # df["Is_Male"] = (df["Sex"] == -0.5).astype(int)
+    # df.drop("Sex", inplace=True, axis=1)
 
     # Handling outliers
     features_to_handle_outliers = ['PolygenicScoreEXT', 'DelinquentPeer', 'SchoolConnect', 'NeighborConnect',
@@ -431,9 +383,10 @@ def initial_cleaning(df, features, target):
     logger.info(f"Dropped {initial_rows - rows_after_dropping} rows due to missing target values...")
 
     # Feature Engineering
-    df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
+    # df['PolygenicScoreEXT_x_Is_Male'] = df['PolygenicScoreEXT'] * df['Is_Male']
+    df['PolygenicScoreEXT_x_Sex'] = df['PolygenicScoreEXT'] * df['Sex']
     df['PolygenicScoreEXT_x_Age'] = df['PolygenicScoreEXT'] * df['Age']
-    feature_cols = features + ['PolygenicScoreEXT_x_Is_Male', 'PolygenicScoreEXT_x_Age']
+    feature_cols = features + ['PolygenicScoreEXT_x_Sex', 'PolygenicScoreEXT_x_Age']
 
     # Replace -0 with 0 in the DataFrame
     df = df.replace(-0, 0)

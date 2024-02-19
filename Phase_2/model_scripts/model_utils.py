@@ -7,16 +7,38 @@ from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_t
 
 
 # Function to split the data into training and testing sets
+# def split_data(df, target):
+#     # Split the data into training and testing sets with stratification
+#     X_train, X_test, y_train, y_test = train_test_split(
+#         df.drop(columns=[target]),
+#         df[target],
+#         test_size=0.2,
+#         random_state=42,
+#         stratify=df[target])
+#
+#     return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
+
+
+# The split_data function to include a validation set
 def split_data(df, target):
-    # Split the data into training and testing sets with stratification
-    X_train, X_test, y_train, y_test = train_test_split(
+    # Split the data into training+validation and testing sets with stratification
+    X_train_val, X_test, y_train_val, y_test = train_test_split(
         df.drop(columns=[target]),
         df[target],
         test_size=0.2,
         random_state=42,
         stratify=df[target])
 
-    return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
+    # Further split the training+validation set into separate training and validation sets
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train_val,
+        y_train_val,
+        test_size=0.25,  # This will split the training+validation into 60% training and 20% validation
+        random_state=42,
+        stratify=y_train_val)
+
+    return pd.DataFrame(X_train), pd.DataFrame(X_val), pd.DataFrame(X_test), \
+        pd.DataFrame(y_train), pd.DataFrame(y_val), pd.DataFrame(y_test)
 
 
 # Function to evaluate model
@@ -67,10 +89,10 @@ def tune_random_forest(model, X_train, y_train):
     return best_model, best_params
 
 
-def random_search_tuning(model, model_name, params, race_X_train, race_y_train):
+def random_search_tuning(model, params, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
         estimator=model,
-        param_distributions=params[model_name],
+        param_distributions=params,
         n_iter=100,
         cv=3,
         verbose=2,
@@ -88,10 +110,10 @@ def random_search_tuning(model, model_name, params, race_X_train, race_y_train):
     return best_model, best_params
 
 
-def random_search_tuning_intermediate(model, model_name, params, race_X_train, race_y_train):
+def random_search_tuning_intermediate(model, params, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
         estimator=model,
-        param_distributions=params[model_name],
+        param_distributions=params,
         n_iter=100,
         cv=3,
         verbose=2,
@@ -119,26 +141,34 @@ def load_data_splits(target_variable, pgs_old="with", pgs_new="without"):
     if target_variable == "AntisocialTrajectory":
         X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_train_old_AST.csv")
         X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_test_old_AST.csv")
+        X_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_val_old_AST.csv")
         y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_train_old_AST.csv")
         y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_test_old_AST.csv")
+        y_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_val_old_AST.csv")
 
         X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_train_new_AST.csv")
         X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_test_new_AST.csv")
+        X_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_val_new_AST.csv")
         y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_train_new_AST.csv")
         y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_test_new_AST.csv")
+        y_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_old/y_val_old_AST.csv")
 
     else:
         X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_train_old_SUT.csv")
         X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_test_old_SUT.csv")
+        X_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_val_old_AST.csv")
         y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_train_old_SUT.csv")
         y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_test_old_SUT.csv")
+        y_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_val_old_AST.csv")
 
         X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_train_new_SUT.csv")
         X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_test_new_SUT.csv")
+        X_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_val_new_AST.csv")
         y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_train_new_SUT.csv")
         y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_test_new_SUT.csv")
+        y_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_old/y_val_old_AST.csv")
 
-    return X_train_new, X_train_old, X_test_new, X_test_old, y_train_new, y_train_old, y_test_new, y_test_old
+    return X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old, y_train_old, y_val_old, y_test_old
 
 
 # Define a function or mapping to determine transfer strategy
@@ -158,6 +188,13 @@ def get_transfer_strategy(base_model_type, target_model_type):
 def search_spaces():
     # Define search spaces for each model
     search_spaces = {
+        'LogisticRegression': {
+            'C': np.logspace(-4, 4, 20),  # Exploring a wide range of regularization strengths
+            'penalty': ['l2', 'none', 'elasticnet'],  # 'l2' is commonly used; 'none' for no regularization
+            'solver': ['lbfgs', 'sag', 'saga'],  # Solvers that support multiclass problems and 'l2' or no penalty
+            'max_iter': [100, 200, 500, 1000],  # Adjust based on convergence needs
+            'l1_ratio': np.linspace(0, 1, 10)  # Only if you include 'elasticnet' in 'penalty'
+        },
         'RandomForest': {
             'n_estimators': np.arange(300, 1001, 50),
             'max_depth': [None] + list(np.arange(10, 101, 10)),

@@ -1,5 +1,5 @@
 FEATURES = ['PolygenicScoreEXT', 'Age', 'DelinquentPeer', 'SchoolConnect',
-            'NeighborConnect', 'ParentalWarmth', 'Is_Male']
+            'NeighborConnect', 'ParentalWarmth', 'Sex']
 
 TARGET_1 = "AntisocialTrajectory"
 TARGET_2 = "SubstanceUseTrajectory"

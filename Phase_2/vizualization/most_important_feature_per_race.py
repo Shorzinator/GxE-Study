@@ -70,7 +70,7 @@ def main():
 
     races = ['1.0', '2.0', '3.0', '4.0']
     models = [load_model(path) for path in model_paths]
-    X = pd.read_csv('../preprocessed_data/with_PGS/AST_new/X_test_new_AST.csv')
+    X = pd.read_csv('../preprocessed_data/without_resampling/with_PGS/AST_new/X_test_new_AST.csv')
 
     top_features = []
     top_values = []

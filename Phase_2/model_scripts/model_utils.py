@@ -93,30 +93,10 @@ def random_search_tuning(model, params, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
         estimator=model,
         param_distributions=params,
-        n_iter=100,
+        n_iter=50,
         cv=3,
         verbose=2,
-        random_state=42,
-        n_jobs=-1
-    )
-
-    # Fit the model
-    random_search.fit(race_X_train, race_y_train)
-
-    # Best model and parameters
-    best_model = random_search.best_estimator_
-    best_params = random_search.best_params_
-
-    return best_model, best_params
-
-
-def random_search_tuning_intermediate(model, params, race_X_train, race_y_train):
-    random_search = RandomizedSearchCV(
-        estimator=model,
-        param_distributions=params,
-        n_iter=100,
-        cv=3,
-        verbose=2,
+        scoring='accuracy',
         random_state=42,
         n_jobs=-1
     )
@@ -137,38 +117,25 @@ def load_data(file_path):
 
 
 # Function to load the data splits
-def load_data_splits(target_variable, pgs_old="with", pgs_new="without"):
-    if target_variable == "AntisocialTrajectory":
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_train_old_AST.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_test_old_AST.csv")
-        X_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_val_old_AST.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_train_old_AST.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_test_old_AST.csv")
-        y_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_val_old_AST.csv")
+def load_data_splits(target_variable, pgs_old="with", pgs_new="without", resampling="with"):
 
-        X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_train_new_AST.csv")
-        X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_test_new_AST.csv")
-        X_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_val_new_AST.csv")
-        y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_train_new_AST.csv")
-        y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/y_test_new_AST.csv")
-        y_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_old/y_val_old_AST.csv")
+    suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
+    X_train_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
+    X_test_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_test_old_{suffix}.csv")
+    X_val_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_val_old_{suffix}.csv")
+    y_train_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_train_old_{suffix}.csv")
+    y_test_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_test_old_{suffix}.csv")
+    y_val_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_val_old_{suffix}.csv")
 
-    else:
-        X_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_train_old_SUT.csv")
-        X_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/X_test_old_SUT.csv")
-        X_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/X_val_old_AST.csv")
-        y_train_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_train_old_SUT.csv")
-        y_test_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/SUT_old/y_test_old_SUT.csv")
-        y_val_old = load_data(f"../../../preprocessed_data/{pgs_new}_PGS/AST_old/y_val_old_AST.csv")
+    X_train_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_train_new_{suffix}.csv")
+    X_test_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_test_new_{suffix}.csv")
+    X_val_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_val_new_{suffix}.csv")
+    y_train_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_train_new_{suffix}.csv")
+    y_test_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_test_new_{suffix}.csv")
+    y_val_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_val_new_{suffix}.csv")
 
-        X_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_train_new_SUT.csv")
-        X_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/X_test_new_SUT.csv")
-        X_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_new/X_val_new_AST.csv")
-        y_train_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_train_new_SUT.csv")
-        y_test_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/SUT_new/y_test_new_SUT.csv")
-        y_val_new = load_data(f"../../../preprocessed_data/{pgs_old}_PGS/AST_old/y_val_old_AST.csv")
-
-    return X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old, y_train_old, y_val_old, y_test_old
+    return (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old,
+            y_train_old, y_val_old, y_test_old)
 
 
 # Define a function or mapping to determine transfer strategy
@@ -190,10 +157,11 @@ def search_spaces():
     search_spaces = {
         'LogisticRegression': {
             'C': np.logspace(-4, 4, 20),  # Exploring a wide range of regularization strengths
-            'penalty': ['l2', 'none', 'elasticnet'],  # 'l2' is commonly used; 'none' for no regularization
+            'penalty': ['l2', 'none'],  # 'l2' is commonly used; 'none' for no regularization
+            # 'penalty': ['elasticnet'],  # 'l2' is commonly used; 'none' for no regularization
             'solver': ['lbfgs', 'sag', 'saga'],  # Solvers that support multiclass problems and 'l2' or no penalty
-            'max_iter': [100, 200, 500, 1000],  # Adjust based on convergence needs
-            'l1_ratio': np.linspace(0, 1, 10)  # Only if you include 'elasticnet' in 'penalty'
+            'max_iter': list(range(100, 5001, 100)),
+            # 'l1_ratio': np.linspace(0, 1, 10)  # Only if you include 'elasticnet' in 'penalty'
         },
         'RandomForest': {
             'n_estimators': np.arange(300, 1001, 50),
@@ -232,7 +200,24 @@ def search_spaces():
             'l2_leaf_reg': [1, 3, 5, 7, 9],
             'border_count': [32, 64, 128, 254],
             'bootstrap_type': ['Bayesian', 'Bernoulli', 'MVS'],
-        }
+        },
+        'DecisionTree': {
+            'max_depth': (1, 30),  # Continuous space, but you'll need to round to integer values when using
+            'min_samples_split': (0.01, 0.2),  # Represented as a fraction of the total number of samples
+            'min_samples_leaf': (0.01, 0.1),  # Represented as a fraction of the total number of samples
+        },
+        'LightGBM': {
+            'num_leaves': np.linspace(20, 400, 10).astype(int),  # More granular range, still need to round to integers
+            'learning_rate': np.logspace(np.log10(0.001), np.log10(0.5), base=10, num=10),  # Log-uniform distribution
+            'min_child_samples': np.linspace(5, 200, 10).astype(int),  # Broader range, round to integers
+            'subsample': np.linspace(0.5, 1.0, 20),  # More granular control
+            'colsample_bytree': np.linspace(0.5, 1.0, 10),
+            'max_depth': np.linspace(-1, 15, 5).astype(int),  # Including max_depth, round to integers
+            'min_split_gain': np.linspace(0.0, 1.0, 10),
+            'reg_alpha': np.linspace(0.0, 1.0, 10),
+            'reg_lambda': np.linspace(0.0, 1.0, 10),
+            # 'max_bin': np.linspace(200, 300, 10)  # Round to integers
+        },
     }
 
     return search_spaces

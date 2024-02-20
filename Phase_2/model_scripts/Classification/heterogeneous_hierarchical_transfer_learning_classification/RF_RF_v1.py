@@ -3,7 +3,6 @@ import statistics
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import StratifiedKFold
 
@@ -12,27 +11,25 @@ from Phase_2.model_scripts.model_utils import (load_data_splits, random_search_t
 
 def main(
         target_variable, race_column="Race", pgs_old="with", pgs_new="with",
-        tune_base=False, tune_final=False, use_cv=True, n_splits=10
-):
+        tune_base=False, tune_final=False, use_cv=True, n_splits=10, resampling="with"):
+
     params = search_spaces()
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old,
-     y_train_old, y_val_old, y_test_old) = load_data_splits(target_variable, pgs_old, pgs_new)
+     y_train_old, y_val_old, y_test_old) = load_data_splits(target_variable, pgs_old, pgs_new, resampling)
 
     # Map labels to start from 0
     label_mapping_old = {label: i for i, label in enumerate(np.unique(y_train_old))}
     label_mapping_new = {label: i for i, label in enumerate(np.unique(y_train_new))}
     y_train_old_mapped = np.vectorize(label_mapping_old.get)(y_train_old)
-    y_test_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
-    # y_val_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
+    y_val_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
     y_train_new_mapped = np.vectorize(label_mapping_new.get)(y_train_new)
-    # y_test_new_mapped = np.vectorize(label_mapping_new.get)(y_test_new)
     y_val_new_mapped = np.vectorize(label_mapping_new.get)(y_val_new)
 
     # Train a base model on old data
-    base_model = LogisticRegression(max_iter=3800, solver='saga', penalty='l2', C=0.03359818286283781,
-                                    multi_class='multinomial')
+    base_model = RandomForestClassifier(n_estimators=750, max_depth=80, random_state=42, min_samples_split=20,
+                                        min_samples_leaf=15, max_features='sqrt', bootstrap=True)
 
     if use_cv:
         # Perform cross-validation on training data
@@ -46,7 +43,7 @@ def main(
             # Train the base model with cross-validation fold
             if tune_base:
                 # Perform hyperparameter tuning for the base model
-                base_model, best_params = random_search_tuning(base_model, params['LogisticRegression'],
+                base_model, best_params = random_search_tuning(base_model, params['RandomForest'],
                                                                X_train_fold, y_train_fold.ravel())
                 print(f"Fold {fold}: Best Parameters for base model: {best_params}")
             else:
@@ -71,7 +68,7 @@ def main(
             print(f"Best Parameters for base model: {best_params}")
         else:
             base_model.fit(X_train_old, y_train_old_mapped.ravel())
-        base_model_accuracy = accuracy_score(y_test_old_mapped.ravel(), base_model.predict(X_test_old))
+        base_model_accuracy = accuracy_score(y_val_old_mapped.ravel(), base_model.predict(X_val_old))
         print(f"Accuracy for base model: {base_model_accuracy}")
 
     # Enhancing new data with predicted probabilities from the base model for both training and validation sets
@@ -110,5 +107,5 @@ def main(
 
 
 if __name__ == "__main__":
-    target_variable = "AntisocialTrajectory"  # or "SubstanceUseTrajectory"
+    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable, "Race", "with", "with", tune_base=False)

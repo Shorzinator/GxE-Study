@@ -83,10 +83,10 @@ def main(TARGET):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST_old
-        SAVE_PATH = "../preprocessed_data/without_PGS/AST_old/"
+        SAVE_PATH = "../preprocessed_data/without_resampling/without_PGS/AST_old/"
     else:
         FEATURES = FEATURES_FOR_SUT_old
-        SAVE_PATH = "../preprocessed_data/without_PGS/SUT_old/"
+        SAVE_PATH = "../preprocessed_data/without_resampling/without_PGS/SUT_old/"
 
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH)
 

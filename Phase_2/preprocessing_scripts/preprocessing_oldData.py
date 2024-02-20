@@ -52,17 +52,17 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
     suffix = "AST" if target == "AntisocialTrajectory" else "SUT"
     if target == "AntisocialTrajectory":
         save_preprocessed_data(X_train, f"{file_path_to_save}X_train_old_{suffix}.csv", "X_train")
-        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_old_{suffix}.csv", "X_test")
+        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_old_{suffix}.csv", "y_train")
         save_preprocessed_data(X_val, f"{file_path_to_save}X_val_old_{suffix}.csv", "X_val")
         save_preprocessed_data(y_val, f"{file_path_to_save}y_val_old_{suffix}.csv", "y_val")
-        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_old_{suffix}.csv", "y_train")
+        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_old_{suffix}.csv", "X_test")
         save_preprocessed_data(y_test, f"{file_path_to_save}y_test_old_{suffix}.csv", "y_test")
     else:
         save_preprocessed_data(X_train, f"{file_path_to_save}X_train_old_{suffix}.csv", "X_train")
-        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_old_{suffix}.csv", "X_test")
+        save_preprocessed_data(y_train, f"{file_path_to_save}y_train_old_{suffix}.csv", "y_train")
         save_preprocessed_data(X_val, f"{file_path_to_save}X_val_old_{suffix}.csv", "X_val")
         save_preprocessed_data(y_val, f"{file_path_to_save}y_val_old_{suffix}.csv", "y_val")
-        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_old_{suffix}.csv", "y_train")
+        save_preprocessed_data(X_test, f"{file_path_to_save}X_test_old_{suffix}.csv", "X_test")
         save_preprocessed_data(y_test, f"{file_path_to_save}y_test_old_{suffix}.csv", "y_test")
 
 
@@ -70,16 +70,16 @@ def main(TARGET, resampling):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST_old
-        SAVE_PATH = "../preprocessed_data/with_PGS/AST_old/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/AST_old/"
     else:
         FEATURES = FEATURES_FOR_SUT_old
-        SAVE_PATH = "../preprocessed_data/with_PGS/SUT_old/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/SUT_old/"
 
-    preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH, resampling)
+    resampling_bool = True if resampling == "with" else False
+    preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH, resampling_bool)
 
 
 if __name__ == '__main__':
-
-    resampling = False
+    resampling = "with"
     main("AntisocialTrajectory", resampling)
     main("SubstanceUseTrajectory", resampling)

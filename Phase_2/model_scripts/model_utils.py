@@ -1,4 +1,3 @@
-import os
 
 import numpy as np
 import pandas as pd
@@ -53,42 +52,6 @@ def evaluate_model(model, X_test, y_test, algo_type="classification"):
     return accuracy_score(y_test, predictions)
 
 
-# Function to perform randomized search on RandomForestRegressor
-def tune_random_forest(model, X_train, y_train):
-    # Define the parameter space to explore
-    param_distributions = {
-        'n_estimators': np.arange(300, 1001, 50),
-        'max_depth': [None] + list(np.arange(10, 101, 10)),
-        'min_samples_split': np.arange(2, 21, 2),
-        'min_samples_leaf': np.arange(1, 21, 2),
-        'max_features': ['sqrt', 'log2', None],
-        'bootstrap': [True, False]
-    }
-
-    # Initialize the base model
-    rf = model
-
-    # Initialize RandomizedSearchCV
-    rf_random = RandomizedSearchCV(
-        estimator=rf,
-        param_distributions=param_distributions,
-        n_iter=100,
-        cv=3,
-        verbose=2,
-        random_state=42,
-        n_jobs=-1
-    )
-
-    # Fit RandomizedSearchCV to the data
-    rf_random.fit(X_train, y_train)
-
-    best_model = rf_random.best_estimator_
-    best_params = rf_random.best_params_
-
-    # Return the best estimator
-    return best_model, best_params
-
-
 def random_search_tuning(model, params, race_X_train, race_y_train):
     random_search = RandomizedSearchCV(
         estimator=model,
@@ -117,7 +80,7 @@ def load_data(file_path):
 
 
 # Function to load the data splits
-def load_data_splits(target_variable, pgs_old="with", pgs_new="without", resampling="with"):
+def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="without"):
 
     suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
     X_train_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
@@ -156,12 +119,19 @@ def search_spaces():
     # Define search spaces for each model
     search_spaces = {
         'LogisticRegression': {
-            'C': np.logspace(-4, 4, 20),  # Exploring a wide range of regularization strengths
-            'penalty': ['l2', 'none'],  # 'l2' is commonly used; 'none' for no regularization
-            # 'penalty': ['elasticnet'],  # 'l2' is commonly used; 'none' for no regularization
-            'solver': ['lbfgs', 'sag', 'saga'],  # Solvers that support multiclass problems and 'l2' or no penalty
-            'max_iter': list(range(100, 5001, 100)),
-            # 'l1_ratio': np.linspace(0, 1, 10)  # Only if you include 'elasticnet' in 'penalty'
+            # 'penalty': ['l2', 'elasticnet', None],  # Including all types of penalties
+            'penalty': ['l2'],  # Including all types of penalties
+            'C': np.logspace(-5, 5, 50),  # A wider range and more values for regularization strength
+            'solver': ['newton-cg', 'lbfgs', 'sag', 'saga'],  # Including all solvers
+            'max_iter': list(range(100, 20001, 50)),  # More iterations range with finer steps
+            'multi_class': ['multinomial', 'ovr'],  # All strategies for handling multiple classes
+            # 'l1_ratio': np.linspace(0, 1, 20),  # Relevant for 'elasticnet' penalty, more granular range
+            'fit_intercept': [True, False],  # Whether to include an intercept term or not
+            'class_weight': [None, 'balanced'],  # Whether to use balanced class weights or not
+            'dual': [True, False],  # Dual formulation is only implemented for 'l2' with 'liblinear', can be ignored
+            # for other cases
+            'warm_start': [True, False],  # Whether to reuse the solution of the previous call as initialization
+            'tol': np.logspace(-6, -1, 20),  # Tolerance for stopping criteria
         },
         'RandomForest': {
             'n_estimators': np.arange(300, 1001, 50),

@@ -10,10 +10,9 @@ from sklearn.model_selection import StratifiedKFold
 from Phase_2.model_scripts.model_utils import (load_data_splits, random_search_tuning, search_spaces)
 
 
-def main(
-        target_variable, race_column="Race", pgs_old="with", pgs_new="with",
-        tune_base=False, tune_final=False, use_cv=True, n_splits=10
-):
+def main(target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_base=False, tune_final=False,
+         use_cv=False, n_splits=10):
+
     params = search_spaces()
 
     # Load data splits
@@ -24,15 +23,18 @@ def main(
     label_mapping_old = {label: i for i, label in enumerate(np.unique(y_train_old))}
     label_mapping_new = {label: i for i, label in enumerate(np.unique(y_train_new))}
     y_train_old_mapped = np.vectorize(label_mapping_old.get)(y_train_old)
-    y_test_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
-    # y_val_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
+    # y_test_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
+    y_val_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
     y_train_new_mapped = np.vectorize(label_mapping_new.get)(y_train_new)
     # y_test_new_mapped = np.vectorize(label_mapping_new.get)(y_test_new)
     y_val_new_mapped = np.vectorize(label_mapping_new.get)(y_val_new)
 
     # Train a base model on old data
-    base_model = LogisticRegression(max_iter=3800, solver='saga', penalty='l2', C=0.03359818286283781,
-                                    multi_class='multinomial')
+    if target_variable == "AntisocialTrajectory":
+        base_model = LogisticRegression(max_iter=3800, solver='saga', penalty='l2', C=0.03359818286283781,
+                                        multi_class='multinomial')
+    else:
+        base_model = LogisticRegression(max_iter=1000, solver='saga', multi_class='multinomial')
 
     if use_cv:
         # Perform cross-validation on training data
@@ -66,12 +68,12 @@ def main(
     else:
         # Train the base model on full training data without cross-validation
         if tune_base:
-            base_model, best_params = random_search_tuning(base_model, params['RandomForest'],
+            base_model, best_params = random_search_tuning(base_model, params['LogisticRegression'],
                                                            X_train_old, y_train_old_mapped.ravel())
             print(f"Best Parameters for base model: {best_params}")
         else:
             base_model.fit(X_train_old, y_train_old_mapped.ravel())
-        base_model_accuracy = accuracy_score(y_test_old_mapped.ravel(), base_model.predict(X_test_old))
+        base_model_accuracy = accuracy_score(y_val_old_mapped.ravel(), base_model.predict(X_val_old))
         print(f"Accuracy for base model: {base_model_accuracy}")
 
     # Enhancing new data with predicted probabilities from the base model for both training and validation sets
@@ -89,7 +91,6 @@ def main(
 
     # Train and evaluate race-specific interim models on enhanced training and validation sets
     for race in sorted(X_train_new[race_column].unique()):
-        final_model = RandomForestClassifier(n_estimators=200, max_depth=None, random_state=42)
         X_train_race = X_train_new_enhanced[X_train_new_enhanced[race_column] == race].drop(columns=[race_column])
         y_train_race = y_train_new_mapped[X_train_new_enhanced[race_column] == race].ravel()
         X_val_race = X_val_new_enhanced[X_val_new_enhanced[race_column] == race].drop(
@@ -97,12 +98,43 @@ def main(
         y_val_race = y_val_new_mapped[
             X_val_new_enhanced[race_column] == race].ravel()  # Use enhanced validation set labels
 
-        if tune_final:
-            final_model, best_params = random_search_tuning(final_model, params['RandomForest'],
-                                                            X_train_race, y_train_race)
-            print(f"Best Parameters for final model (race {race}): {best_params}")
-        else:
+        if target_variable == "AntisocialTrajectory":
+            if race == 1.0:
+                final_model = RandomForestClassifier(n_estimators=750, max_depth=80, min_samples_split=20,
+                                                     min_samples_leaf=15, random_state=42, bootstrap=True,
+                                                     max_features="sqrt")
+            elif race == 2.0:
+                final_model = RandomForestClassifier(n_estimators=650, max_depth=20, min_samples_split=18,
+                                                     min_samples_leaf=1, random_state=42, bootstrap=True,
+                                                     max_features="log2")
+            elif race == 3.0:
+                final_model = RandomForestClassifier(n_estimators=550, max_depth=30, min_samples_split=18,
+                                                     min_samples_leaf=5, random_state=42, bootstrap=False,
+                                                     max_features="log2")
+            else:
+                final_model = RandomForestClassifier(n_estimators=550, max_depth=30, min_samples_split=18,
+                                                     min_samples_leaf=5, random_state=42, bootstrap=False,
+                                                     max_features="log2")
             final_model.fit(X_train_race, y_train_race)
+
+        else:
+            if race == 1.0:
+                final_model = RandomForestClassifier(n_estimators=850, max_depth=90, min_samples_split=8,
+                                                     min_samples_leaf=15, random_state=42, bootstrap=True,
+                                                     max_features="sqrt")
+            elif race == 2.0:
+                final_model = RandomForestClassifier(n_estimators=700, max_depth=20, min_samples_split=16,
+                                                     min_samples_leaf=3, random_state=42, bootstrap=False,
+                                                     max_features="log2")
+            elif race == 3.0:
+                final_model = RandomForestClassifier(n_estimators=600, max_depth=70, min_samples_split=6,
+                                                     min_samples_leaf=19, random_state=42, bootstrap=False,
+                                                     max_features="sqrt")
+            else:
+                final_model = RandomForestClassifier(n_estimators=550, max_depth=20, min_samples_split=8,
+                                                     min_samples_leaf=9, random_state=42, bootstrap=False,
+                                                     max_features="log2")
+        final_model.fit(X_train_race, y_train_race)
 
         final_accuracy = accuracy_score(y_val_race,
                                         final_model.predict(X_val_race))  # Evaluate on enhanced validation set
@@ -110,5 +142,12 @@ def main(
 
 
 if __name__ == "__main__":
-    target_variable = "AntisocialTrajectory"  # or "SubstanceUseTrajectory"
-    main(target_variable, "Race", "with", "with", tune_base=False)
+    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
+    main(target_variable,
+         "Race",
+         "with",
+         "with",
+         tune_base=True,
+         tune_final=False,
+         use_cv=False,
+         n_splits=5)

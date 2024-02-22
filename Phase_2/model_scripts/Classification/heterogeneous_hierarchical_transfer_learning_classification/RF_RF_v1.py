@@ -107,5 +107,12 @@ def main(
 
 
 if __name__ == "__main__":
-    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
-    main(target_variable, "Race", "with", "with", tune_base=False)
+    target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
+    main(target_variable,
+         "Race",
+         "with",
+         "with",
+         tune_base=False,
+         tune_final=False,
+         use_cv=False,
+         n_splits=5)

@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score
 from Phase_2.model_scripts.model_utils import load_data_splits, random_search_tuning, search_spaces
 
 
-def main_without_tl(target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False):
+def main(target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False):
     params = search_spaces()
 
     # Load data splits
@@ -39,4 +39,4 @@ def main_without_tl(target_variable, race_column="Race", pgs_old="with", pgs_new
 
 if __name__ == "__main__":
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
-    main_without_tl(target_variable, "Race", "with", "with")
+    main(target_variable, "Race", "with", "with")

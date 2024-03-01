@@ -1,7 +1,6 @@
-
 import numpy as np
 import pandas as pd
-from sklearn.metrics import r2_score, accuracy_score
+from sklearn.metrics import f1_score, r2_score, accuracy_score
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split
 
 
@@ -52,12 +51,12 @@ def evaluate_model(model, X_test, y_test, algo_type="classification"):
     return accuracy_score(y_test, predictions)
 
 
-def random_search_tuning(model, params, race_X_train, race_y_train):
+def random_search_tuning(model, params, race_X_train, race_y_train, cv=3):
     random_search = RandomizedSearchCV(
         estimator=model,
         param_distributions=params,
         n_iter=50,
-        cv=3,
+        cv=cv,
         verbose=2,
         scoring='accuracy',
         random_state=42,
@@ -79,23 +78,77 @@ def load_data(file_path):
     return pd.read_csv(file_path)
 
 
+def evaluate_overfitting(train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred):
+    """
+    Evaluate the model for overfitting using training and validation accuracies, and F1 scores.
+
+    :param train_accuracy: Accuracy of the model on the training data.
+    :param val_accuracy: Accuracy of the model on the validation data.
+    :param y_train_true: True labels for the training data.
+    :param y_train_pred: Predicted labels for the training data.
+    :param y_val_true: True labels for the validation data.
+    :param y_val_pred: Predicted labels for the validation data.
+    :return: Dictionary containing overfitting evaluation results.
+    """
+
+    # Calculate F1 scores for training and validation sets
+    f1_train = f1_score(y_train_true, y_train_pred, average='macro')
+    f1_val = f1_score(y_val_true, y_val_pred, average='macro')
+
+    # Calculate the difference in F1 scores and accuracies
+    f1_diff = f1_train - f1_val
+    acc_diff = train_accuracy - val_accuracy
+
+    # Define thresholds for differences that would indicate overfitting
+    # These are heuristic values and could be adjusted based on domain knowledge and empirical evidence
+    f1_threshold = 0.2
+    acc_threshold = 0.2
+
+    # Check for overfitting
+    is_overfitting = f1_diff > f1_threshold or acc_diff > acc_threshold
+
+    # Compile results into a dictionary
+    results = {
+        'train_accuracy': train_accuracy,
+        'val_accuracy': val_accuracy,
+        'f1_train': f1_train,
+        'f1_val': f1_val,
+        'f1_diff': f1_diff,
+        'acc_diff': acc_diff,
+        'is_overfitting': is_overfitting
+    }
+
+    return results['is_overfitting']
+
+
 # Function to load the data splits
 def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="without"):
-
     suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
-    X_train_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
-    X_test_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_test_old_{suffix}.csv")
-    X_val_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_val_old_{suffix}.csv")
-    y_train_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_train_old_{suffix}.csv")
-    y_test_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_test_old_{suffix}.csv")
-    y_val_old = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_val_old_{suffix}.csv")
+    X_train_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
+    X_test_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_test_old_{suffix}.csv")
+    X_val_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_val_old_{suffix}.csv")
+    y_train_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_train_old_{suffix}.csv")
+    y_test_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_test_old_{suffix}.csv")
+    y_val_old = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/y_val_old_{suffix}.csv")
 
-    X_train_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_train_new_{suffix}.csv")
-    X_test_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_test_new_{suffix}.csv")
-    X_val_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_val_new_{suffix}.csv")
-    y_train_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_train_new_{suffix}.csv")
-    y_test_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_test_new_{suffix}.csv")
-    y_val_new = load_data(f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_val_new_{suffix}.csv")
+    X_train_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_train_new_{suffix}.csv")
+    X_test_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_test_new_{suffix}.csv")
+    X_val_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/X_val_new_{suffix}.csv")
+    y_train_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_train_new_{suffix}.csv")
+    y_test_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_test_new_{suffix}.csv")
+    y_val_new = load_data(
+        f"../../../preprocessed_data/{resampling}_resampling/{pgs_old}_PGS/{suffix}_new/y_val_new_{suffix}.csv")
 
     return (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old,
             y_train_old, y_val_old, y_test_old)
@@ -122,13 +175,12 @@ def search_spaces():
             # 'penalty': ['l2', 'elasticnet', None],  # Including all types of penalties
             'penalty': ['l2'],  # Including all types of penalties
             'C': np.logspace(-5, 5, 50),  # A wider range and more values for regularization strength
-            'solver': ['newton-cg', 'lbfgs', 'sag', 'saga'],  # Including all solvers
-            'max_iter': list(range(100, 20001, 50)),  # More iterations range with finer steps
+            'solver': ['newton-cg', 'lbfgs'],  # Including all solvers
+            'max_iter': list(range(100, 30001, 50)),  # More iterations range with finer steps
             'multi_class': ['multinomial', 'ovr'],  # All strategies for handling multiple classes
             # 'l1_ratio': np.linspace(0, 1, 20),  # Relevant for 'elasticnet' penalty, more granular range
             'fit_intercept': [True, False],  # Whether to include an intercept term or not
             'class_weight': [None, 'balanced'],  # Whether to use balanced class weights or not
-            'dual': [True, False],  # Dual formulation is only implemented for 'l2' with 'liblinear', can be ignored
             # for other cases
             'warm_start': [True, False],  # Whether to reuse the solution of the previous call as initialization
             'tol': np.logspace(-6, -1, 20),  # Tolerance for stopping criteria

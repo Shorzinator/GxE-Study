@@ -6,7 +6,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import StratifiedKFold
 
-from Phase_2.model_scripts.model_utils import (load_data_splits, random_search_tuning, search_spaces)
+from Phase_2.model_scripts.model_utils import (evaluate_overfitting, load_data_splits, random_search_tuning,
+                                               search_spaces)
 
 
 def get_model_params(target_variable, model_type, race=None):
@@ -64,9 +65,8 @@ def get_model_params(target_variable, model_type, race=None):
         return params[target_variable][model_type][race]
 
 
-def main(
-        target_variable, race_column="Race", pgs_old="with", pgs_new="with",
-        tune_base=False, tune_final=False, use_cv=True, n_splits=10, resampling="without"):
+def main(target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_base=False, tune_final=False,
+         use_cv=True, n_splits=10, resampling="without"):
 
     params = search_spaces()
 
@@ -95,9 +95,8 @@ def main(
             X_train_fold, X_val_fold = X_train_old.iloc[train_index], X_train_old.iloc[val_index]
             y_train_fold, y_val_fold = y_train_old_mapped[train_index], y_train_old_mapped[val_index]
 
-            # Train the base model with cross-validation fold
+            # If hyperparameter tuning is enabled
             if tune_base:
-                # Perform hyperparameter tuning for the base model
                 base_model, best_params = random_search_tuning(base_model, params['RandomForest'],
                                                                X_train_fold, y_train_fold.ravel())
                 print(f"Fold {fold}: Best Parameters for base model: {best_params}")
@@ -106,14 +105,25 @@ def main(
 
             # Evaluate on the validation fold
             val_accuracy = accuracy_score(y_val_fold.ravel(), base_model.predict(X_val_fold))
+            fold_val_acc.append(val_accuracy)
+
             train_accuracy = accuracy_score(y_train_fold.ravel(), base_model.predict(X_train_fold))
             fold_train_acc.append(train_accuracy)
-            fold_val_acc.append(val_accuracy)
-            # print(f"Fold {fold}: Validation Accuracy for the base model: {val_accuracy}")
-            # print(f"Fold {fold}: Training Accuracy for the base model: {train_accuracy}")
 
-        print("Mean Base Validation Accuracy:", statistics.mean(fold_val_acc))
-        print("Mean Base Training Accuracy:", statistics.mean(fold_train_acc))
+        # Evaluate for overfitting
+        base_overfitting_results = evaluate_overfitting(
+            train_accuracy=statistics.mean(fold_train_acc),
+            val_accuracy=statistics.mean(fold_val_acc),
+            y_train_true=y_train_old_mapped,
+            y_train_pred=base_model.predict(X_train_old),
+            y_val_true=y_val_old_mapped,
+            y_val_pred=base_model.predict(X_val_old)
+        )
+
+        print(f"Base Model Overfitting Evaluation Results: {base_overfitting_results}")
+
+        print("Mean Val Accuracy for base model:", statistics.mean(fold_val_acc))
+        print("Mean Train Accuracy for base model:", statistics.mean(fold_train_acc), "\n")
 
     else:
         # Train the base model on full training data without cross-validation
@@ -123,15 +133,30 @@ def main(
             print(f"Best Parameters for base model: {best_params}")
         else:
             base_model.fit(X_train_old, y_train_old_mapped.ravel())
-        base_model_accuracy = accuracy_score(y_val_old_mapped.ravel(), base_model.predict(X_val_old))
-        print(f"Accuracy for base model: {base_model_accuracy}")
+
+            # Evaluate for overfitting
+            base_overfitting_results = evaluate_overfitting(
+                train_accuracy=accuracy_score(y_train_old_mapped.ravel(), base_model.predict(X_train_old)),
+                val_accuracy=accuracy_score(y_val_old_mapped.ravel(), base_model.predict(X_val_old)),
+                y_train_true=y_train_old_mapped,
+                y_train_pred=base_model.predict(X_train_old),
+                y_val_true=y_val_old_mapped,
+                y_val_pred=base_model.predict(X_val_old)
+            )
+
+            print(f"Base Model Overfitting Evaluation Results: {base_overfitting_results}")
+
+        base_model_val_accuracy = accuracy_score(y_val_old_mapped.ravel(), base_model.predict(X_val_old))
+        print(f"Val Accuracy for base model: {base_model_val_accuracy}")
+
+        base_model_train_accuracy = accuracy_score(y_train_old_mapped.ravel(), base_model.predict(X_train_old))
+        print(f"Train Accuracy for base model: {base_model_train_accuracy}", "\n")
 
     # Enhancing new data with predicted probabilities from the base model for both training and validation sets
     base_model_probs_new_train = base_model.predict_proba(X_train_new.drop(columns=[race_column]))
     X_train_new_enhanced = np.hstack([X_train_new.drop(columns=[race_column]), base_model_probs_new_train])
-    base_model_probs_new_val = base_model.predict_proba(X_val_new.drop(columns=[race_column]))  # Enhance validation set
-    X_val_new_enhanced = np.hstack([X_val_new.drop(columns=[race_column]), base_model_probs_new_val])  # Enhanced
-    # validation set
+    base_model_probs_new_val = base_model.predict_proba(X_val_new.drop(columns=[race_column]))
+    X_val_new_enhanced = np.hstack([X_val_new.drop(columns=[race_column]), base_model_probs_new_val])
 
     # Reintroduce 'Race' for race-specific modeling for both training and validation enhanced sets
     X_train_new_enhanced = pd.DataFrame(X_train_new_enhanced)
@@ -149,29 +174,59 @@ def main(
         X_val_race = X_val_new_enhanced[X_val_new_enhanced[race_column] == race].drop(columns=[race_column])
         y_val_race = y_val_new_mapped[X_val_new_enhanced[race_column] == race].ravel()
 
+        # Implement cross-validation for the final models
         if use_cv:
-            # Implement cross-validation for the final models
             kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
             cv_val_accuracy = []
+            cv_train_accuracy = []
 
             for train_index, val_index in kf.split(X_train_race, y_train_race):
                 X_train_fold, X_val_fold = X_train_race.iloc[train_index], X_train_race.iloc[val_index]
                 y_train_fold, y_val_fold = y_train_race[train_index], y_train_race[val_index]
 
-                final_model.fit(X_train_fold, y_train_fold)
+                if tune_final:
+                    final_model, best_params = random_search_tuning(final_model, params['LogisticRegression'],
+                                                                    X_train_race,
+                                                                    y_train_race)
+                    print(f"Best Parameters for final model (race {race}): {best_params}")
+                else:
+                    final_model.fit(X_train_race, y_train_race)
 
                 val_accuracy = accuracy_score(y_val_fold, final_model.predict(X_val_fold))
                 cv_val_accuracy.append(val_accuracy)
 
-            print(f"Mean CV Accuracy for final model (race {race}): {statistics.mean(cv_val_accuracy)}")
+                train_accuracy = accuracy_score(y_train_fold.ravel(), final_model.predict(X_train_fold))
+                cv_train_accuracy.append(train_accuracy)
+
+            print(f"Mean Val Accuracy for final model (race {race}): {statistics.mean(cv_val_accuracy)}")
+            print(f"Mean Train Accuracy for final model (race {race}): {statistics.mean(cv_train_accuracy)}")
+
         else:
-            final_model.fit(X_train_race, y_train_race)
-            final_accuracy = accuracy_score(y_val_race, final_model.predict(X_val_race))
-            print(f"Accuracy for final model (race {race}) on validation set: {final_accuracy}")
+            if tune_final:
+                final_model, best_params = random_search_tuning(final_model, params['LogisticRegression'], X_train_race,
+                                                                y_train_race)
+                print(f"Best Parameters for final model (race {race}): {best_params}")
+            else:
+                final_model.fit(X_train_race, y_train_race)
+                final_accuracy = accuracy_score(y_val_race, final_model.predict(X_val_race))
+                print(f"Accuracy for final model (race {race}) on validation set: {final_accuracy}")
+
+        # After training the final model for each race
+        y_train_race_pred = final_model.predict(X_train_race)
+        y_val_race_pred = final_model.predict(X_val_race)
+        final_overfitting_results = evaluate_overfitting(
+            train_accuracy=accuracy_score(y_train_race, y_train_race_pred),
+            val_accuracy=accuracy_score(y_val_race, y_val_race_pred),
+            y_train_true=y_train_race,
+            y_train_pred=y_train_race_pred,
+            y_val_true=y_val_race,
+            y_val_pred=y_val_race_pred
+        )
+        print(f"Final Model Overfitting Evaluation Results for Race {race}: {final_overfitting_results}\n")
 
 
 if __name__ == "__main__":
-    target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
+    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
          "Race",
          "with",

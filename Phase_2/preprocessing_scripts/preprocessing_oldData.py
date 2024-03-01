@@ -41,6 +41,7 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
 
     # Apply encoding
     if resampling:
+        print(f"\nResampling is {resampling} - \n")
         if target == 'AntisocialTrajectory':
             categorical_indices = [X_train.columns.get_loc("SubstanceUseTrajectory")]
             X_train, y_train = apply_smote_nc(X_train, y_train, categorical_features_indices=categorical_indices)
@@ -66,20 +67,21 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
         save_preprocessed_data(y_test, f"{file_path_to_save}y_test_old_{suffix}.csv", "y_test")
 
 
-def main(TARGET, resampling):
+def main(TARGET, pgs, resampling):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST_old
-        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/AST_old/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/AST_old/"
     else:
         FEATURES = FEATURES_FOR_SUT_old
-        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/SUT_old/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/SUT_old/"
 
     resampling_bool = True if resampling == "with" else False
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH, resampling_bool)
 
 
 if __name__ == '__main__':
-    resampling = "with"
-    main("AntisocialTrajectory", resampling)
-    main("SubstanceUseTrajectory", resampling)
+    resampling = "without"
+    pgs = "with"
+    main("AntisocialTrajectory", pgs, resampling)
+    main("SubstanceUseTrajectory", pgs, resampling)

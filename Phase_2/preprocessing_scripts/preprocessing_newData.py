@@ -61,21 +61,21 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
     save_preprocessed_data(y_test, f"{file_path_to_save}y_test_new_{suffix}.csv", "y_test")
 
 
-def main(TARGET, resampling):
+def main(TARGET, pgs, resampling):
     # Assigning features based on the outcome.
     if TARGET == "AntisocialTrajectory":
         FEATURES = FEATURES_FOR_AST_new
-        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/AST_new/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/AST_new/"
     else:
         FEATURES = FEATURES_FOR_SUT_new
-        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/with_PGS/SUT_new/"
+        SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/SUT_new/"
 
     resampling_bool = True if resampling == "with" else False
     preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH, resampling_bool)
 
 
 if __name__ == '__main__':
-
-    resampling = "with"
-    main("AntisocialTrajectory", resampling)
-    main("SubstanceUseTrajectory", resampling)
+    resampling = "without"
+    pgs = "with"
+    main("AntisocialTrajectory", pgs, resampling)
+    main("SubstanceUseTrajectory", pgs, resampling)

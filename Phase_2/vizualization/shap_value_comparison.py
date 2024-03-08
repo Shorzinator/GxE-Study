@@ -89,13 +89,13 @@ def main(target):
 
     # Load your model and data
     if target == "AntisocialTrajectory":
-        model = load_model('../results/models/classification/HetHieTL/AST/XGBClassifier/XGBClassifier_wPGS_race_1.0.pkl')
+        model = load_model('../results/models/classification/AST/XGBClassifier/XGBClassifier_wPGS_race_1.0.pkl')
         X = pd.read_csv('../preprocessed_data/without_resampling/with_PGS/AST_new/X_test_new_AST.csv')
 
         shap_value_comparison_AST(model, X, output_filename="shap_summary_plot_AST_race_1.0.png")
 
     else:
-        model = load_model('../results/models/classification/HetHieTL/AST/XGBClassifier/XGBClassifier_wPGS_race_2.0.pkl')
+        model = load_model('../results/models/classification/AST/XGBClassifier/XGBClassifier_wPGS_race_2.0.pkl')
         X = pd.read_csv('../preprocessed_data/without_resampling/with_PGS/AST_new/X_test_new_AST.csv')
 
         shap_value_comparison_SUT(model, X, output_filename="shap_summary_plot_AST_race_2.0.png")

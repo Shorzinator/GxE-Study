@@ -21,10 +21,10 @@ def plot_feature_importances(importances, title, ax):
 
 
 def plot_model_evolution(ax):
-    base_model = load_model('../results/models/classification/HetHieTL/AST/BaseModel - XGB/base_model_woPGS.pkl')
-    intermediate_wo_tl = load_model('../results/models/classification/HetHieTL/AST/BaseModel - '
+    base_model = load_model('../results/models/classification/AST/BaseModel - XGB/base_model_woPGS.pkl')
+    intermediate_wo_tl = load_model('../results/models/classification/AST/BaseModel - '
                                     'XGB/intermediate_model_wRace_woPGS_woTL.pkl')
-    intermediate_w_tl = load_model('../results/models/classification/HetHieTL/AST/BaseModel - '
+    intermediate_w_tl = load_model('../results/models/classification/AST/BaseModel - '
                                    'XGB/intermediate_model_wRace_woPGS_wTL.pkl')
 
     importances_base = base_model.get_booster().get_score(importance_type='weight')

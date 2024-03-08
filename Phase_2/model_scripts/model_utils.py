@@ -1,20 +1,13 @@
+import os
+import statistics
+from joblib import dump
+
 import numpy as np
 import pandas as pd
-from sklearn.metrics import f1_score, r2_score, accuracy_score
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import f1_score, accuracy_score
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split
-
-
-# Function to split the data into training and testing sets
-# def split_data(df, target):
-#     # Split the data into training and testing sets with stratification
-#     X_train, X_test, y_train, y_test = train_test_split(
-#         df.drop(columns=[target]),
-#         df[target],
-#         test_size=0.2,
-#         random_state=42,
-#         stratify=df[target])
-#
-#     return pd.DataFrame(X_train), pd.DataFrame(X_test), pd.DataFrame(y_train), pd.DataFrame(y_test)
 
 
 # The split_data function to include a validation set
@@ -39,19 +32,9 @@ def split_data(df, target):
         pd.DataFrame(y_train), pd.DataFrame(y_val), pd.DataFrame(y_test)
 
 
-# Function to evaluate model
-# def evaluate_model(model, X_test, y_test, algo_type="regression"):
-#     predictions = model.predict(X_test)
-#     return r2_score(y_test, predictions)
+def random_search_tuning(model, params, race_X_train, race_y_train, cv=3, model_path=None, param_path=None,
+                         script_name=None, model_type="base"):
 
-
-def evaluate_model(model, X_test, y_test, algo_type="classification"):
-    # Get the predicted probabilities for each class
-    predictions = model.predict(X_test)
-    return accuracy_score(y_test, predictions)
-
-
-def random_search_tuning(model, params, race_X_train, race_y_train, cv=3):
     random_search = RandomizedSearchCV(
         estimator=model,
         param_distributions=params,
@@ -64,11 +47,18 @@ def random_search_tuning(model, params, race_X_train, race_y_train, cv=3):
     )
 
     # Fit the model
-    random_search.fit(race_X_train, race_y_train)
+    random_search.fit(race_X_train, race_y_train.ravel())
 
-    # Best model and parameters
     best_model = random_search.best_estimator_
     best_params = random_search.best_params_
+
+    file_name = f"{model_type}_{script_name}"
+    model_file_path = os.path.join(model_path, f'{file_name}_best_model.joblib')
+    params_file_path = os.path.join(param_path, f'{file_name}_best_params.joblib')
+
+    # Save the best model and parameters
+    # dump(random_search.best_estimator_, model_file_path)
+    # dump(random_search.best_params_, params_file_path)
 
     return best_model, best_params
 
@@ -121,6 +111,171 @@ def evaluate_overfitting(train_accuracy, val_accuracy, y_train_true, y_train_pre
     return results['is_overfitting']
 
 
+def get_mapped_data(y_train_old, y_val_old, y_test_old, y_train_new, y_val_new, y_test_new):
+    # Map labels to start from 0
+    label_mapping_old = {label: i for i, label in enumerate(np.unique(y_train_old))}
+    label_mapping_new = {label: i for i, label in enumerate(np.unique(y_train_new))}
+
+    y_train_old_mapped = np.vectorize(label_mapping_old.get)(y_train_old)
+    y_val_old_mapped = np.vectorize(label_mapping_old.get)(y_val_old)
+    y_test_old_mapped = np.vectorize(label_mapping_old.get)(y_test_old)
+
+    y_train_new_mapped = np.vectorize(label_mapping_new.get)(y_train_new)
+    y_val_new_mapped = np.vectorize(label_mapping_new.get)(y_val_new)
+    y_test_new_mapped = np.vectorize(label_mapping_old.get)(y_test_new)
+
+    # Converting the arrays to be 1-D
+    y_train_old_mapped = y_train_old_mapped.ravel()
+    y_val_old_mapped = y_val_old_mapped.ravel()
+    y_test_old_mapped = y_test_old_mapped.ravel()
+
+    y_train_new_mapped = y_train_new_mapped.ravel()
+    y_val_new_mapped = y_val_new_mapped.ravel()
+    y_test_new_mapped = y_test_new_mapped.ravel()
+
+    return (y_train_old_mapped, y_val_old_mapped, y_test_old_mapped, y_train_new_mapped, y_val_new_mapped,
+            y_test_new_mapped)
+
+
+def prep_data_for_TL(base_model, X_train_new, X_val_new, X_test_new, race_column):
+    # Enhance new data with predicted probabilities from the base model
+    base_model_probs_train = base_model.predict_proba(X_train_new.drop(columns=[race_column]))
+    X_train_new_enhanced = np.hstack([X_train_new.drop(columns=[race_column]), base_model_probs_train])
+
+    base_model_probs_val = base_model.predict_proba(X_val_new.drop(columns=[race_column]))
+    X_val_new_enhanced = np.hstack([X_val_new.drop(columns=[race_column]), base_model_probs_val])
+
+    base_model_probs_test = base_model.predict_proba(X_test_new.drop(columns=[race_column]))
+    X_test_new_enhanced = np.hstack([X_test_new.drop(columns=[race_column]), base_model_probs_test])
+
+    # Reintroduce 'Race' for race-specific modeling for both training and validation enhanced sets
+    X_train_new_enhanced = pd.DataFrame(X_train_new_enhanced)
+    X_train_new_enhanced[race_column] = X_train_new[race_column].values
+
+    X_val_new_enhanced = pd.DataFrame(X_val_new_enhanced)
+    X_val_new_enhanced[race_column] = X_val_new[race_column].values
+
+    X_test_new_enhanced = pd.DataFrame(X_test_new_enhanced)
+    X_test_new_enhanced[race_column] = X_test_new[race_column].values
+
+    return X_train_new_enhanced, X_val_new_enhanced, X_test_new_enhanced
+
+
+def perform_cross_validation(model, X_train, y_train, n_splits):
+    kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
+    fold_val_acc = []
+    fold_train_acc = []
+
+    for fold, (train_index, val_index) in enumerate(kf.split(X_train, y_train)):
+        X_train_fold, X_val_fold = X_train.iloc[train_index], X_train.iloc[val_index]
+        y_train_fold, y_val_fold = y_train[train_index], y_train[val_index]
+
+        model.fit(X_train_fold, y_train_fold.ravel())
+
+        # Evaluate on the validation fold
+        val_accuracy = accuracy_score(y_val_fold, model.predict(X_val_fold))
+        fold_val_acc.append(val_accuracy)
+
+        train_accuracy = accuracy_score(y_train_fold, model.predict(X_train_fold))
+        fold_train_acc.append(train_accuracy)
+
+    return model, fold_val_acc, fold_train_acc
+
+
+def prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new_enhanced, y_val_new_mapped,
+                             X_test_new_enhanced, y_test_new_mapped, race, race_column):
+
+    X_train_race = X_train_new_enhanced[X_train_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_train_race = y_train_new_mapped[X_train_new_enhanced[race_column] == race].ravel()
+
+    X_val_race = X_val_new_enhanced[X_val_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_val_race = y_val_new_mapped[X_val_new_enhanced[race_column] == race].ravel()
+
+    X_test_race = X_test_new_enhanced[X_test_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_test_race = y_test_new_mapped[X_test_new_enhanced[race_column] == race].ravel()
+
+    return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
+
+
+def train_and_evaluate_model(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
+                             check_overfitting=False, race=None, model_type="base", cv=10, resampling="with",
+                             script_name=None, outcome="AntisocialTrajectory"):
+    """
+    Train and evaluate a model with optional hyperparameter tuning and cross-validation.
+
+    Parameters:
+    - model: The model to be trained.
+    - X_train, y_train: Training data and labels.
+    - X_val, y_val: Validation data and labels.
+    - params: Parameter grid for hyperparameter tuning.
+    - tune: Whether to perform hyperparameter tuning.
+    - check_overfitting: Whether to check if the model is overfitting or not
+    - model_type: Type of model ("base" or "final").
+    - race: The race identifier for race-specific final models, if applicable.
+    - n_splits: Number of splits for cross-validation.
+    """
+
+    model_name = f"{model_type} model" + (f" (race {race})" if race else "")
+
+    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
+    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
+    param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
+
+    if tune:
+        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv, model_path=model_path,
+                                                  param_path=param_path, script_name=script_name, model_type=model_type)
+        print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
+
+        model.fit(X_train, y_train)
+
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}\n")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}\n")
+
+    else:
+        model.fit(X_train, y_train)
+
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}\n")
+
+    # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
+    if check_overfitting:
+
+        overfitting_results = evaluate_overfitting(
+            train_accuracy=model_train_accuracy,
+            val_accuracy=model_val_accuracy,
+            y_train_true=y_train,
+            y_train_pred=model.predict(X_train),
+            y_val_true=y_val,
+            y_val_pred=model.predict(X_val)
+        )
+
+        print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
+
+    return model
+
+
+def get_model_instance(model_name):
+    if model_name == "LogisticRegression":
+        return LogisticRegression(multi_class="multinomial", random_state=42)
+    elif model_name == "RandomForest":
+        return RandomForestClassifier(random_state=42)
+    # Add more models as needed
+    else:
+        raise ValueError(f"Model {model_name} is not supported.")
+
+
 # Function to load the data splits
 def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="without"):
     suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
@@ -154,25 +309,11 @@ def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling
             y_train_old, y_val_old, y_test_old)
 
 
-# Define a function or mapping to determine transfer strategy
-def get_transfer_strategy(base_model_type, target_model_type):
-    # Example mappings, to be expanded based on actual compatibility
-    direct_transfer_compatible = {
-        ('RandomForestClassifier', 'XGBClassifier'): True,
-        ('RandomForestClassifier', 'GradientBoostingClassifier'): True,
-        ('XGBClassifier', 'XGBClassifier'): True,
-        ('XGBClassifier', 'GradientBoostingClassifier'): True,
-
-        # Add more pairs as needed
-    }
-    return direct_transfer_compatible.get((base_model_type, target_model_type), False)
-
-
 def search_spaces():
     # Define search spaces for each model
     search_spaces = {
         'LogisticRegression': {
-            # 'penalty': ['l2', 'elasticnet', None],  # Including all types of penalties
+            # 'penalty': ['l2', 'elasticnet', None], # Including all types of penalties
             'penalty': ['l2'],  # Including all types of penalties
             'C': np.logspace(-5, 5, 50),  # A wider range and more values for regularization strength
             'solver': ['newton-cg', 'lbfgs'],  # Including all solvers
@@ -224,9 +365,18 @@ def search_spaces():
             'bootstrap_type': ['Bayesian', 'Bernoulli', 'MVS'],
         },
         'DecisionTree': {
-            'max_depth': (1, 30),  # Continuous space, but you'll need to round to integer values when using
-            'min_samples_split': (0.01, 0.2),  # Represented as a fraction of the total number of samples
-            'min_samples_leaf': (0.01, 0.1),  # Represented as a fraction of the total number of samples
+            'criterion': ['gini', 'entropy'],  # Criterion for measuring the quality of a split
+            'splitter': ['best', 'random'],  # Strategy used to choose the split at each node
+            'max_depth': [None] + list(range(1, 31)),  # Maximum depth of the tree (None means unlimited)
+            'min_samples_split': [2, 3, 4, 5] + list(np.linspace(0.01, 0.2, 20)),  # Minimum number of samples
+            # required to split an internal node
+            'min_samples_leaf': [1, 2, 3, 4, 5] + list(np.linspace(0.01, 0.1, 10)),  # Minimum number of samples
+            # required to be at a leaf node
+            'max_features': ['sqrt', 'log2', None] + list(np.linspace(0.1, 1.0, 10)),  # Number of features
+            # to consider when looking for the best split
+            'max_leaf_nodes': [None] + list(range(10, 101, 10)),  # Maximum number of leaf nodes
+            'min_impurity_decrease': np.linspace(0, 0.2, 10),  # Threshold for early stopping in tree growth
+            'class_weight': [None, 'balanced'],  # Weights associated with classes
         },
         'LightGBM': {
             'num_leaves': np.linspace(20, 400, 10).astype(int),  # More granular range, still need to round to integers

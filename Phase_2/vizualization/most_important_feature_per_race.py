@@ -46,8 +46,8 @@ def plot_grouped_bar_chart(top_features, top_values, races, output_filename='mos
     ax.yaxis.grid(True)
 
     # Save the plot before showing
-    plt.savefig(f"../results/modeling/{output_filename}", bbox_inches='tight')
-    print(f"SHAP summary plot saved as {output_filename}")
+    # plt.savefig(f"../results/modeling/{output_filename}", bbox_inches='tight')
+    # print(f"SHAP summary plot saved as {output_filename}")
 
     # Show the plot
     plt.show()

@@ -23,8 +23,8 @@ def plot_feature_importances(importances, title, ax):
 
 # 2. Effect of PGS
 def plot_effect_of_pgs(ax):
-    model_wo_pgs = load_model('../results/models/classification/HetHieTL/AST/BaseModel - XGB/base_model_woPGS.pkl')
-    model_w_pgs = load_model('../results/models/classification/HetHieTL/AST/BaseModel - XGB/base_model_wPGS.pkl')
+    model_wo_pgs = load_model('../results/models/classification/AST/BaseModel - XGB/base_model_woPGS.pkl')
+    model_w_pgs = load_model('../results/models/classification/AST/BaseModel - XGB/base_model_wPGS.pkl')
 
     importances_wo_pgs = model_wo_pgs.get_booster().get_score(importance_type='weight')
     importances_w_pgs = model_w_pgs.get_booster().get_score(importance_type='weight')

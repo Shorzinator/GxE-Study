@@ -12,11 +12,11 @@ def load_model(file_path):
 
 
 # Load your models
-base_model_rf = load_model('../results/models/classification/HetHieTL/AST/BaseModel - RanFor/base_model.pkl')
-intermediate_model_rf = load_model('../results/models/classification/HetHieTL/AST/BaseModel - '
+base_model_rf = load_model('../results/models/classification/AST/BaseModel - RanFor/base_model.pkl')
+intermediate_model_rf = load_model('../results/models/classification/AST/BaseModel - '
                                    'RanFor/intermediate_model.pkl')
-base_model_xgb = load_model('../results/models/classification/HetHieTL/AST/BaseModel - XGB/base_model_wPGS.pkl')
-intermediate_model_xgb = load_model('../results/models/classification/HetHieTL/AST/BaseModel - '
+base_model_xgb = load_model('../results/models/classification/AST/BaseModel - XGB/base_model_wPGS.pkl')
+intermediate_model_xgb = load_model('../results/models/classification/AST/BaseModel - '
                                     'XGB/intermediate_model_wRace_wPGS.pkl')
 
 # Assuming all models use the same set of features

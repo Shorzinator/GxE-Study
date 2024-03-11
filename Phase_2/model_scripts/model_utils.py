@@ -1,13 +1,13 @@
 import os
-import statistics
-from joblib import dump
 
 import numpy as np
 import pandas as pd
+import shap
+from matplotlib import pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score, accuracy_score
-from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold, train_test_split
+from sklearn.model_selection import RandomizedSearchCV, train_test_split
 
 
 # The split_data function to include a validation set
@@ -32,83 +32,93 @@ def split_data(df, target):
         pd.DataFrame(y_train), pd.DataFrame(y_val), pd.DataFrame(y_test)
 
 
-def random_search_tuning(model, params, race_X_train, race_y_train, cv=3, model_path=None, param_path=None,
-                         script_name=None, model_type="base"):
-
-    random_search = RandomizedSearchCV(
-        estimator=model,
-        param_distributions=params,
-        n_iter=50,
-        cv=cv,
-        verbose=2,
-        scoring='accuracy',
-        random_state=42,
-        n_jobs=-1
-    )
-
-    # Fit the model
-    random_search.fit(race_X_train, race_y_train.ravel())
-
-    best_model = random_search.best_estimator_
-    best_params = random_search.best_params_
-
-    file_name = f"{model_type}_{script_name}"
-    model_file_path = os.path.join(model_path, f'{file_name}_best_model.joblib')
-    params_file_path = os.path.join(param_path, f'{file_name}_best_params.joblib')
-
-    # Save the best model and parameters
-    # dump(random_search.best_estimator_, model_file_path)
-    # dump(random_search.best_params_, params_file_path)
-
-    return best_model, best_params
-
-
 # Function to load data
 def load_data(file_path):
     return pd.read_csv(file_path)
 
 
-def evaluate_overfitting(train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred):
+def prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new_enhanced, y_val_new_mapped,
+                             X_test_new_enhanced, y_test_new_mapped, race, race_column):
+
+    X_train_race = X_train_new_enhanced[X_train_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_train_race = y_train_new_mapped[X_train_new_enhanced[race_column] == race].ravel()
+
+    X_val_race = X_val_new_enhanced[X_val_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_val_race = y_val_new_mapped[X_val_new_enhanced[race_column] == race].ravel()
+
+    X_test_race = X_test_new_enhanced[X_test_new_enhanced[race_column] == race].drop(columns=[race_column])
+    y_test_race = y_test_new_mapped[X_test_new_enhanced[race_column] == race].ravel()
+
+    return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
+
+
+def train_and_evaluate_model(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
+                             check_overfitting=False, race=None, model_type="base", cv=10, resampling="with",
+                             script_name=None, outcome="AntisocialTrajectory"):
     """
-    Evaluate the model for overfitting using training and validation accuracies, and F1 scores.
+    Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
-    :param train_accuracy: Accuracy of the model on the training data.
-    :param val_accuracy: Accuracy of the model on the validation data.
-    :param y_train_true: True labels for the training data.
-    :param y_train_pred: Predicted labels for the training data.
-    :param y_val_true: True labels for the validation data.
-    :param y_val_pred: Predicted labels for the validation data.
-    :return: Dictionary containing overfitting evaluation results.
+    Parameters:
+    - model: The model to be trained.
+    - X_train, y_train: Training data and labels.
+    - X_val, y_val: Validation data and labels.
+    - params: Parameter grid for hyperparameter tuning.
+    - tune: Whether to perform hyperparameter tuning.
+    - check_overfitting: Whether to check if the model is overfitting or not
+    - model_type: Type of model ("base" or "final").
+    - race: The race identifier for race-specific final models, if applicable.
+    - n_splits: Number of splits for cross-validation.
     """
 
-    # Calculate F1 scores for training and validation sets
-    f1_train = f1_score(y_train_true, y_train_pred, average='macro')
-    f1_val = f1_score(y_val_true, y_val_pred, average='macro')
+    model_name = f"{model_type} model" + (f" (race {race})" if race else "")
 
-    # Calculate the difference in F1 scores and accuracies
-    f1_diff = f1_train - f1_val
-    acc_diff = train_accuracy - val_accuracy
+    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
+    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
+    param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
 
-    # Define thresholds for differences that would indicate overfitting
-    # These are heuristic values and could be adjusted based on domain knowledge and empirical evidence
-    f1_threshold = 0.2
-    acc_threshold = 0.2
+    if tune:
+        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv, model_path=model_path,
+                                                  param_path=param_path, script_name=script_name, model_type=model_type)
 
-    # Check for overfitting
-    is_overfitting = f1_diff > f1_threshold or acc_diff > acc_threshold
+        print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
 
-    # Compile results into a dictionary
-    results = {
-        'train_accuracy': train_accuracy,
-        'val_accuracy': val_accuracy,
-        'f1_train': f1_train,
-        'f1_val': f1_val,
-        'f1_diff': f1_diff,
-        'acc_diff': acc_diff,
-        'is_overfitting': is_overfitting
-    }
+        model.fit(X_train, y_train)
 
-    return results['is_overfitting']
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}")
+
+    else:
+        model.fit(X_train, y_train)
+
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}")
+
+    # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
+    if check_overfitting:
+        overfitting_results = evaluate_overfitting(
+            train_accuracy=model_train_accuracy,
+            val_accuracy=model_val_accuracy,
+            y_train_true=y_train,
+            y_train_pred=model.predict(X_train),
+            y_val_true=y_val,
+            y_val_pred=model.predict(X_val)
+        )
+
+        print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
+
+    return model
 
 
 def get_mapped_data(y_train_old, y_val_old, y_test_old, y_train_new, y_val_new, y_test_new):
@@ -161,109 +171,77 @@ def prep_data_for_TL(base_model, X_train_new, X_val_new, X_test_new, race_column
     return X_train_new_enhanced, X_val_new_enhanced, X_test_new_enhanced
 
 
-def perform_cross_validation(model, X_train, y_train, n_splits):
-    kf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=42)
-    fold_val_acc = []
-    fold_train_acc = []
+def random_search_tuning(model, params, race_X_train, race_y_train, cv=3, model_path=None, param_path=None,
+                         script_name=None, model_type="base"):
+    random_search = RandomizedSearchCV(
+        estimator=model,
+        param_distributions=params,
+        n_iter=50,
+        cv=cv,
+        verbose=2,
+        scoring='accuracy',
+        random_state=42,
+        n_jobs=-1
+    )
 
-    for fold, (train_index, val_index) in enumerate(kf.split(X_train, y_train)):
-        X_train_fold, X_val_fold = X_train.iloc[train_index], X_train.iloc[val_index]
-        y_train_fold, y_val_fold = y_train[train_index], y_train[val_index]
+    # Fit the model
+    random_search.fit(race_X_train, race_y_train.ravel())
 
-        model.fit(X_train_fold, y_train_fold.ravel())
+    best_model = random_search.best_estimator_
+    best_params = random_search.best_params_
 
-        # Evaluate on the validation fold
-        val_accuracy = accuracy_score(y_val_fold, model.predict(X_val_fold))
-        fold_val_acc.append(val_accuracy)
+    file_name = f"{model_type}_{script_name}"
+    model_file_path = os.path.join(model_path, f'{file_name}_best_model.joblib')
+    params_file_path = os.path.join(param_path, f'{file_name}_best_params.joblib')
 
-        train_accuracy = accuracy_score(y_train_fold, model.predict(X_train_fold))
-        fold_train_acc.append(train_accuracy)
+    # Save the best model and parameters
+    # dump(random_search.best_estimator_, model_file_path)
+    # dump(random_search.best_params_, params_file_path)
 
-    return model, fold_val_acc, fold_train_acc
-
-
-def prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new_enhanced, y_val_new_mapped,
-                             X_test_new_enhanced, y_test_new_mapped, race, race_column):
-
-    X_train_race = X_train_new_enhanced[X_train_new_enhanced[race_column] == race].drop(columns=[race_column])
-    y_train_race = y_train_new_mapped[X_train_new_enhanced[race_column] == race].ravel()
-
-    X_val_race = X_val_new_enhanced[X_val_new_enhanced[race_column] == race].drop(columns=[race_column])
-    y_val_race = y_val_new_mapped[X_val_new_enhanced[race_column] == race].ravel()
-
-    X_test_race = X_test_new_enhanced[X_test_new_enhanced[race_column] == race].drop(columns=[race_column])
-    y_test_race = y_test_new_mapped[X_test_new_enhanced[race_column] == race].ravel()
-
-    return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
+    return best_model, best_params
 
 
-def train_and_evaluate_model(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
-                             check_overfitting=False, race=None, model_type="base", cv=10, resampling="with",
-                             script_name=None, outcome="AntisocialTrajectory"):
+def evaluate_overfitting(train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred):
     """
-    Train and evaluate a model with optional hyperparameter tuning and cross-validation.
+    Evaluate the model for overfitting using training and validation accuracies, and F1 scores.
 
-    Parameters:
-    - model: The model to be trained.
-    - X_train, y_train: Training data and labels.
-    - X_val, y_val: Validation data and labels.
-    - params: Parameter grid for hyperparameter tuning.
-    - tune: Whether to perform hyperparameter tuning.
-    - check_overfitting: Whether to check if the model is overfitting or not
-    - model_type: Type of model ("base" or "final").
-    - race: The race identifier for race-specific final models, if applicable.
-    - n_splits: Number of splits for cross-validation.
+    :param train_accuracy: Accuracy of the model on the training data.
+    :param val_accuracy: Accuracy of the model on the validation data.
+    :param y_train_true: True labels for the training data.
+    :param y_train_pred: Predicted labels for the training data.
+    :param y_val_true: True labels for the validation data.
+    :param y_val_pred: Predicted labels for the validation data.
+    :return: Dictionary containing overfitting evaluation results.
     """
 
-    model_name = f"{model_type} model" + (f" (race {race})" if race else "")
+    # Calculate F1 scores for training and validation sets
+    f1_train = f1_score(y_train_true, y_train_pred, average='macro')
+    f1_val = f1_score(y_val_true, y_val_pred, average='macro')
 
-    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
-    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
-    param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
+    # Calculate the difference in F1 scores and accuracies
+    f1_diff = f1_train - f1_val
+    acc_diff = train_accuracy - val_accuracy
 
-    if tune:
-        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv, model_path=model_path,
-                                                  param_path=param_path, script_name=script_name, model_type=model_type)
-        print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
+    # Define thresholds for differences that would indicate overfitting
+    # These are heuristic values and could be adjusted based on domain knowledge and empirical evidence
+    f1_threshold = 0.2
+    acc_threshold = 0.2
 
-        model.fit(X_train, y_train)
+    # Check for overfitting
+    is_overfitting = f1_diff > f1_threshold or acc_diff > acc_threshold
 
-        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
-        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+    # Compile results into a dictionary
+    results = {
+        'train_accuracy': train_accuracy,
+        'val_accuracy': val_accuracy,
+        'f1_train': f1_train,
+        'f1_val': f1_val,
+        'f1_diff': f1_diff,
+        'acc_diff': acc_diff,
+        'is_overfitting': is_overfitting
+    }
 
-        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
-        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}\n")
-
-        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
-        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}\n")
-
-    else:
-        model.fit(X_train, y_train)
-
-        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
-        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
-
-        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
-        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
-
-        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
-        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}\n")
-
-    # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
-    if check_overfitting:
-
-        overfitting_results = evaluate_overfitting(
-            train_accuracy=model_train_accuracy,
-            val_accuracy=model_val_accuracy,
-            y_train_true=y_train,
-            y_train_pred=model.predict(X_train),
-            y_val_true=y_val,
-            y_val_pred=model.predict(X_val)
-        )
-
-        print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
-
-    return model
+    return results['is_overfitting']
 
 
 def get_model_instance(model_name):
@@ -274,6 +252,110 @@ def get_model_instance(model_name):
     # Add more models as needed
     else:
         raise ValueError(f"Model {model_name} is not supported.")
+
+
+def interpret_model(model, model_type, X_train, model_name="", race=None):
+    """
+    Provides an enhanced interpretation of Logistic Regression and RandomForestClassifier models.
+
+    Parameters:
+    - model: The trained model instance.
+    - X_train: Training dataset used to extract feature names.
+    - model_name: A string indicating the name or type of the model for print statements.
+    """
+    feature_names = X_train.columns.tolist()
+    race_info = f" for Race {race}" if race else ""
+
+    if model_name == "LogisticRegression":
+        print(f"Interpreting {model_type} Model{race_info}: {model_name}")
+        if hasattr(model, 'coef_'):
+            # Displaying coefficients and odds ratios
+            coefficients = model.coef_[0]
+            odds_ratios = np.exp(coefficients)
+            print("\nFeature Coefficients and Odds Ratios:")
+            for feature, coef, odds_ratio in zip(feature_names, coefficients, odds_ratios):
+                print(f"{feature}: Coef={coef:.4f}, Odds Ratio={odds_ratio:.4f}")
+
+            # print("Number of features:", len(feature_names))
+            # print("Number of coefficients/importances:",
+            #       len(model.coef_[0]) if model_name == "LogisticRegression" else len(model.feature_importances_))
+
+            # Plotting coefficient magnitudes for visualization
+            # plt.figure(figsize=(10, 8))
+            # indices = np.argsort(np.abs(coefficients))
+            # plt.title("Feature Coefficients")
+            # plt.barh(range(len(indices)), coefficients[indices], color='b', align='center')
+            # plt.yticks(range(len(indices)), [feature_names[i] for i in indices])
+            # plt.xlabel("Coefficient Value")
+            # plt.ylabel("Feature")
+            # plt.show()
+        print()
+
+    elif model_name == "RandomForestClassifier":
+        print(f"Interpreting {model_type} Model: {model_name}")
+        if hasattr(model, 'feature_importances_'):
+            # Displaying feature importances
+            importances = model.feature_importances_
+            indices = np.argsort(importances)[::-1]
+            print("\nFeature Importances:")
+            for f in range(X_train.shape[1]):
+                print(f"{f + 1}. feature {feature_names[indices[f]]} ({importances[indices[f]]:.4f})")
+
+            # Plotting feature importances for visualization
+            plt.figure(figsize=(10, 8))
+            plt.title("Feature Importances")
+            plt.barh(range(X_train.shape[1]), importances[indices], color='r', align='center')
+            plt.yticks(range(X_train.shape[1]), [feature_names[i] for i in indices])
+            plt.xlabel("Relative Importance")
+            plt.ylabel("Feature")
+            plt.show()
+
+    else:
+        print(f"Model interpretation for {model_name} is not supported.")
+
+
+def equation(model, feature_names):
+    """
+        Prints the equation of a trained Logistic Regression model.
+
+        Parameters:
+        - model: A trained Logistic Regression model.
+        - feature_names: A list of feature names used by the model.
+        """
+
+    intercept = model.intercept_[0]
+    coefficients = model.coef_[0]
+
+    # Starting the equation with the intercept
+    equation = f"log(odds) = {intercept:.4f}"
+
+    # Adding each feature and its coefficient to the equation
+    for feature_name, coef in zip(feature_names, coefficients):
+        equation += f" + ({coef:.4f} * {feature_name})"
+
+    print(equation, "\n")
+
+
+def explore_shap_values(model, X):
+    """
+    Computes and visualizes SHAP values for a given model and dataset.
+
+    Parameters:
+    - model: The trained model (e.g., a logistic regression model).
+    - X: The dataset to compute SHAP values for (e.g., X_train or X_test).
+    """
+    # Initialize SHAP explainer
+    explainer = shap.Explainer(model, X)
+
+    # Compute SHAP values
+    shap_values = explainer(X)
+
+    # Generate summary plot for all features
+    shap.summary_plot(shap_values.values, X, feature_names=X.columns, plot_type="bar")
+
+    # Generate a waterfall plot for the first observation
+    # Note: Ensure that shap_values[0] correctly indexes into the Explanation object for the desired observation
+    shap.plots.waterfall(shap_values[0][0])
 
 
 # Function to load the data splits

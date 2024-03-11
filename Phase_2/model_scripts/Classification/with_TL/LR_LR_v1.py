@@ -1,10 +1,13 @@
 import os
 
+import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits, prep_data_for_TL,
+from Phase_2.model_scripts.model_utils import (equation, explore_shap_values, get_mapped_data, get_model_instance,
+                                               interpret_model,
+                                               load_data_splits,
+                                               prep_data_for_TL,
                                                prep_data_for_race_model, search_spaces, train_and_evaluate_model)
-
 
 # Get the base name of the current script and strip the .py extension to use in the filename
 script_name = os.path.basename(__file__).replace('.py', '')
@@ -33,45 +36,14 @@ def get_model_params(target_variable, model_type, race=None, resampling="without
                         "final":
                             {
                                 1.0: {
-                                    'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
-                                    'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False,
+                                    'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False,
                                     'class_weight': None, 'C': 1e-05
                                 },
                                 2.0: {
-                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 7950, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 0.07543120063354623
-                                },
-                                3.0: {
-                                    'warm_start': False, 'tol': 0.1, 'solver': 'newton-cg', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 14000, 'fit_intercept': True,
-                                    'class_weight': None, 'C': 1.2648552168552958
-                                },
-                                4.0: {
-                                    'warm_start': False, 'tol': 0.1, 'solver': 'newton-cg', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 14000, 'fit_intercept': True,
-                                    'class_weight': None, 'C': 1.2648552168552958
-                                },
-                            }
-                    },
-                "SubstanceUseTrajectory":
-                    {
-                        "base": {
-                            'warm_start': True, 'tol': 0.0026366508987303583, 'solver': 'newton-cg', 'penalty': 'l2',
-                            'multi_class': 'ovr', 'max_iter': 5850, 'fit_intercept': True, 'class_weight': None,
-                            'C': 568.9866029018305
-                        },
-                        "final":
-                            {
-                                1.0: {
-                                    'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                    'penalty': 'l2', 'multi_class': 'ovr', 'max_iter': 14750, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 62505.51925273976
-                                },
-                                2.0: {
-                                    'warm_start': False, 'tol': 0.0004281332398719391, 'solver': 'lbfgs', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 950, 'fit_intercept': False,
-                                    'class_weight': 'balanced', 'C': 222.29964825261956
+                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7950,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 0.07543120063354623
                                 },
                                 3.0: {
                                     'warm_start': False, 'tol': 0.05455594781168514, 'solver': 'lbfgs', 'penalty': 'l2',
@@ -79,9 +51,40 @@ def get_model_params(target_variable, model_type, race=None, resampling="without
                                     'class_weight': None, 'C': 86.85113737513521
                                 },
                                 4.0: {
-                                    'warm_start': False, 'tol': 1.1288378916846883e-05, 'solver': 'lbfgs', 'penalty': 'l2',
-                                    'multi_class': 'ovr', 'max_iter': 27000, 'fit_intercept': True,
-                                    'class_weight': 'balanced', 'C': 0.00042919342601287783
+                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7950,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 0.07543120063354623
+                                },
+                            }
+                    },
+                "SubstanceUseTrajectory":
+                    {
+                        "base": {
+                            'warm_start': True, 'tol': 6.951927961775606e-05, 'solver': 'newton-cg', 'penalty': 'l2',
+                            'multi_class': 'multinomial', 'max_iter': 19550, 'fit_intercept': True,
+                            'class_weight': None, 'C': 138.9495494373139
+                        },
+                        "final":
+                            {
+                                1.0: {
+                                    'warm_start': False, 'tol': 0.00023357214690901214, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'ovr', 'max_iter': 5100, 'fit_intercept': False,
+                                    'class_weight': None, 'C': 1.2648552168552958
+                                },
+                                2.0: {
+                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7950,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 0.07543120063354623
+                                },
+                                3.0: {
+                                    'warm_start': False, 'tol': 0.05455594781168514, 'solver': 'lbfgs', 'penalty': 'l2',
+                                    'multi_class': 'ovr', 'max_iter': 29300, 'fit_intercept': False,
+                                    'class_weight': 'balanced', 'C': 33.9322177189533
+                                },
+                                4.0: {
+                                    'warm_start': False, 'tol': 1e-06, 'solver': 'newton-cg', 'penalty': 'l2',
+                                    'multi_class': 'ovr', 'max_iter': 7650, 'fit_intercept': True,
+                                    'class_weight': 'balanced', 'C': 2329.951810515372
                                 },
                             }
                     }
@@ -92,66 +95,62 @@ def get_model_params(target_variable, model_type, race=None, resampling="without
                 "AntisocialTrajectory":
                     {
                         "base": {
-                            'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
-                            'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False, 'class_weight': None,
-                            'C': 1e-05
+                            'warm_start': True, 'tol': 1.1288378916846883e-05, 'solver': 'lbfgs', 'penalty': 'l2',
+                            'multi_class': 'multinomial', 'max_iter': 2950, 'fit_intercept': False,
+                            'class_weight': None, 'C': 0.7906043210907702
                         },
                         "final":
                             {
                                 1.0: {
-                                    'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs',
-                                    'penalty': 'l2',
-                                    'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 1e-05
+                                    'warm_start': True, 'tol': 6.951927961775606e-05, 'solver': 'newton-cg',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 19550,
+                                    'fit_intercept': True, 'class_weight': None, 'C': 138.9495494373139
                                 },
                                 2.0: {
-                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
-                                    'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 7950, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 0.07543120063354623
+                                    'warm_start': True, 'tol': 0.0004281332398719391, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 29050,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 54.286754393238596
                                 },
                                 3.0: {
-                                    'warm_start': False, 'tol': 0.1, 'solver': 'newton-cg', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 14000, 'fit_intercept': True,
-                                    'class_weight': None, 'C': 1.2648552168552958
+                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7950,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 0.07543120063354623
                                 },
                                 4.0: {
-                                    'warm_start': False, 'tol': 0.1, 'solver': 'newton-cg', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 14000, 'fit_intercept': True,
-                                    'class_weight': None, 'C': 1.2648552168552958
+                                    'warm_start': True, 'tol': 3.792690190732254e-05, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7950,
+                                    'fit_intercept': False, 'class_weight': None, 'C': 0.07543120063354623
                                 },
                             }
                     },
                 "SubstanceUseTrajectory":
                     {
                         "base": {
-                            'warm_start': True, 'tol': 0.0026366508987303583, 'solver': 'newton-cg', 'penalty': 'l2',
-                            'multi_class': 'ovr', 'max_iter': 5850, 'fit_intercept': True, 'class_weight': None,
-                            'C': 568.9866029018305
+                            'warm_start': False, 'tol': 2.06913808111479e-05, 'solver': 'lbfgs', 'penalty': 'l2',
+                            'multi_class': 'ovr', 'max_iter': 3700, 'fit_intercept': True, 'class_weight': None,
+                            'C': 1456.3484775012444
                         },
                         "final":
                             {
                                 1.0: {
-                                    'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                    'penalty': 'l2', 'multi_class': 'ovr', 'max_iter': 14750, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 62505.51925273976
+                                    'warm_start': False, 'tol': 1e-06, 'solver': 'lbfgs', 'penalty': 'l2',
+                                    'multi_class': 'ovr', 'max_iter': 20900, 'fit_intercept': True,
+                                    'class_weight': None, 'C': 8.286427728546842
                                 },
                                 2.0: {
-                                    'warm_start': False, 'tol': 0.0004281332398719391, 'solver': 'lbfgs',
-                                    'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 950, 'fit_intercept': False,
-                                    'class_weight': 'balanced', 'C': 222.29964825261956
+                                    'warm_start': True, 'tol': 6.951927961775606e-05, 'solver': 'newton-cg',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 19550,
+                                    'fit_intercept': True, 'class_weight': None, 'C': 138.9495494373139
                                 },
                                 3.0: {
-                                    'warm_start': False, 'tol': 0.05455594781168514, 'solver': 'lbfgs', 'penalty': 'l2',
-                                    'multi_class': 'multinomial', 'max_iter': 17950, 'fit_intercept': False,
-                                    'class_weight': None, 'C': 86.85113737513521
+                                    'warm_start': False, 'tol': 1e-06, 'solver': 'newton-cg', 'penalty': 'l2',
+                                    'multi_class': 'ovr', 'max_iter': 7650, 'fit_intercept': True,
+                                    'class_weight': 'balanced', 'C': 2329.951810515372
                                 },
                                 4.0: {
-                                    'warm_start': False, 'tol': 1.1288378916846883e-05, 'solver': 'lbfgs',
-                                    'penalty': 'l2',
-                                    'multi_class': 'ovr', 'max_iter': 27000, 'fit_intercept': True,
-                                    'class_weight': 'balanced', 'C': 0.00042919342601287783
+                                    'warm_start': True, 'tol': 0.0026366508987303583, 'solver': 'lbfgs',
+                                    'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 22750,
+                                    'fit_intercept': True, 'class_weight': 'balanced', 'C': 0.018420699693267165
                                 },
                             }
                     }
@@ -166,7 +165,7 @@ def get_model_params(target_variable, model_type, race=None, resampling="without
 def main(
         target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_base=False, tune_final=False,
         check_overfitting=False, cv=10, resampling="without", base_model_name="LogisticRegression",
-        final_model_name="LogisticRegression", base_model_type="base", final_model_type="final"
+        final_model_name="LogisticRegression", base_model_type="base", final_model_type="final", interpret=False
 ):
     params = search_spaces()
 
@@ -190,6 +189,12 @@ def main(
                                           check_overfitting, model_type=base_model_type, cv=cv, resampling=resampling,
                                           script_name=script_name, outcome=target_variable)
 
+    # Interpreting base-model
+    if interpret:
+        interpret_model(base_model, base_model_type, X_train_old, base_model_name)
+        equation(base_model, X_train_old.columns.tolist())
+        explore_shap_values(base_model, X_train_old)
+
     # Prepare new data by combining it with the knowledge from old data.
     X_train_new_enhanced, X_val_new_enhanced, X_test_new_enhanced = prep_data_for_TL(base_model, X_train_new, X_val_new,
                                                                                      X_test_new, race_column)
@@ -209,14 +214,22 @@ def main(
             prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new_enhanced, y_val_new_mapped,
                                      X_test_new_enhanced, y_test_new_mapped, race, race_column))
 
-        train_and_evaluate_model(final_model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race,
-                                 y_test_race, params[final_model_name], tune_final, check_overfitting,
-                                 race, model_type=final_model_type, cv=cv, resampling=resampling,
-                                 script_name=script_name, outcome=target_variable)
+        final_model = train_and_evaluate_model(final_model, X_train_race, y_train_race, X_val_race, y_val_race,
+                                               X_test_race, y_test_race, params[final_model_name], tune_final,
+                                               check_overfitting, race, model_type=final_model_type, cv=cv,
+                                               resampling=resampling, script_name=script_name, outcome=target_variable)
+
+        # Interpreting final model per race
+        if interpret:
+            interpret_model(final_model, final_model_type, X_train_race, final_model_name, race)
+            equation(final_model, X_train_new.columns.tolist())
+            explore_shap_values(final_model, pd.DataFrame(X_train_race))
 
 
 if __name__ == "__main__":
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
+    resampling = "without"
+
     main(target_variable,
          "Race",
          "with",
@@ -225,10 +238,12 @@ if __name__ == "__main__":
          False,
          True,
          5,  # The least populated class in y has only 5 members
-         "without",  # Does not do well with resampling
+         resampling,
          "LogisticRegression",
-         "LogisticRegression"
+         "LogisticRegression",
+         interpret=True
          )
+
 
 # First, run the model based on an untuned and non-cv model.
 # Second, tune the model and re-evaluate the results.

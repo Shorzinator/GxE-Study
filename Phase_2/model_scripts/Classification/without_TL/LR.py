@@ -79,6 +79,8 @@ def main(
         target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False, check_overfitting=False,
         cv=10, resampling="without", final_model_name="LogisticRegression", final_model_type="final"
 ):
+    print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
+
     params = search_spaces()
 
     # Load data splits
@@ -115,8 +117,9 @@ def main(
 
 
 if __name__ == "__main__":
+    resampling = "without"
+
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
-    resampling = "with"
     main(target_variable,
          "Race",
          "with",
@@ -127,7 +130,7 @@ if __name__ == "__main__":
          resampling,
          "LogisticRegression")
 
-    target_variable = "AntisocialTrajectory"  # "SubstanceUseTrajectory" or "SubstanceUseTrajectory"
+    target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
          "Race",
          "with",
@@ -135,5 +138,5 @@ if __name__ == "__main__":
          False,
          True,
          5,
-         resampling,
+         "with",
          "LogisticRegression")

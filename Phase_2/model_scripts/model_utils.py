@@ -52,9 +52,9 @@ def prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new
     return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
 
 
-def train_and_evaluate_model(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
-                             check_overfitting=False, race=None, model_type="base", cv=10, resampling="with",
-                             script_name=None, outcome="AntisocialTrajectory"):
+def train_and_evaluate(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
+                       check_overfitting=False, race=None, model_type="base", cv=10, resampling="with",
+                       script_name=None, outcome="AntisocialTrajectory"):
     """
     Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
@@ -116,6 +116,75 @@ def train_and_evaluate_model(model, X_train, y_train, X_val, y_val, X_test, y_te
             y_val_pred=model.predict(X_val)
         )
 
+        print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
+
+    return model, model_train_accuracy, model_test_accuracy, model_val_accuracy
+
+
+def train_and_evaluate_with_race_feature(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
+                                         check_overfitting=False, model_type="final", cv=10, resampling="with",
+                                         script_name=None, outcome="AntisocialTrajectory"):
+    """
+    Train and evaluate a model including race as a single feature within the dataset.
+    This function does not handle race-specific modeling but treats race as any other feature.
+
+    Parameters:
+    - model: The model instance to be trained and evaluated.
+    - X_train, y_train: Training data and labels.
+    - X_val, y_val: Validation data and labels.
+    - X_test, y_test: Testing data and labels.
+    - tune: Boolean, whether to perform hyperparameter tuning.
+    - check_overfitting: Boolean, whether to evaluate the model for overfitting.
+    - cv: Integer, the number of cross-validation folds.
+    - resampling: String, indicating the resampling strategy used.
+    - script_name: String, the name of the script, if applicable.
+    - outcome: String, the outcome variable name.
+    """
+    model_name = f"{model_type} model"
+
+    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
+    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
+    param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
+
+    if tune:
+        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv, model_path=model_path,
+                                                  param_path=param_path, script_name=script_name, model_type=model_type)
+
+        print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
+
+        model.fit(X_train, y_train)
+
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}")
+
+    else:
+        model.fit(X_train, y_train)
+
+        model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
+        print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
+
+        model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
+        print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
+
+        model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
+        print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}")
+
+    # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
+    if check_overfitting:
+        overfitting_results = evaluate_overfitting(
+            train_accuracy=model_train_accuracy,
+            val_accuracy=model_val_accuracy,
+            y_train_true=y_train,
+            y_train_pred=model.predict(X_train),
+            y_val_true=y_val,
+            y_val_pred=model.predict(X_val)
+        )
         print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
 
     return model

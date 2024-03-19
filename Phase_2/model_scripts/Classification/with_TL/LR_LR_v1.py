@@ -7,7 +7,7 @@ from Phase_2.model_scripts.model_utils import (equation, explore_shap_values, ge
                                                interpret_model,
                                                load_data_splits,
                                                prep_data_for_TL,
-                                               prep_data_for_race_model, search_spaces, train_and_evaluate_model)
+                                               prep_data_for_race_model, search_spaces, train_and_evaluate)
 
 # Get the base name of the current script and strip the .py extension to use in the filename
 script_name = os.path.basename(__file__).replace('.py', '')
@@ -184,16 +184,16 @@ def main(
         base_model = get_model_instance(base_model_name)
 
     # Train a base model on old data with dynamic parameters
-    base_model = train_and_evaluate_model(base_model, X_train_old, y_train_old_mapped, X_val_old, y_val_old_mapped,
-                                          X_test_old, y_test_old_mapped, params[base_model_name], tune_base,
-                                          check_overfitting, model_type=base_model_type, cv=cv, resampling=resampling,
-                                          script_name=script_name, outcome=target_variable)
+    base_model = train_and_evaluate(base_model, X_train_old, y_train_old_mapped, X_val_old, y_val_old_mapped,
+                                    X_test_old, y_test_old_mapped, params[base_model_name], tune_base,
+                                    check_overfitting, model_type=base_model_type, cv=cv, resampling=resampling,
+                                    script_name=script_name, outcome=target_variable)
 
     # Interpreting base-model
     if interpret:
         interpret_model(base_model, base_model_type, X_train_old, base_model_name)
         equation(base_model, X_train_old.columns.tolist())
-        explore_shap_values(base_model, X_train_old)
+        # explore_shap_values(base_model, X_train_old)
 
     # Prepare new data by combining it with the knowledge from old data.
     X_train_new_enhanced, X_val_new_enhanced, X_test_new_enhanced = prep_data_for_TL(base_model, X_train_new, X_val_new,
@@ -214,16 +214,16 @@ def main(
             prep_data_for_race_model(X_train_new_enhanced, y_train_new_mapped, X_val_new_enhanced, y_val_new_mapped,
                                      X_test_new_enhanced, y_test_new_mapped, race, race_column))
 
-        final_model = train_and_evaluate_model(final_model, X_train_race, y_train_race, X_val_race, y_val_race,
-                                               X_test_race, y_test_race, params[final_model_name], tune_final,
-                                               check_overfitting, race, model_type=final_model_type, cv=cv,
-                                               resampling=resampling, script_name=script_name, outcome=target_variable)
+        final_model = train_and_evaluate(final_model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race,
+                                         y_test_race, params[final_model_name], tune_final, check_overfitting, race,
+                                         model_type=final_model_type, cv=cv, resampling=resampling,
+                                         script_name=script_name, outcome=target_variable)
 
         # Interpreting final model per race
         if interpret:
             interpret_model(final_model, final_model_type, X_train_race, final_model_name, race)
             equation(final_model, X_train_new.columns.tolist())
-            explore_shap_values(final_model, pd.DataFrame(X_train_race))
+            # explore_shap_values(final_model, pd.DataFrame(X_train_race))
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 
 from Phase_2.model_scripts.model_utils import (get_mapped_data, load_data_splits, prep_data_for_TL, search_spaces,
-                                               prep_data_for_race_model, train_and_evaluate_model)
+                                               prep_data_for_race_model, train_and_evaluate)
 
 
 def get_model_params(target_variable, model_type, resampling, race=None):
@@ -130,9 +130,8 @@ def main(
         base_model = DecisionTreeClassifier()
 
     # Train a base model on old data with dynamic parameters
-    base_model = train_and_evaluate_model(base_model, X_train_old, y_train_old_mapped, X_val_old, y_val_old_mapped,
-                                          params[base_model_name], tune_base, use_cv, "base",
-                                          n_splits=n_splits, resampling=resampling)
+    base_model = train_and_evaluate(base_model, X_train_old, y_train_old_mapped, X_val_old, y_val_old_mapped,
+                                    params[base_model_name], tune_base, use_cv, "base", resampling=resampling)
 
     # Prepare new data by combining it with the knowledge from old data.
     X_train_new_enhanced, X_val_new_enhanced = prep_data_for_TL(base_model, X_train_new, X_val_new, race_column)
@@ -155,9 +154,8 @@ def main(
                                                                                       y_val_new_mapped, race,
                                                                                       race_column)
 
-        train_and_evaluate_model(final_model, X_train_race, y_train_race, X_val_race, y_val_race,
-                                 params[final_model_name], tune_final, use_cv, "final", race, n_splits,
-                                 resampling)
+        train_and_evaluate(final_model, X_train_race, y_train_race, X_val_race, y_val_race, params[final_model_name],
+                           tune_final, use_cv, "final", race, n_splits, resampling)
 
 
 if __name__ == "__main__":

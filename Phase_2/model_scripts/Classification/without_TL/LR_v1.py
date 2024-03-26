@@ -206,14 +206,3 @@ if __name__ == "__main__":
          5,
          resampling,
          "LogisticRegression")
-
-    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
-    main(target_variable,
-         "Race",
-         "with",
-         "with",
-         False,
-         True,
-         5,
-         "with",
-         "LogisticRegression")

@@ -50,7 +50,7 @@ def plot_results(results, metric, target_variable):
     ax.text(0.5, 0.95, f"", transform=ax.transAxes, ha='center', fontsize=12, color='black')
 
     plt.tight_layout()
-    plt.savefig(f"../../../results/modeling/comparing_models_{target_variable.lower()}_{metric.lower()}.png")
+    # plt.savefig(f"../../../results/modeling/comparing_models_{target_variable.lower()}_{metric.lower()}.png")
     plt.show()
 
 
@@ -90,7 +90,7 @@ def plot_classification_report(results, target_variable):
         ax[i].legend()
 
     plt.tight_layout()
-    plt.savefig(f"../../../results/modeling/classification_report_{target_variable.lower()}.png")
+    # plt.savefig(f"../../../results/modeling/classification_report_{target_variable.lower()}.png")
     plt.show()
 
 

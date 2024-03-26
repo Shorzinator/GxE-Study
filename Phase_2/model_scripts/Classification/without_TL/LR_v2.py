@@ -21,18 +21,26 @@ def get_model_params(target_variable, model_type, resampling="without"):
     """
     # Example parameters; update these based on tuning results
 
-    if resampling == "with":
+    if resampling == "without":
         params = \
             {
                 "AntisocialTrajectory":
                     {
                         "final":
-                            {}
+                            {
+                                'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
+                                'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False, 'class_weight': None,
+                                'C': 1e-05
+                            }
                     },
                 "SubstanceUseTrajectory":
                     {
                         "final":
-                            {}
+                            {
+                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
+                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
+                                'class_weight': None, 'C': 1456.3484775012444
+                            }
                     }
             }
     else:
@@ -41,12 +49,20 @@ def get_model_params(target_variable, model_type, resampling="without"):
                 "AntisocialTrajectory":
                     {
                         "final":
-                            {}
+                            {
+                                'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
+                                'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False, 'class_weight': None,
+                                'C': 1e-05
+                            }
                     },
                 "SubstanceUseTrajectory":
                     {
                         "final":
-                            {}
+                            {
+                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
+                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
+                                'class_weight': None, 'C': 1456.3484775012444
+                            }
                     }
             }
 
@@ -95,14 +111,4 @@ if __name__ == "__main__":
          True,
          5,
          resampling,
-         "LogisticRegression")
-
-    target_variable = "SubstanceUseTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
-    main(target_variable,
-         "with",
-         "with",
-         False,
-         True,
-         5,
-         "with",
          "LogisticRegression")

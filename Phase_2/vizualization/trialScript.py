@@ -1,10 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from utility.data_loader import load_data
+from utility.data_loader import load_data_new
 
 # Load your dataset
-data_new = load_data()
+data_new = load_data_new()
 
 # Calculate the sample distribution percentages for the 'Race' variable
 race_distribution_sample = data_new['Race'].value_counts(normalize=True) * 100

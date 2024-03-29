@@ -4,7 +4,8 @@ import statistics
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-from Phase_2.model_scripts.model_utils import (get_model_instance, load_data_splits, prep_data_for_race_model,
+from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits,
+                                               prep_data_for_race_model,
                                                search_spaces,
                                                train_and_evaluate)
 
@@ -145,22 +146,14 @@ def main(
 ):
     print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
 
-    params = search_spaces()
-
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, _, _, _, _, _, _) = (
         load_data_splits(target_variable, pgs_old, pgs_new))
 
     # Map labels to start from 0
-    label_mapping_new = {label: i for i, label in enumerate(np.unique(y_train_new))}
-    y_train_new_mapped = np.vectorize(label_mapping_new.get)(y_train_new)
-    y_val_new_mapped = np.vectorize(label_mapping_new.get)(y_val_new)
-    y_test_new_mapped = np.vectorize(label_mapping_new.get)(y_test_new)
+    y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
 
     # Train and evaluate race-specific final models directly on the new data
-    train_acc_all = []
-    test_acc_all = []
-    val_acc_all = []
     for race in sorted(X_train_new[race_column].unique()):
         # Defining final_model based on the current race in iteration and its respective parameters
         if not tune_final:
@@ -177,20 +170,9 @@ def main(
             y_test_new_mapped,
             race, race_column)
 
-        _, train_acc, test_acc, val_acc = train_and_evaluate(final_model, X_train_race, y_train_race, X_val_race,
-                                                             y_val_race, X_test_race, y_test_race,
-                                                             params[final_model_name], tune_final, check_overfitting,
-                                                             race, model_type=final_model_type,
-                                                             cv=cv, resampling=resampling, script_name=script_name,
-                                                             outcome=target_variable)
-
-        train_acc_all.append(train_acc)
-        test_acc_all.append(test_acc)
-        val_acc_all.append(val_acc)
-
-    print(f"Mean Validation accuracy across different races: {statistics.mean(val_acc_all)}")
-    print(f"Mean Training accuracy across different races: {statistics.mean(train_acc_all)}")
-    print(f"Mean Testing accuracy across different races: {statistics.mean(test_acc_all)}\n\n")
+        train_and_evaluate(final_model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race,
+                           final_model_name, tune_final, race, model_type=final_model_type, cv=cv,
+                           resampling=resampling, script_name=script_name, outcome=target_variable)
 
 
 if __name__ == "__main__":

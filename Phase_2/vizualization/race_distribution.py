@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from utility.data_loader import load_data
+from utility.data_loader import load_data_new
 
-df = load_data()
+df = load_data_new()
 
 
 # Define a function to annotate the bars with counts

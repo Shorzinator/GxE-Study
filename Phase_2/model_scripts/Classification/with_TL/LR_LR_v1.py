@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from Phase_2.model_scripts.model_utils import (equation, explore_shap_values, get_mapped_data, get_model_instance,
+from Phase_2.model_scripts.model_utils import (equation, calc_shap_values, get_mapped_data, get_model_instance,
                                                interpret_model,
                                                load_data_splits,
                                                prep_data_for_TL,
@@ -174,8 +174,8 @@ def main(
      y_train_old, y_val_old, y_test_old) = load_data_splits(target_variable, pgs_old, pgs_new, resampling)
 
     # Map the train and val data as 0 to 3 from 1 to 4
-    y_train_old_mapped, y_val_old_mapped, y_test_old_mapped, y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = (
-        get_mapped_data(y_train_old, y_val_old, y_test_old, y_train_new, y_val_new, y_test_new))
+    y_train_new_mapped, y_val_new_mapped, y_test_new_mapped, y_train_old_mapped, y_val_old_mapped, y_test_old_mapped = (
+        get_mapped_data(y_train_new, y_val_new, y_test_new, y_train_old, y_val_old, y_test_old))
 
     if not tune_base:
         # Step 1 - Training base model on old data

@@ -2,9 +2,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from utility.data_loader import load_data, load_data_old
+from utility.data_loader import load_data_new, load_data_old
 
-data = load_data_old()
+# data = load_data_new()
+data = pd.read_csv("C:\\Users\\shour\\OneDrive\\Desktop\\GxE_Analysis\\Phase_2\\preprocessed_data\\without_resampling\\with_PGS\\AST_new\\y_val_new_AST.csv")
 
 
 # Define a function to annotate the bars with counts
@@ -30,16 +31,16 @@ plt.title('Distribution of AntisocialTrajectory Categories in Phase 1')
 plt.xlabel('Antisocial Trajectory')
 plt.ylabel('Count per Category')
 annotate_bars(ax1)  # Annotate bars with counts
-plt.savefig("../results/raw_old_data/distribution_AST")
+# plt.savefig("../results/raw_old_data/distribution_AST")
 plt.show()
 
 # Adjusted plot for SubstanceUseTrajectory distribution
-plt.figure(figsize=(10, 6))
-ax2 = sns.countplot(x='SubstanceUseTrajectory', data=data, palette=color_palette)
-ax2.set_xticklabels([substance_use_labels.get(x) for x in sorted(data['SubstanceUseTrajectory'].dropna().unique())])
-plt.title('Distribution of SubstanceUseTrajectory Categories in Phase 1')
-plt.xlabel('Substance Use Trajectory')
-plt.ylabel('Count per Category')
-annotate_bars(ax2)  # Annotate bars with counts
-plt.savefig("../results/raw_old_data/distribution_SUT")
-plt.show()
+# plt.figure(figsize=(10, 6))
+# ax2 = sns.countplot(x='SubstanceUseTrajectory', data=data, palette=color_palette)
+# ax2.set_xticklabels([substance_use_labels.get(x) for x in sorted(data['SubstanceUseTrajectory'].dropna().unique())])
+# plt.title('Distribution of SubstanceUseTrajectory Categories in Phase 1')
+# plt.xlabel('Substance Use Trajectory')
+# plt.ylabel('Count per Category')
+# annotate_bars(ax2)  # Annotate bars with counts
+# plt.savefig("../results/raw_old_data/distribution_SUT")
+# plt.show()

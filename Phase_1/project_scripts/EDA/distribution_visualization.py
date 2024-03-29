@@ -2,14 +2,14 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-from utility.data_loader import load_data
+from utility.data_loader import load_data_new
 from utility.path_utils import get_path_from_root
 
 # Setting up directories
 output_dir_plots = get_path_from_root("results", "figures", "eda_plots", "distribution_visualization")
 
 # Load data
-df = load_data()
+df = load_data_new()
 
 # List of numerical columns (excluding target variable for now)
 numerical_cols = df.select_dtypes(['int64', 'float64']).columns

@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from Phase_1.project_scripts import balance_data, preprocess_multinomial, scaling_applier
 # Using your utility functions and other functions you've already created
 from Phase_1.project_scripts.preprocessing import *
-from utility.data_loader import load_data
+from utility.data_loader import load_data_new
 from utility.model_utils import add_interaction_terms, \
     calculate_metrics, ensure_directory_exists, save_results, train_model
 from utility.path_utils import get_path_from_root
@@ -41,7 +41,7 @@ def main(target):
     ensure_directory_exists(metrics_dir)
 
     # Load data
-    df = load_data()
+    df = load_data_new()
 
     # Preprocess data
     df, outcome = preprocess_multinomial(df, "AntisocialTrajectory")

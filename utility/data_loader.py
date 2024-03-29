@@ -11,7 +11,7 @@ DATA_PATH_new = get_data_path("Data_GxE_on_EXT_trajectories_new.csv")
 DATA_PATH_old = get_data_path("Data_GxE_on_EXT_trajectories_old.csv")
 
 
-def load_data():
+def load_data_new():
     df = pd.read_csv(DATA_PATH_new)
     if df.empty:
         raise ValueError("Data is empty or not loaded properly.")

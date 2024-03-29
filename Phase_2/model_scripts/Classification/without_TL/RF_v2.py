@@ -1,5 +1,6 @@
 import os
 
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 
 from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits,
@@ -26,11 +27,8 @@ def get_model_params(target_variable, model_type, resampling="without"):
                 "AntisocialTrajectory":
                     {
                         "final":
-                            {
-                                'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
-                                'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False, 'class_weight': None,
-                                'C': 1e-05
-                            }
+                            {'n_estimators': 600, 'min_samples_split': 6, 'min_samples_leaf': 19, 'max_features': 'log2', 'max_depth': 10, 'bootstrap': False}
+
                     },
                 "SubstanceUseTrajectory":
                     {
@@ -48,11 +46,8 @@ def get_model_params(target_variable, model_type, resampling="without"):
                 "AntisocialTrajectory":
                     {
                         "final":
-                            {
-                                'warm_start': False, 'tol': 0.029763514416313194, 'solver': 'lbfgs', 'penalty': 'l2',
-                                'multi_class': 'ovr', 'max_iter': 2400, 'fit_intercept': False, 'class_weight': None,
-                                'C': 1e-05
-                            }
+                            {'n_estimators': 600, 'min_samples_split': 6, 'min_samples_leaf': 19, 'max_features': 'log2', 'max_depth': 10, 'bootstrap': False}
+
                     },
                 "SubstanceUseTrajectory":
                     {
@@ -68,7 +63,7 @@ def get_model_params(target_variable, model_type, resampling="without"):
     return params[target_variable][model_type]
 
 
-def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="LogisticRegression",
+def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="RandomForest",
          model_type="final"):
 
     print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
@@ -82,7 +77,8 @@ def main(target_variable, tune_final=False, cv=5, resampling="without", final_mo
 
     # Train and evaluate race-specific final models directly on the new data
     if not tune_final:
-        final_model = LogisticRegression(**get_model_params(target_variable, "final", resampling))
+        # final_model = RandomForestClassifier(random_state=42)
+        final_model = RandomForestClassifier(**get_model_params(target_variable, "final", resampling))
     else:
         final_model = get_model_instance(final_model_name)
 
@@ -98,4 +94,6 @@ if __name__ == "__main__":
          False,
          5,
          "with",
-         "LogisticRegression")
+         "RandomForest")
+
+

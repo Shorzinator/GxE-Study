@@ -1,12 +1,9 @@
 import os
-import statistics
 
-import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits,
                                                prep_data_for_race_model,
-                                               search_spaces,
                                                train_and_evaluate)
 
 # Get the base name of the current script and strip the .py extension to use in the filename
@@ -141,8 +138,8 @@ def get_model_params(target_variable, model_type, race=None, resampling="without
 
 
 def main(
-        target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False, check_overfitting=False,
-        cv=10, resampling="without", final_model_name="LogisticRegression", final_model_type="final"
+        target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False, cv=10,
+        resampling="without", final_model_name="LogisticRegression", final_model_type="final"
 ):
     print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
 
@@ -157,7 +154,8 @@ def main(
     for race in sorted(X_train_new[race_column].unique()):
         # Defining final_model based on the current race in iteration and its respective parameters
         if not tune_final:
-            final_model = LogisticRegression(**get_model_params(target_variable, "final", race, resampling))
+            final_model = LogisticRegression(random_state=42, multi_class='ovr')
+            # final_model = LogisticRegression(**get_model_params(target_variable, "final", race, resampling))
         else:
             final_model = get_model_instance(final_model_name)
 
@@ -172,11 +170,10 @@ def main(
 
         train_and_evaluate(final_model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race,
                            final_model_name, tune_final, race, model_type=final_model_type, cv=cv,
-                           resampling=resampling, script_name=script_name, outcome=target_variable)
+                           resampling=resampling, outcome=target_variable)
 
 
 if __name__ == "__main__":
-    resampling = "without"
 
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
@@ -184,7 +181,6 @@ if __name__ == "__main__":
          "with",
          "with",
          False,
-         True,
          5,
-         resampling,
+         "with",
          "LogisticRegression")

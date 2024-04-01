@@ -228,7 +228,7 @@ def train_and_evaluate_with_race_feature(
         y_prob_train, y_prob_val, y_prob_test = get_prob_values(model, X_train_race, X_val_race, X_test_race)
 
         # Calculate and print the accuracies
-        # calc_accuracy(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
+        calc_accuracy(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
 
         # Calculate and print the f1 score's
         # calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
@@ -282,13 +282,13 @@ def calc_accuracy(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_rac
     print(f"Validation Accuracy: {val_accuracy:.4f}")
     print(f"Test Accuracy: {test_accuracy:.4f}")
 
-    print("\nPer-class metrics:")
-    print("Training:")
-    print(classification_report(y_train_race, y_pred_train))
-    print("Validation:")
-    print(classification_report(y_val_race, y_pred_val))
-    print("Testing:")
-    print(classification_report(y_test_race, y_pred_test))
+    # print("\nPer-class metrics:")
+    # print("Training:")
+    # print(classification_report(y_train_race, y_pred_train))
+    # print("Validation:")
+    # print(classification_report(y_val_race, y_pred_val))
+    # print("Testing:")
+    # print(classification_report(y_test_race, y_pred_test))
 
 
 def calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test):
@@ -664,7 +664,7 @@ def load_data(file_path):
 
 
 # Function to load the data splits
-def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="without"):
+def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="with"):
     suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
     X_train_old = load_data(
         f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
@@ -698,7 +698,7 @@ def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling
 
 def search_spaces():
     # Define search spaces for each model
-    search_spaces = {
+    search_parameters = {
         'LogisticRegression': {
             # 'penalty': ['l2', 'elasticnet', None], # Including all types of penalties
             'penalty': ['l2'],  # Including all types of penalties
@@ -779,4 +779,4 @@ def search_spaces():
         },
     }
 
-    return search_spaces
+    return search_parameters

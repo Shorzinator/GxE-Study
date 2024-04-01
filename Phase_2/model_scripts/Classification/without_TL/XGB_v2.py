@@ -1,3 +1,5 @@
+from xgboost import XGBClassifier
+
 from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits,
                                                train_and_evaluate_with_race_feature)
 
@@ -66,14 +68,26 @@ def main(target_variable, tune_final=False, cv=5, resampling="without", final_mo
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, _, _, _, _, _, _) = (
-        load_data_splits(target_variable, "without", "without", resampling))
+        load_data_splits(target_variable, "with", "with", resampling))
 
     # Map labels to start from 0
     y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
 
     # Train and evaluate race-specific final models directly on the new data
     if not tune_final:
-        final_model = get_model_instance(final_model_name)
+        final_model = XGBClassifier(
+            random_state=42,
+            n_estimators=800,
+            reg_alpha=0.5,
+            reg_lambda=20,
+            max_depth=3,
+            min_child_weight=8,
+            subsample=0.7,
+            colsample_bytree=0.7,
+            learning_rate=0.1,
+            # early_stopping_rounds=50,
+            eval_metric='mlogloss'
+        )
         # final_model = XGBClassifier(**get_model_params(target_variable, "final", resampling))
     else:
         final_model = get_model_instance(final_model_name)
@@ -89,5 +103,5 @@ if __name__ == "__main__":
     main(target_variable,
          False,
          5,
-         "without",
+         "with",
          "XGB")

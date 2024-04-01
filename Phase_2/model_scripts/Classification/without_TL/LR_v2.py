@@ -70,7 +70,14 @@ def get_model_params(target_variable, model_type, resampling="without"):
 
 def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="LogisticRegression",
          model_type="final"):
-
+    """
+    @param cv: integer
+    @param final_model_name: string
+    @param resampling: string
+    @param tune_final: string
+    @param model_type: string
+    @type target_variable: string
+    """
     print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
 
     # Load data splits
@@ -82,7 +89,8 @@ def main(target_variable, tune_final=False, cv=5, resampling="without", final_mo
 
     # Train and evaluate race-specific final models directly on the new data
     if not tune_final:
-        final_model = LogisticRegression(**get_model_params(target_variable, "final", resampling))
+        final_model = LogisticRegression(random_state=42, multi_class='ovr')
+        # final_model = LogisticRegression(**get_model_params(target_variable, "final", resampling))
     else:
         final_model = get_model_instance(final_model_name)
 

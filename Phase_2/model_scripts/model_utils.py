@@ -1,14 +1,12 @@
-import os
-
 import numpy as np
 import pandas as pd
 import shap
 from matplotlib import pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 from sklearn.calibration import calibration_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix, f1_score, accuracy_score
+from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confusion_matrix, f1_score, accuracy_score, \
+    precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import RandomizedSearchCV, learning_curve, train_test_split
 from xgboost import XGBClassifier
 
@@ -51,65 +49,14 @@ def prep_data_for_race_model(
     return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
 
 
-# def train_and_evaluate_with_race_feature(model, X_train, y_train, X_val, y_val, X_test, y_test, params=None, tune=False,
-#                                          check_overfitting=False, model_type="final", cv=10, resampling="with",
-#                                          script_name=None, outcome="AntisocialTrajectory"):
-#     """
-#     Train and evaluate a model including race as a single feature within the dataset.
-#     This function does not handle race-specific modeling but treats race as any other feature.
-#
-#     Parameters:
-#     - model: The model instance to be trained and evaluated.
-#     - X_train, y_train: Training data and labels.
-#     - X_val, y_val: Validation data and labels.
-#     - X_test, y_test: Testing data and labels.
-#     - tune: Boolean, whether to perform hyperparameter tuning.
-#     - check_overfitting: Boolean, whether to evaluate the model for overfitting.
-#     - cv: Integer, the number of cross-validation folds.
-#     - resampling: String, indicating the resampling strategy used.
-#     - script_name: String, the name of the script, if applicable.
-#     - outcome: String, the outcome variable name.
-#     """
-#     model_name = f"{model_type} model"
-#
-#     tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
-#     model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
-#     param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
-#
-#     if tune:
-#         model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv, model_path=model_path,
-#                                                   param_path=param_path, script_name=script_name, model_type=model_type)
-#
-#         print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
-#
-#     model.fit(X_train, y_train)
-#
-#     model_val_accuracy = accuracy_score(y_val, model.predict(X_val))
-#     print(f"Accuracy for {model_name} on validation set {resampling} resampling: {model_val_accuracy}")
-#
-#     model_train_accuracy = accuracy_score(y_train, model.predict(X_train))
-#     print(f"Accuracy for {model_name} on training set {resampling} resampling: {model_train_accuracy}")
-#
-#     model_test_accuracy = accuracy_score(y_test, model.predict(X_test))
-#     print(f"Accuracy for {model_name} on testing set {resampling} resampling: {model_test_accuracy}")
-#
-#     # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
-#     if check_overfitting:
-#         overfitting_results = evaluate_overfitting(
-#             train_accuracy=model_train_accuracy,
-#             val_accuracy=model_val_accuracy,
-#             y_train_true=y_train,
-#             y_train_pred=model.predict(X_train),
-#             y_val_true=y_val,
-#             y_val_pred=model.predict(X_val)
-#         )
-#         print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {overfitting_results}", "\n")
-#
-#     return model
+# Declaring variable to prevent overfitting
+early_stopping_rounds = 150
 
 
-def train_and_evaluate(model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, race=None,
-                       model_type="base", cv=5, resampling="with", outcome="AntisocialTrajectory"):
+def train_and_evaluate(
+        model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, race=None,
+        model_type="base", cv=5, resampling="with", outcome="AntisocialTrajectory"
+        ):
     """
     Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
@@ -127,9 +74,9 @@ def train_and_evaluate(model, X_train, y_train, X_val, y_val, X_test, y_test, fi
 
     model_name = f"{model_type} model" + (f" (race {race})" if race else "")
 
-    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
-    model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
-    param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
+    # tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
+    # model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
+    # param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
 
     # If 'tuning' is toggled to True
     if tune:
@@ -140,14 +87,25 @@ def train_and_evaluate(model, X_train, y_train, X_val, y_val, X_test, y_test, fi
         print(f"Best Parameters for {model_name} {resampling} resampling: \n{best_params} \n")
 
     # Fitting the trained model
-    model.fit(X_train, y_train)
-
+    model.fit(
+        X_train,
+        y_train,
+        eval_set=[(X_val, y_val)],
+        early_stopping_rounds=early_stopping_rounds,
+        verbose=False
+    )
     # Get predictions using the trained model
     y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train, X_val, X_test)
     print(np.unique(y_pred_train), np.unique(y_pred_val), np.unique(y_pred_test))
 
+    # Get probability values using the trained model
+    y_prob_train, y_prob_val, y_prob_test = get_prob_values(model, X_train, X_val, X_test)
+
     # Calculate and print the accuracies
     calc_accuracy(y_train, y_pred_train, y_val, y_pred_val, y_test, y_pred_test)
+
+    # Calculate and print the AUC
+    calc_roc_auc(y_train, y_prob_train, y_val, y_prob_val, y_test, y_prob_test)
 
     # Calculate and print the f1 score's
     # calc_f1_score(y_train, y_pred_train, y_val, y_pred_val, y_test, y_pred_test)
@@ -188,7 +146,7 @@ def train_and_evaluate_with_race_feature(
     """
     model_name = f"{model_type} model"
 
-    tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
+    # tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
     # model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
     # param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
 
@@ -218,7 +176,13 @@ def train_and_evaluate_with_race_feature(
         y_test_race = y_test[indices_test]
 
         # Train the model
-        model.fit(X_train_race, y_train_race)
+        model.fit(
+            X_train_race,
+            y_train_race,
+            eval_set=[(X_val_race, y_val_race)],
+            early_stopping_rounds=early_stopping_rounds,
+            verbose=False
+        )
 
         # Get predictions using the trained model
         y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train_race, X_val_race, X_test_race)
@@ -229,6 +193,9 @@ def train_and_evaluate_with_race_feature(
 
         # Calculate and print the accuracies
         calc_accuracy(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
+
+        # Calculate and print the AUC
+        calc_roc_auc(y_train_race, y_prob_train, y_val_race, y_prob_val, y_test_race, y_prob_test)
 
         # Calculate and print the f1 score's
         # calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
@@ -299,6 +266,16 @@ def calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_rac
     print(f"Training F-1 Score: {f1_train:.4f}")
     print(f"Validation F-1 Score: {f1_val:.4f}")
     print(f"Testing F-1 Score: {f1_test:.4f}")
+
+
+def calc_roc_auc(y_train_race, y_prob_train, y_val_race, y_prob_val, y_test_race, y_prob_test):
+    train_roc_auc = roc_auc_score(y_train_race, y_prob_train, multi_class='ovr')
+    val_roc_auc = roc_auc_score(y_val_race, y_prob_val, multi_class='ovr')
+    test_roc_auc = roc_auc_score(y_test_race, y_prob_test, multi_class='ovr')
+
+    print(f"Training ROC AUC: {train_roc_auc:.4f}")
+    print(f"Validation ROC AUC: {val_roc_auc:.4f}")
+    print(f"Test ROC AUC: {test_roc_auc:.4f}")
 
 
 def plot_calibration_curve(y_true, y_prob, labels):
@@ -402,7 +379,6 @@ def prep_data_for_TL(base_model, X_train_new, X_val_new, X_test_new, race_column
 
 
 def random_search_tuning(model, params, race_X_train, race_y_train, cv=5):
-
     random_search = RandomizedSearchCV(
         estimator=model,
         param_distributions=params,
@@ -463,7 +439,7 @@ def random_search_tuning(model, params, race_X_train, race_y_train, cv=5):
 def evaluate_overfitting(
         train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred, model_name,
         resampling
-        ):
+):
     """
     Evaluate the model for overfitting using training and validation metrics.
 
@@ -483,51 +459,33 @@ def evaluate_overfitting(
     f1_val = f1_score(y_val_true, y_val_pred, average='macro')
 
     # Calculate precision scores for training and validation sets
-    # precision_train = precision_score(y_train_true, y_train_pred, average='macro', zero_division=1)
-    # precision_val = precision_score(y_val_true, y_val_pred, average='macro', zero_division=1)
+    precision_train = precision_score(y_train_true, y_train_pred, average='macro', zero_division=1)
+    precision_val = precision_score(y_val_true, y_val_pred, average='macro', zero_division=1)
 
     # Calculate recall scores for training and validation sets
-    # recall_train = recall_score(y_train_true, y_train_pred, average='macro', zero_division=1)
-    # recall_val = recall_score(y_val_true, y_val_pred, average='macro', zero_division=1)
+    recall_train = recall_score(y_train_true, y_train_pred, average='macro', zero_division=1)
+    recall_val = recall_score(y_val_true, y_val_pred, average='macro', zero_division=1)
 
     # Calculate the differences in metrics between training and validation sets
     f1_diff = f1_train - f1_val
-    # precision_diff = precision_train - precision_val
-    # recall_diff = recall_train - recall_val
+    precision_diff = precision_train - precision_val
+    recall_diff = recall_train - recall_val
     acc_diff = train_accuracy - val_accuracy
 
     # Define thresholds for differences that would indicate overfitting
     # These are heuristic values and could be adjusted based on domain knowledge and empirical evidence
     f1_threshold = 0.2
-    # precision_threshold = 0.2
-    # recall_threshold = 0.2
+    precision_threshold = 0.2
+    recall_threshold = 0.2
     acc_threshold = 0.2
 
     # Check for overfitting based on multiple criteria
     is_overfitting = (
             f1_diff > f1_threshold or
-            # precision_diff > precision_threshold or
-            # recall_diff > recall_threshold or
-            # roc_auc_diff > roc_auc_threshold or
+            precision_diff > precision_threshold or
+            recall_diff > recall_threshold or
             acc_diff > acc_threshold
     )
-
-    # Compile results into a dictionary
-    # results = {
-    #     'train_accuracy': train_accuracy,
-    #     'val_accuracy': val_accuracy,
-    #     'f1_train': f1_train,
-    #     'f1_val': f1_val,
-    #     # 'precision_train': precision_train,
-    #     # 'precision_val': precision_val,
-    #     # 'recall_train': recall_train,
-    #     # 'recall_val': recall_val,
-    #     'f1_diff': f1_diff,
-    #     # 'precision_diff': precision_diff,
-    #     # 'recall_diff': recall_diff,
-    #     'acc_diff': acc_diff,
-    #     'is_overfitting': is_overfitting
-    # }
 
     print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {is_overfitting}\n")
 

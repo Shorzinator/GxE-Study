@@ -61,8 +61,7 @@ def get_model_params(target_variable, model_type, resampling="without"):
     return params[target_variable][model_type]
 
 
-def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="XGB",
-         model_type="final"):
+def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="XGB", model_type="final"):
 
     print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
 
@@ -75,19 +74,7 @@ def main(target_variable, tune_final=False, cv=5, resampling="without", final_mo
 
     # Train and evaluate race-specific final models directly on the new data
     if not tune_final:
-        final_model = XGBClassifier(
-            random_state=42,
-            n_estimators=800,
-            reg_alpha=0.5,
-            reg_lambda=20,
-            max_depth=3,
-            min_child_weight=8,
-            subsample=0.7,
-            colsample_bytree=0.7,
-            learning_rate=0.1,
-            # early_stopping_rounds=50,
-            eval_metric='mlogloss'
-        )
+        final_model = XGBClassifier(random_state=42, n_estimators=800)
         # final_model = XGBClassifier(**get_model_params(target_variable, "final", resampling))
     else:
         final_model = get_model_instance(final_model_name)

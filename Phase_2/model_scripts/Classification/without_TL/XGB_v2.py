@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
-         False,
+         True,
          5,
          "with",
          "XGB")

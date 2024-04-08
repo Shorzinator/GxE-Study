@@ -90,9 +90,9 @@ def train_and_evaluate(
     model.fit(
         X_train,
         y_train,
-        eval_set=[(X_val, y_val)],
-        early_stopping_rounds=early_stopping_rounds,
-        verbose=False
+        # eval_set=[(X_val, y_val)],
+        # early_stopping_rounds=early_stopping_rounds,
+        # verbose=False
     )
     # Get predictions using the trained model
     y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train, X_val, X_test)
@@ -179,9 +179,9 @@ def train_and_evaluate_with_race_feature(
         model.fit(
             X_train_race,
             y_train_race,
-            eval_set=[(X_val_race, y_val_race)],
-            early_stopping_rounds=early_stopping_rounds,
-            verbose=False
+            # eval_set=[(X_val_race, y_val_race)],
+            # early_stopping_rounds=early_stopping_rounds,
+            # verbose=False
         )
 
         # Get predictions using the trained model
@@ -622,7 +622,7 @@ def load_data(file_path):
 
 
 # Function to load the data splits
-def load_data_splits(target_variable, pgs_old="with", pgs_new="with", resampling="with"):
+def load_data_splits(target_variable, pgs_old="without", pgs_new="without", resampling="with"):
     suffix = "AST" if target_variable == "AntisocialTrajectory" else "SUT"
     X_train_old = load_data(
         f"../../../preprocessed_data/{resampling}_resampling/{pgs_new}_PGS/{suffix}_old/X_train_old_{suffix}.csv")
@@ -689,17 +689,17 @@ def search_spaces():
             'max_features': ['sqrt', 'log2', None],
         },
         'XGB': {
-            'n_estimators': (100, 1000),
-            'learning_rate': (0.01, 0.2),
-            'max_depth': (3, 10),
-            'min_child_weight': (0, 10),
-            'subsample': (0.5, 1.0),
-            'colsample_bytree': (0.5, 1.0),
-            'gamma': (0, 1),
-            'reg_alpha': (0, 10),
-            'reg_lambda': (0, 10),
-            'max_delta_step': (0, 5),
-            'colsample_bylevel': (0.5, 1.0),
+            'n_estimators': (800, 1500),
+            'learning_rate': (0.01, 0.1),  # Narrowed the range to focus on smaller learning rates
+            'max_depth': (3, 6),  # Reduced the upper limit to prevent overly complex trees
+            'min_child_weight': (3, 8),  # Adjusted the range based on previous good results
+            'subsample': (0.6, 0.9),  # Narrowed the range to focus on higher values
+            'colsample_bytree': (0.6, 0.9),  # Narrowed the range to focus on higher values
+            'gamma': (0, 0.5),  # Reduced the upper limit to focus on smaller values
+            'reg_alpha': (0.1, 1.0),  # Adjusted the range based on previous good results
+            'reg_lambda': (10, 30),  # Adjusted the range based on previous good results
+            'max_delta_step': (0, 3),  # Reduced the upper limit to focus on smaller values
+            'colsample_bylevel': (0.6, 0.9),  # Narrowed the range to focus on higher values
         },
         'CatBoost': {
             'iterations': [100, 500, 1000],

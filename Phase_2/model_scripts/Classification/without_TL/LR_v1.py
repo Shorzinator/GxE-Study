@@ -141,7 +141,7 @@ def main(
         target_variable, race_column="Race", pgs_old="with", pgs_new="with", tune_final=False, cv=10,
         resampling="without", final_model_name="LogisticRegression", final_model_type="final"
 ):
-    print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
+    print(f"Running {final_model_name}_v1 model predicting {target_variable} {resampling} resampling:\n")
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, _, _, _, _, _, _) = (

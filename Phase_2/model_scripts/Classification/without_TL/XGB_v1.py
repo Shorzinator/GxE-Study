@@ -21,10 +21,30 @@ def get_model_params(target_variable, model_type, race=None, resampling="with"):
                     {
                         "final":
                         {
-                            1.0: {'subsample': 1.0, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 1000, 'min_child_weight': 0, 'max_depth': 10, 'max_delta_step': 5, 'learning_rate': 0.2, 'gamma': 0, 'colsample_bytree': 0.5, 'colsample_bylevel': 0.5},
-                            2.0: {'subsample': 0.5, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 1000, 'min_child_weight': 0, 'max_depth': 10, 'max_delta_step': 5, 'learning_rate': 0.01, 'gamma': 0, 'colsample_bytree': 0.5, 'colsample_bylevel': 1.0},
-                            3.0: {'subsample': 0.5, 'reg_lambda': 10, 'reg_alpha': 0, 'n_estimators': 1000, 'min_child_weight': 10, 'max_depth': 3, 'max_delta_step': 0, 'learning_rate': 0.2, 'gamma': 1, 'colsample_bytree': 1.0, 'colsample_bylevel': 0.5},
-                            4.0: {'subsample': 1.0, 'reg_lambda': 0, 'reg_alpha': 0, 'n_estimators': 100, 'min_child_weight': 0, 'max_depth': 10, 'max_delta_step': 0, 'learning_rate': 0.2, 'gamma': 0, 'colsample_bytree': 0.5, 'colsample_bylevel': 1.0},
+                            1.0:
+                                {
+                                    'subsample': 0.9, 'reg_lambda': 10, 'reg_alpha': 0.1, 'n_estimators': 800,
+                                    'min_child_weight': 3, 'max_depth': 6, 'max_delta_step': 0, 'learning_rate': 0.1,
+                                    'gamma': 0, 'colsample_bytree': 0.6, 'colsample_bylevel': 0.9
+                                },
+                            2.0:
+                                {
+                                    'subsample': 0.9, 'reg_lambda': 10, 'reg_alpha': 0.1, 'n_estimators': 800,
+                                    'min_child_weight': 3, 'max_depth': 6, 'max_delta_step': 0, 'learning_rate': 0.1,
+                                    'gamma': 0, 'colsample_bytree': 0.6, 'colsample_bylevel': 0.9
+                                },
+                            3.0:
+                                {
+                                    'subsample': 0.6, 'reg_lambda': 30, 'reg_alpha': 1.0, 'n_estimators': 1500,
+                                    'min_child_weight': 8, 'max_depth': 6, 'max_delta_step': 3, 'learning_rate': 0.1,
+                                    'gamma': 0, 'colsample_bytree': 0.6, 'colsample_bylevel': 0.6
+                                },
+                            4.0:
+                                {
+                                    'subsample': 0.6, 'reg_lambda': 10, 'reg_alpha': 0.1, 'n_estimators': 1500,
+                                    'min_child_weight': 3, 'max_depth': 6, 'max_delta_step': 3, 'learning_rate': 0.01,
+                                    'gamma': 0, 'colsample_bytree': 0.6, 'colsample_bylevel': 0.9
+                                },
                         }
                     },
                 "SubstanceUseTrajectory":
@@ -114,7 +134,18 @@ def main(target_variable, race_column="Race", tune_final=False, cv=10, resamplin
         # Defining final_model based on the current race in iteration and its respective parameters
         if not tune_final:
             # final_model = get_model_instance(final_model_name)
-            final_model = XGBClassifier(random_state=42, n_estimators=800)
+            final_model = XGBClassifier(
+                random_state=42,
+                n_estimators=1200,
+                reg_alpha=0.5,
+                reg_lambda=25,
+                max_depth=5,
+                min_child_weight=5,
+                subsample=0.8,
+                colsample_bytree=0.8,
+                learning_rate=0.08,
+                eval_metric='mlogloss'
+            )
 
             # final_model = XGBClassifier(**get_model_params(target_variable, "final", race, resampling))
         else:
@@ -139,7 +170,7 @@ if __name__ == "__main__":
     main(
         target_variable,
         "Race",
-        False,
+        True,
         5,
         "with",
         "XGB"

@@ -3,14 +3,14 @@ import logging
 from Phase_2.model_scripts.model_utils import split_data
 from Phase_2.preprocessing_scripts.preprocessing_utils import apply_smote_nc, handle_family_clusters, \
     initial_cleaning, \
-    load_old_data, robust_scaling_continuous_variables_old, save_preprocessed_data
+    initial_cleaning_without_genetics, load_old_data, robust_scaling_continuous_variables_old, save_preprocessed_data
 from config import FEATURES_FOR_AST_old, FEATURES_FOR_SUT_old
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def preprocessing_pipeline(features, target, file_path_to_save, resampling):
+def preprocessing_pipeline(features, target, file_path_to_save, resampling, pgs):
     """
         Applies the entire preprocessing pipeline to a dataset and saves the preprocessed data.
 
@@ -28,7 +28,12 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
     df = load_old_data()
 
     # Initial cleaning and feature engineering
-    df, feature_cols = initial_cleaning(df, features, target)
+    if pgs == "without":
+        df = initial_cleaning_without_genetics(df, target)
+        pgs_dropped = True
+    else:
+        df, features = initial_cleaning(df, features, target)
+        pgs_dropped = False
 
     # Handle family clusters
     df = handle_family_clusters(df)
@@ -37,7 +42,7 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
     X_train, X_val, X_test, y_train, y_val, y_test = split_data(df, target)
 
     # Apply StandardScaler
-    X_train, X_val, X_test = robust_scaling_continuous_variables_old(X_train, X_val, X_test, feature_cols, target)
+    X_train, X_val, X_test = robust_scaling_continuous_variables_old(X_train, X_val, X_test, features, target, pgs_dropped)
 
     # Apply encoding
     if resampling:
@@ -67,21 +72,21 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling):
         save_preprocessed_data(y_test, f"{file_path_to_save}y_test_old_{suffix}.csv", "y_test")
 
 
-def main(TARGET, pgs, resampling):
+def main(target, pgs, resampling):
     # Assigning features based on the outcome.
-    if TARGET == "AntisocialTrajectory":
-        FEATURES = FEATURES_FOR_AST_old
+    if target == "AntisocialTrajectory":
+        features = FEATURES_FOR_AST_old
         SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/AST_old/"
     else:
-        FEATURES = FEATURES_FOR_SUT_old
+        features = FEATURES_FOR_SUT_old
         SAVE_PATH = f"../preprocessed_data/{resampling}_resampling/{pgs}_PGS/SUT_old/"
 
     resampling_bool = True if resampling == "with" else False
-    preprocessing_pipeline(FEATURES, TARGET, SAVE_PATH, resampling_bool)
+    preprocessing_pipeline(features, target, SAVE_PATH, resampling_bool, pgs)
 
 
 if __name__ == '__main__':
-    resampling = "without"
-    pgs = "with"
+    resampling = "with"
+    pgs = "without"
     main("AntisocialTrajectory", pgs, resampling)
     main("SubstanceUseTrajectory", pgs, resampling)

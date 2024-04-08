@@ -68,21 +68,24 @@ def get_model_params(target_variable, model_type, resampling="without"):
     return params[target_variable][model_type]
 
 
-def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="LogisticRegression",
+def main(target_variable, tune_final=False, pgs_old="with", pgs_new="with", cv=5, resampling="without", final_model_name="LogisticRegression",
          model_type="final"):
     """
-    @param cv: integer
-    @param final_model_name: string
-    @param resampling: string
-    @param tune_final: string
-    @param model_type: string
-    @type target_variable: string
+    :param cv:
+    :param final_model_name:
+    :param resampling:
+    :param tune_final:
+    :param model_type:
+    :param target_variable:
+    :param pgs_new:
+    :param pgs_old:
+
     """
-    print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
+    print(f"Running {final_model_name}_v2 model predicting {target_variable} {resampling} resampling and {pgs_new} PGS:\n")
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, _, _, _, _, _, _) = (
-        load_data_splits(target_variable))
+        load_data_splits(target_variable, pgs_old, pgs_new))
 
     # Map labels to start from 0
     y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
@@ -104,6 +107,8 @@ if __name__ == "__main__":
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
          False,
+         "without",
+         "without",
          5,
-         "with",
+         "without",
          "LogisticRegression")

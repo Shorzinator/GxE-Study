@@ -30,15 +30,14 @@ def preprocessing_pipeline(features, target, file_path_to_save, resampling, pgs)
     # Load data
     df = load_new_data()
     df = df.dropna(subset=["Race"])
-    df = df.drop(df[df["Race"] == 5].index)
+    # df = df.drop(df[df["Race"] == 5].index)
 
     # Initial cleaning and feature engineering
+    pgs_dropped = True if pgs == "without" else False
     if pgs == "without":
         df = initial_cleaning_without_genetics(df, target)
-        pgs_dropped = True
     else:
         df, feature_cols = initial_cleaning(df, features, target)
-        pgs_dropped = False
 
     # Handle family clusters
     df = handle_family_clusters(df)
@@ -87,5 +86,9 @@ def main(target, pgs, resampling):
 if __name__ == '__main__':
     resampling = "with"
     pgs = "without"
-    main("AntisocialTrajectory", pgs, resampling)
-    main("SubstanceUseTrajectory", pgs, resampling)
+    main("AntisocialTrajectory", "with", "with")
+    main("AntisocialTrajectory", "without", "with")
+    main("AntisocialTrajectory", "with", "without")
+    main("AntisocialTrajectory", "without", "without")
+
+    # main("SubstanceUseTrajectory", pgs, resampling)

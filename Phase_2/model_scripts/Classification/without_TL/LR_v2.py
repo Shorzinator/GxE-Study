@@ -32,15 +32,6 @@ def get_model_params(target_variable, model_type, resampling="without"):
                                 'C': 1e-05
                             }
                     },
-                "SubstanceUseTrajectory":
-                    {
-                        "final":
-                            {
-                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
-                                'class_weight': None, 'C': 1456.3484775012444
-                            }
-                    }
             }
     else:
         params = \
@@ -54,15 +45,6 @@ def get_model_params(target_variable, model_type, resampling="without"):
                                 'C': 1e-05
                             }
                     },
-                "SubstanceUseTrajectory":
-                    {
-                        "final":
-                            {
-                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
-                                'class_weight': None, 'C': 1456.3484775012444
-                            }
-                    }
             }
 
     return params[target_variable][model_type]
@@ -106,9 +88,9 @@ if __name__ == "__main__":
 
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
-         False,
+         True,
          "without",
          "without",
          5,
-         "without",
+         "with",
          "LogisticRegression")

@@ -166,16 +166,35 @@ def train_and_evaluate_with_race_feature(
         indices_val = X_val[race_column] == race
         indices_test = X_test[race_column] == race
 
+        # Training data
         X_train_race = X_train.loc[indices_train].drop(columns=[race_column])
+        X_train_race = pd.DataFrame(X_train_race)
+
         y_train_race = y_train[indices_train]
+        y_train_race = pd.DataFrame(y_train_race)
+        y_train_race = y_train_race.values.ravel()
 
+        # Validation data
         X_val_race = X_val.loc[indices_val].drop(columns=[race_column])
-        y_val_race = y_val[indices_val]
+        X_val_race = pd.DataFrame(X_val_race)
 
+        y_val_race = y_val[indices_val]
+        y_val_race = pd.DataFrame(y_val_race)
+        y_val_race = y_val_race.values.ravel()
+
+        # Testing data
         X_test_race = X_test.loc[indices_test].drop(columns=[race_column])
+        X_test_race = pd.DataFrame(X_test_race)
+
         y_test_race = y_test[indices_test]
+        y_test_race = pd.DataFrame(y_test_race)
+        y_test_race = y_test_race.values.ravel()
 
         # Train the model
+        # print("X_train_race columns:", X_train_race.columns, "\n y_train_race columns:", y_train_race.columns)
+        # print()
+        # print("X_train_race shape:", X_train_race.shape, "y_train_race shape:", y_train_race.shape)
+
         model.fit(
             X_train_race,
             y_train_race,
@@ -387,7 +406,8 @@ def random_search_tuning(model, params, race_X_train, race_y_train, cv=5):
         verbose=2,
         scoring='accuracy',
         random_state=42,
-        n_jobs=-1
+        n_jobs=-1,
+        error_score='raise'
     )
 
     # Fit the model

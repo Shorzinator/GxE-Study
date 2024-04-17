@@ -1,7 +1,6 @@
 import os
 
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
 
 from Phase_2.model_scripts.model_utils import (get_mapped_data, get_model_instance, load_data_splits,
                                                train_and_evaluate_with_race_feature)
@@ -30,15 +29,6 @@ def get_model_params(target_variable, model_type, resampling="without"):
                             {'n_estimators': 600, 'min_samples_split': 6, 'min_samples_leaf': 19, 'max_features': 'log2', 'max_depth': 10, 'bootstrap': False}
 
                     },
-                "SubstanceUseTrajectory":
-                    {
-                        "final":
-                            {
-                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
-                                'class_weight': None, 'C': 1456.3484775012444
-                            }
-                    }
             }
     else:
         params = \
@@ -46,31 +36,25 @@ def get_model_params(target_variable, model_type, resampling="without"):
                 "AntisocialTrajectory":
                     {
                         "final":
-                            {'n_estimators': 600, 'min_samples_split': 6, 'min_samples_leaf': 19, 'max_features': 'log2', 'max_depth': 10, 'bootstrap': False}
+                            {
+                                'n_estimators': 650, 'min_samples_split': 8, 'min_samples_leaf': 1,
+                                'max_features': 'sqrt', 'max_depth': 60, 'bootstrap': False
+                            }
 
                     },
-                "SubstanceUseTrajectory":
-                    {
-                        "final":
-                            {
-                                'warm_start': False, 'tol': 0.0026366508987303583, 'solver': 'newton-cg',
-                                'penalty': 'l2', 'multi_class': 'multinomial', 'max_iter': 7750, 'fit_intercept': True,
-                                'class_weight': None, 'C': 1456.3484775012444
-                            }
-                    }
             }
 
     return params[target_variable][model_type]
 
 
-def main(target_variable, tune_final=False, cv=5, resampling="without", final_model_name="RandomForest",
+def main(target_variable, tune_final=False, pgs_old="without", pgs_new="without", cv=5, resampling="without", final_model_name="RandomForest",
          model_type="final"):
 
-    print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
+    print(f"Running {final_model_name}_v2 model predicting {target_variable} {resampling} resampling and {pgs_new} PGS:\n")
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, _, _, _, _, _, _) = (
-        load_data_splits(target_variable))
+        load_data_splits(target_variable, pgs_old, pgs_new))
 
     # Map labels to start from 0
     y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
@@ -92,8 +76,8 @@ if __name__ == "__main__":
     target_variable = "AntisocialTrajectory"  # "AntisocialTrajectory" or "SubstanceUseTrajectory"
     main(target_variable,
          False,
+         "without",
+         "without",
          5,
-         "with",
+         "without",
          "RandomForest")
-
-

@@ -117,14 +117,14 @@ def get_model_params(target_variable, model_type, race=None, resampling="with"):
         return params[target_variable][model_type][race]
 
 
-def main(target_variable, race_column="Race", tune_final=False, cv=10, resampling="with",
-         final_model_name="RandomForest", final_model_type="final"):
+def main(target_variable, race_column="Race", tune_final=False, pgs_old="without", pgs_new="without", cv=10,
+         resampling="with", final_model_name="RandomForest", final_model_type="final"):
 
-    print(f"Running model for predicting {target_variable} {resampling} resampling:\n")
+    print(f"Running {final_model_name}_v2 model predicting {target_variable} {resampling} resampling and {pgs_new} PGS:\n")
 
     # Load data splits
     (X_train_new, X_val_new, X_test_new, y_train_new, y_val_new, y_test_new, X_train_old, X_val_old, X_test_old,
-     y_train_old, y_val_old, y_test_old) = load_data_splits(target_variable, resampling=resampling)
+     y_train_old, y_val_old, y_test_old) = load_data_splits(target_variable, pgs_old, pgs_new, resampling=resampling)
 
     # Map labels to start from 0
     y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
@@ -170,8 +170,10 @@ if __name__ == "__main__":
     main(
         target_variable,
         "Race",
-        True,
+        False,
+        "without",
+        "without",
         5,
-        "with",
+        "without",
         "XGB"
     )

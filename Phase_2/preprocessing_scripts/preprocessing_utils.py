@@ -277,9 +277,9 @@ def robust_scaling_continuous_variables_new(X_train, X_val, X_test, feature_cols
     f.remove("PolygenicScoreEXT")
 
     if not pgs_dropped:
-        print("in here ...")
-        f.remove("PolygenicScoreEXT_x_Sex")
-        f.remove("PolygenicScoreEXT_x_Age")
+        pass
+        # f.remove("PolygenicScoreEXT_x_Sex")
+        # f.remove("PolygenicScoreEXT_x_Age")
 
     if target == "AntisocialTrajectory":
         f.remove("SubstanceUseTrajectory")

@@ -61,8 +61,8 @@ def main(target_variable, tune_final=False, pgs_old="without", pgs_new="without"
 
     # Train and evaluate race-specific final models directly on the new data
     if not tune_final:
-        # final_model = RandomForestClassifier(random_state=42)
-        final_model = RandomForestClassifier(**get_model_params(target_variable, "final", resampling))
+        final_model = get_model_instance(final_model_name)
+        # final_model = RandomForestClassifier(**get_model_params(target_variable, "final", resampling))
     else:
         final_model = get_model_instance(final_model_name)
 

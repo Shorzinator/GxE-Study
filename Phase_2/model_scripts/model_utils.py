@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import shap
-from matplotlib import pyplot as plt
 from sklearn.calibration import calibration_curve
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -9,6 +8,8 @@ from sklearn.metrics import ConfusionMatrixDisplay, classification_report, confu
     precision_score, recall_score, roc_auc_score
 from sklearn.model_selection import RandomizedSearchCV, learning_curve, train_test_split
 from xgboost import XGBClassifier
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
 
 
 # The split_data function to include a validation set
@@ -49,10 +50,6 @@ def prep_data_for_race_model(
     return X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race
 
 
-# Declaring variable to prevent overfitting
-early_stopping_rounds = 150
-
-
 def train_and_evaluate(
         model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, race=None,
         model_type="base", cv=5, resampling="with", outcome="AntisocialTrajectory"
@@ -74,9 +71,7 @@ def train_and_evaluate(
 
     model_name = f"{model_type} model" + (f" (race {race})" if race else "")
 
-    # tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
-    # model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
-    # param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
+    print(f"Evaluating model for race: {race}")
 
     # If 'tuning' is toggled to True
     if tune:
@@ -90,44 +85,111 @@ def train_and_evaluate(
     model.fit(
         X_train,
         y_train,
-        # eval_set=[(X_val, y_val)],
-        # early_stopping_rounds=early_stopping_rounds,
-        # verbose=False
     )
-    # Get predictions using the trained model
-    y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train, X_val, X_test)
-    print(np.unique(y_pred_train), np.unique(y_pred_val), np.unique(y_pred_test))
 
-    # Get probability values using the trained model
-    y_prob_train, y_prob_val, y_prob_test = get_prob_values(model, X_train, X_val, X_test)
+    # Evaluate the model
+    evaluation(model, X_train, y_train, X_val, y_val, X_test, y_test)
 
-    # Calculate and print the accuracies
-    calc_accuracy(y_train, y_pred_train, y_val, y_pred_val, y_test, y_pred_test)
+    return model
 
-    # Calculate and print the AUC
-    calc_roc_auc(y_train, y_prob_train, y_val, y_prob_val, y_test, y_prob_test)
 
-    # Calculate and print the f1 score's
-    # calc_f1_score(y_train, y_pred_train, y_val, y_pred_val, y_test, y_pred_test)
+def train_and_evaluate_updated(model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, cv=5):
+    """
+    Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
-    # Check if the model being evaluated is overfitting on the outcome currently under consideration or not.
-    evaluate_overfitting(
-        train_accuracy=accuracy_score(y_train, y_pred_train),
-        val_accuracy=accuracy_score(y_val, y_pred_val),
-        y_train_true=y_train,
-        y_train_pred=model.predict(X_train),
-        y_val_true=y_val,
-        y_val_pred=model.predict(X_val),
-        model_name=model_name,
-        resampling=resampling
+    Parameters:
+    - model: The model to be trained.
+    - X_train, y_train: Training data and labels.
+    - X_val, y_val: Validation data and labels.
+    - params: Parameter grid for hyperparameter tuning.
+    - tune: Whether to perform hyperparameter tuning.
+    """
+
+    # If 'tuning' is toggled to True
+    if tune:
+        all_params = search_spaces()
+        params = all_params[final_model_name]
+        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv)
+
+        print(f"Best Parameters for {final_model_name}: \n{best_params} \n")
+
+    # Fitting the trained model
+    model.fit(
+        X_train,
+        y_train,
     )
+
+    # Evaluate the model
+    evaluation(model, X_train, y_train, X_val, y_val, X_test, y_test)
+
+    return model
+
+
+def train_and_evaluate_updated_race_stratified(model, X_train, y_train, X_val, y_val, X_test, y_test,
+                                               model_name, tune, cv, race_columns=None, target="AntisocialTrajectory"):
+    """
+        Train and evaluate a model, analyzing performance separately for each race within the dataset.
+        Here, each race is represented by a separate dummy column.
+
+        Parameters:
+        - model: The model instance to be trained and evaluated.
+        - X_train, y_train, X_val, y_val, X_test, y_test: Data splits for training, validation, and testing.
+        - final_model_name: Name of the final model, e.g. LogisticRegression, etc.
+        - race_columns: List of columns names representing different races.
+        - tune: Whether to tune the model.
+        - model_type: Type of model (e.g., "base" or "final").
+        - cv: Number of cross-validation folds.
+        - resampling: Resampling strategy used.
+        - script_name: Name of the script, if applicable.
+        - outcome: Name of the outcome variable.
+        """
+
+    if tune:
+        all_params = search_spaces()
+        params = all_params[model_name]
+        model, best_params = random_search_tuning(model, params, X_train, y_train, cv=cv)
+        print(f"Best Parameters for {model_name}: \n{best_params} \n")
+
+    for race_column in race_columns:
+        print(f"Evaluating model for race: {race_column}")
+        # Filter the dataset for the current race
+        indices_train = X_train[race_column] == 1
+        indices_val = X_val[race_column] == 1
+        indices_test = X_test[race_column] == 1
+
+        # Prepare training data
+        X_train_race = X_train[indices_train].drop(columns=race_columns)
+        # y_train_race = y_train[indices_train].values.ravel()
+        y_train_race = y_train[indices_train]
+
+        # Prepare validation data
+        X_val_race = X_val[indices_val].drop(columns=race_columns)
+        # y_val_race = y_val[indices_val].values.ravel()
+        y_val_race = y_val[indices_val]
+
+        # Prepare testing data
+        X_test_race = X_test[indices_test].drop(columns=race_columns)
+        # y_test_race = y_test[indices_test].values.ravel()
+        y_test_race = y_test[indices_test]
+
+        # Train the model
+        model.fit(X_train_race, y_train_race)
+
+        # Evaluate the model
+        evaluation(model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race)
+
+        # Plot feature importance
+        plot_feature_importance(model, X_train_race, race_column, target)
+
+        # Explore PCA
+        # plot_pca(X_train, y_train, race_column)
 
     return model
 
 
 def train_and_evaluate_with_race_feature(
         model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, model_type="final", cv=5,
-        resampling="with", script_name=None, outcome="AntisocialTrajectory", race_column='Race'
+        resampling="with", race_column='Race'
 ):
     """
     Train and evaluate a model, analyzing performance separately for each race within the dataset.
@@ -146,11 +208,7 @@ def train_and_evaluate_with_race_feature(
     """
     model_name = f"{model_type} model"
 
-    # tag = "AST" if outcome == "AntisocialTrajectory" else "SUT"
-    # model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "models", "classification", tag)
-    # param_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "results", "param", "classification", tag)
-
-    unique_races = X_train[race_column].unique()
+    unique_races = sorted(X_train[race_column].unique())
 
     if tune:
         all_params = search_spaces()
@@ -190,58 +248,256 @@ def train_and_evaluate_with_race_feature(
         y_test_race = pd.DataFrame(y_test_race)
         y_test_race = y_test_race.values.ravel()
 
-        # Train the model
-        # print("X_train_race columns:", X_train_race.columns, "\n y_train_race columns:", y_train_race.columns)
-        # print()
-        # print("X_train_race shape:", X_train_race.shape, "y_train_race shape:", y_train_race.shape)
-
         model.fit(
             X_train_race,
             y_train_race,
-            # eval_set=[(X_val_race, y_val_race)],
-            # early_stopping_rounds=early_stopping_rounds,
-            # verbose=False
         )
-
-        # Get predictions using the trained model
-        y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train_race, X_val_race, X_test_race)
-        print(np.unique(y_pred_train), np.unique(y_pred_val), np.unique(y_pred_test))
-
-        # Get probability values using the trained model
-        y_prob_train, y_prob_val, y_prob_test = get_prob_values(model, X_train_race, X_val_race, X_test_race)
-
-        # Calculate and print the accuracies
-        calc_accuracy(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
-
-        # Calculate and print the AUC
-        calc_roc_auc(y_train_race, y_prob_train, y_val_race, y_prob_val, y_test_race, y_prob_test)
-
-        # Calculate and print the f1 score's
-        # calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
-
-        # Calculate the SHAP values and plot them
-        # calc_shap_values(model, X_train_race, race)
-
-        # Plotting Calibration Curve
-        # labels = np.unique(y_val_race)
-        # plot_calibration_curve(y_val_race, y_prob_val, labels)
-
-        # plot_confusion_matrix(y_train_race, y_pred_train, labels)
-
-        # Check for overfitting
-        evaluate_overfitting(
-            train_accuracy=accuracy_score(y_train_race, y_pred_train),
-            val_accuracy=accuracy_score(y_val_race, y_pred_val),
-            y_train_true=y_train_race,
-            y_train_pred=y_pred_train,
-            y_val_true=y_val_race,
-            y_val_pred=y_pred_val,
-            model_name=model_name,
-            resampling=resampling
-        )
+        evaluation(model, X_train_race, y_train_race, X_val_race, y_val_race, X_test_race, y_test_race, race)
 
     # Return the model
     return model
+
+
+def evaluation(model, X_train, y_train, X_val, y_val, X_test, y_test, race=None):
+    # Get predictions using the trained model
+    y_pred_train, y_pred_val, y_pred_test = get_pred_values(model, X_train, X_val, X_test)
+    print(np.unique(y_pred_train), np.unique(y_pred_val), np.unique(y_pred_test))
+
+    # Get probability values using the trained model
+    y_prob_train, y_prob_val, y_prob_test = get_prob_values(model, X_train, X_val, X_test)
+
+    # Calculate and print the accuracies
+    calc_accuracy(y_train, y_pred_train, y_val, y_pred_val, y_test, y_pred_test)
+
+    # Calculate and print the AUC
+    calc_roc_auc(y_train, y_prob_train, y_val, y_prob_val, y_test, y_prob_test)
+
+    # Calculate and print the f1 score's
+    # calc_f1_score(y_train_race, y_pred_train, y_val_race, y_pred_val, y_test_race, y_pred_test)
+
+    # Calculate the SHAP values and plot them
+    # calc_shap_values(model, X_train, race)
+
+    # Plotting Calibration Curve
+    # labels = np.unique(y_val)
+    # plot_calibration_curve(y_val_race, y_prob_val, labels)
+
+    # plot_confusion_matrix(y_train, y_pred_train, labels)
+
+    # Check for overfitting
+    evaluate_overfitting(
+        train_accuracy=accuracy_score(y_train, y_pred_train),
+        val_accuracy=accuracy_score(y_val, y_pred_val),
+        y_train_true=y_train,
+        y_train_pred=y_pred_train,
+        y_val_true=y_val,
+        y_val_pred=y_pred_val,
+    )
+
+
+def plot_pca(X, y, race):
+    # Perform PCA
+    pca = PCA(n_components=2)
+    X_pca = pca.fit_transform(X)
+
+    # Create a figure and axis
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    # Plot the PCA results for each target class
+    unique_targets = np.unique(y)
+    colors = plt.cm.viridis(np.linspace(0, 1, len(unique_targets)))
+
+    for target, color in zip(unique_targets, colors):
+        mask = (y == target)
+        ax.scatter(X_pca[mask, 0], X_pca[mask, 1], color=color, label=f'Class {target}', alpha=0.8)
+
+    # Set the x-axis and y-axis labels
+    ax.set_xlabel('Principal Component 1')
+    ax.set_ylabel('Principal Component 2')
+
+    # Set the plot title
+    race_meaning = variable_meanings.get(f"H1GI6{race}", f"Race {race}")
+    ax.set_title(f'PCA Visualization for {race_meaning}')
+
+    # Add a legend
+    ax.legend(title='Target Classes')
+
+    # Add a grid for better readability
+    ax.grid(True, linestyle='--', alpha=0.7)
+
+    # Remove the top and right spines for a cleaner look
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    # Adjust the layout and display the plot
+    fig.tight_layout()
+    plt.show()
+
+
+# Dictionary mapping variable names to English meanings
+variable_meanings = {
+    'BIO_SEX': 'Biological Sex',
+    'IYEAR': 'Interview Year',
+    'H1GI1Y': 'Birth Year',
+    'H1GI6A': 'Race: White',
+    'H1GI6B': 'Race: Black/African',
+    'H1GI6C': 'Race: Native',
+    'H1GI6D': 'Race: Asian',
+    'H1GI6E': 'Race: Other',
+    'H1GI4': 'Ethnicity - Hispanic',
+    'H1GI21': 'Schooling',
+    'H1GH20': 'Mood',
+    'H1GH41': 'Motorcycle Helmet Usage',
+    'H1GH42': 'Seatbelt Usage',
+    'H1GH43': 'Drinking and Driving',
+    'H1ED2': 'Skipping School',
+    'H1ED7': 'Out-of-School Suspension',
+    'H1ED9': 'Expelled from School',
+    'H1SE4': 'Self-perceived Intelligence',
+    'H1RM12': 'Resident Mother Presence',
+    'H1RF12': 'Resident Father Presence',
+    'H1WP10': 'Perceived Mother Care',
+    'H1WP14': 'Perceived Father Care',
+    'H1PF7': 'Never Argue',
+    'H1PF13': 'Never Criticize Others',
+    'H1PF16': 'Impulsive Decision Making',
+    'H1CO10': 'Forced Sexual Intercourse',
+    'H1NR3': 'Paid for Sex',
+    'H1WS3A': 'Sibling Quarrel Frequency',
+    'H1WS5A': 'Perceived Parental Attention',
+    'H1EE12': 'Chances of Living to Age 35',
+    'H1EE13': 'Chances of Being Married by 25',
+    'H1EE14': 'Chances of Being Killed by 21',
+    'H1RE1': 'Religion',
+    'H1RE4': 'Importance of Religion',
+    'H1NB1': 'Know People in Neighborhood',
+    'H1NB2': 'Interact with Neighbors',
+    'H1PR1': 'Adults Care',
+    'H1PR2': 'Teachers Care',
+    'H1PR3': 'Parents Care',
+    'H1PR4': 'Friends Care',
+    'H1PR5': 'Family Understands',
+    'H1PR6': 'Want to Leave Home',
+    'H1PR7': 'Family Has Fun Together',
+    'H1PR8': 'Family Pays Attention',
+    'H1SU1': 'Suicidal Thoughts',
+    'H1SU2': 'Suicide Attempts',
+    'H1SU4': 'Friends Attempted Suicide',
+    'H1FV1': 'Witnessed Shooting or Stabbing',
+    'H1FV2': 'Threatened with Knife or Gun',
+    'H1FV3': 'Shot',
+    'H1FV4': 'Cut or Stabbed',
+    'H1FV5': 'Physical Fight Involvement',
+    'H1FV6': 'Jumped',
+    'H1FV7': 'Pulled Knife or Gun on Someone',
+    'H1FV8': 'Shot or Stabbed Someone',
+    'H1FV9': 'Carried Weapon to School',
+    'H1JO1': 'Alcohol Use at First Sex',
+    'H1JO5': 'Drug Use at First Sex',
+    'H1JO9': 'Driven While Drunk',
+    'H1JO10': 'Drunk at School',
+    'H1JO11': 'Physical Fight Involvement',
+    'H1JO12': 'Drinking During Fight',
+    'H1JO14': 'Drinking While Carrying Weapon',
+    'H1JO17': 'Drinking While Using Drugs',
+    'H1JO19': 'Driven While High on Drugs',
+    'H1JO20': 'High on Drugs at School',
+    'H1JO21': 'Fight While Using Drugs',
+    'H1JO23': 'Used Drugs While Carrying Weapon',
+    'H1JO25': 'Carried Weapon at School',
+    'H1JO26': 'Used Weapon in Fight',
+    'H1DS1': 'Vandalism - Graffiti',
+    'H1DS2': 'Vandalism - Property Damage',
+    'H1DS3': 'Lying to Parents/Guardians',
+    'H1DS4': 'Shoplifting',
+    'H1DS5': 'Serious Physical Fight',
+    'H1DS7': 'Running Away from Home',
+    'H1DS8': 'Driving Without Permission',
+    'H1DS9': 'Stealing (>$50)',
+    'H1DS10': 'Burglary',
+    'H1DS11': 'Weapon Use for Stealing',
+    'H1DS12': 'Selling Drugs',
+    'H1DS13': 'Stealing (<$50)',
+    'H1DS14': 'Group Fight Involvement',
+    'H1DS15': 'Disruptive in Public',
+    'H1TO2': 'Age at First Cigarette',
+    'H1TO4': 'Age Started Smoking Regularly',
+    'H1TO9': 'Friends Who Smoke',
+    'H1TO10': 'Chewing Tobacco or Snuff Use',
+    'H1TO11': 'Age at First Chewing Tobacco or Snuff',
+    'H1TO13': 'Drinking Without Parents',
+    'H1TO14': 'Age at First Drink Without Parents',
+    'H1TO15': 'Days Drank Alcohol (Past 12 Months)',
+    'H1TO17': 'Days Had 5+ Drinks in a Row',
+    'H1TO18': 'Days Got Drunk',
+    'H1TO20': 'Trouble with Parents Due to Drinking',
+    'H1TO21': 'School Problems Due to Drinking',
+    'H1TO22': 'Friend Problems Due to Drinking',
+    'H1TO23': 'Dating Problems Due to Drinking',
+    'H1TO24': 'Regretted Actions Due to Drinking',
+    'H1TO27': 'Regretted Sexual Situations Due to Drinking',
+    'H1TO28': 'Physical Fights Due to Drinking',
+    'H1TO29': 'Friends Who Drink Alcohol',
+    'H1TO30': 'Age at First Marijuana Use',
+    'H1TO33': 'Friends Who Use Marijuana',
+    'H1TO34': 'Age at First Cocaine Use',
+    'H1TO37': 'Age at First Inhalant Use',
+    'H1TO40': 'Age at First Other Illegal Drug Use',
+    'H1TO41': 'Lifetime Other Illegal Drug Use',
+    'H1TO42': 'Past 30 Days Other Illegal Drug Use',
+    'H1TO43': 'Lifetime Illegal Drug Injection',
+    'H1TO45': 'Age at First Illegal Drug Injection',
+    'H1BC1': 'Birth Control Hassle',
+    'H1BC3': 'Birth Control Planning'
+}
+
+
+def plot_feature_importance(model, X_train, race, target):
+    # Store importances in a dictionary literal
+    # feature_importances = {race: model.feature_importances_}
+
+    # Get the indices of the top 5 most important features
+    top_n = 5
+    indices = np.argsort(model.feature_importances_)[::-1][:top_n]
+
+    # Map the feature names to their English meanings
+    feature_names = [variable_meanings.get(feature, feature) for feature in X_train.columns[indices]]
+
+    # Map the race code to its corresponding meaning
+    race_meaning = variable_meanings[race]
+
+    # Create a figure and axis
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    # Create a horizontal bar plot
+    y_pos = np.arange(top_n)
+    ax.barh(y_pos, model.feature_importances_[indices], align='center')
+
+    # Set the x-axis and y-axis labels
+    ax.set_xlabel('Feature Importance')
+    ax.set_ylabel('Features')
+
+    # Set the y-tick labels to the feature names
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(feature_names)
+
+    # Set the plot title
+    ax.set_title(f'Top {top_n} Feature Importances for "{race_meaning}" in Predicting {target}')
+
+    # Add a grid for better readability
+    ax.grid(axis='x', linestyle='--', alpha=0.7)
+
+    # Remove the top and right spines for a cleaner look
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+
+    # Add value labels to the end of each bar
+    for i, v in enumerate(model.feature_importances_[indices]):
+        ax.text(v + 0.001, i, f'{v:.3f}', va='center')
+
+    # Adjust the layout and display the plot
+    fig.tight_layout()
+    plt.show()
 
 
 def get_pred_values(model, X_train, X_val, X_test):
@@ -457,9 +713,8 @@ def random_search_tuning(model, params, race_X_train, race_y_train, cv=5):
 
 
 def evaluate_overfitting(
-        train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred, model_name,
-        resampling
-):
+        train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred, model_name="",
+        resampling=""):
     """
     Evaluate the model for overfitting using training and validation metrics.
 
@@ -506,8 +761,9 @@ def evaluate_overfitting(
             recall_diff > recall_threshold or
             acc_diff > acc_threshold
     )
+    # print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {is_overfitting}\n")
 
-    print(f"Overfitting Evaluation Results for {model_name} {resampling} resampling: {is_overfitting}\n")
+    print(f"Overfitting Evaluation Results for updated data: {is_overfitting}\n")
 
 
 def get_model_instance(model_name):
@@ -526,7 +782,7 @@ def interpret_model(model, model_type, X_train, model_name="", race=None):
     """
     Provides an enhanced interpretation of Logistic Regression and RandomForestClassifier models.
 
-    Parameters:
+    Parameters:m
     - model: The trained model instance.
     - X_train: Training dataset used to extract feature names.
     - model_name: A string indicating the name or type of the model for print statements.
@@ -674,22 +930,37 @@ def load_data_splits(target_variable, pgs_old="without", pgs_new="without", resa
             y_train_old, y_val_old, y_test_old)
 
 
+def load_updated_data(target):
+    suffix = "AST" if target == "AntisocialTrajectory" else "SUT"
+    X_train = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/X_train_updated_{suffix}.csv")
+    X_test = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/X_test_updated_{suffix}.csv")
+    X_val = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/X_val_updated_{suffix}.csv")
+    y_train = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/y_train_updated_{suffix}.csv")
+    y_test = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/y_test_updated_{suffix}.csv")
+    y_val = load_data(
+        f"../../../preprocessed_data/updated_data/{suffix}/y_val_updated_{suffix}.csv")
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
+
 def search_spaces():
     # Define search spaces for each model
     search_parameters = {
         'LogisticRegression': {
-            # 'penalty': ['l2', 'elasticnet', None], # Including all types of penalties
-            'penalty': ['l2'],  # Including all types of penalties
-            'C': np.logspace(-5, 5, 50),  # A wider range and more values for regularization strength
-            'solver': ['newton-cg', 'lbfgs'],  # Including all solvers
-            'max_iter': list(range(100, 30001, 50)),  # More iterations range with finer steps
-            'multi_class': ['multinomial', 'ovr'],  # All strategies for handling multiple classes
-            # 'l1_ratio': np.linspace(0, 1, 20),  # Relevant for 'elasticnet' penalty, more granular range
-            'fit_intercept': [True, False],  # Whether to include an intercept term or not
-            'class_weight': [None, 'balanced'],  # Whether to use balanced class weights or not
-            # for other cases
-            'warm_start': [True, False],  # Whether to reuse the solution of the previous call as initialization
-            'tol': np.logspace(-6, -1, 20),  # Tolerance for stopping criteria
+            'penalty': ['l1', 'l2'],  # L1 can help with feature selection in high-dimensionality
+            'C': np.logspace(-4, 2, 20),  # Adjust based on the performance feedback
+            'solver': ['saga'],  # Recommended for large datasets
+            'max_iter': list(range(100, 1000, 100)),  # Realistic iteration range
+            'multi_class': ['multinomial'],  # Handling multiple classes
+            'fit_intercept': [True],  # Usually beneficial to fit intercept
+            'class_weight': [None, 'balanced'],  # Handling imbalanced classes
+            'tol': np.logspace(-3, -1, 10),  # Adjusting tolerance
+            'warm_start': [False]  # Not typically necessary
         },
         'RandomForest': {
             'n_estimators': np.arange(300, 1001, 50),

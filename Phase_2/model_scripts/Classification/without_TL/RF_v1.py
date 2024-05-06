@@ -75,7 +75,7 @@ def main(target_variable, race_column="Race", tune_final=False, pgs_old="without
     # Map labels to start from 0
     y_train_new_mapped, y_val_new_mapped, y_test_new_mapped = get_mapped_data(y_train_new, y_val_new, y_test_new)
 
-    # Train and evaluate race-specific interim models
+    # Train and evaluate race-specific models
     for race in sorted(X_train_new[race_column].unique()):
         # Defining final_model based on the current race in iteration and its respective parameters
         if not tune_final:
@@ -107,6 +107,6 @@ if __name__ == "__main__":
         "without",
         "without",
         5,
-        "with",
+        "without",
         "RandomForest"
     )

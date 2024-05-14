@@ -30,6 +30,7 @@ plt.ylabel('Test Accuracy')
 plt.xticks(race_labels)  # Set x-ticks to show only races 1, 2, 3, 4, 5
 plt.legend(title='Model Code')
 plt.grid(True)
+plt.savefig(f'C:\\Users\\shour\\OneDrive\Desktop\\GxE_Analysis\\Phase_2\\results\\updated_data\\RF_comparison_Accuracy.png')
 plt.show()
 
 # Plotting Test ROC AUC
@@ -42,4 +43,5 @@ plt.ylabel('Test ROC AUC')
 plt.xticks(race_labels)  # Set x-ticks to show only races 1, 2, 3, 4, 5
 plt.legend(title='Model Code')
 plt.grid(True)
+plt.savefig(f'C:\\Users\\shour\\OneDrive\Desktop\\GxE_Analysis\\Phase_2\\results\\updated_data\\RF_comparison_ROC.png')
 plt.show()

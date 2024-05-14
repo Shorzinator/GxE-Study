@@ -53,7 +53,7 @@ def prep_data_for_race_model(
 def train_and_evaluate(
         model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, race=None,
         model_type="base", cv=5, resampling="with", outcome="AntisocialTrajectory"
-        ):
+):
     """
     Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
@@ -93,7 +93,9 @@ def train_and_evaluate(
     return model
 
 
-def train_and_evaluate_updated(model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, cv=5):
+def train_and_evaluate_updated(
+        model, X_train, y_train, X_val, y_val, X_test, y_test, final_model_name, tune=False, cv=5
+        ):
     """
     Train and evaluate a model with optional hyperparameter tuning and cross-validation.
 
@@ -125,8 +127,10 @@ def train_and_evaluate_updated(model, X_train, y_train, X_val, y_val, X_test, y_
     return model
 
 
-def train_and_evaluate_updated_race_stratified(model, X_train, y_train, X_val, y_val, X_test, y_test,
-                                               model_name, tune, cv, race_columns=None, target="AntisocialTrajectory"):
+def train_and_evaluate_updated_race_stratified(
+        model, X_train, y_train, X_val, y_val, X_test, y_test,
+        model_name, tune, cv, race_columns=None, target="AntisocialTrajectory"
+        ):
     """
         Train and evaluate a model, analyzing performance separately for each race within the dataset.
         Here, each race is represented by a separate dummy column.
@@ -471,7 +475,8 @@ def plot_feature_importance(model, X_train, race, target):
 
     # Create a horizontal bar plot
     y_pos = np.arange(top_n)
-    ax.barh(y_pos, model.feature_importances_[indices], align='center')
+    color = 'blue' if target == 'AntisocialTrajectory' else 'orange'
+    ax.barh(y_pos, model.feature_importances_[indices], align='center', color=color)
 
     # Set the x-axis and y-axis labels
     ax.set_xlabel('Feature Importance')
@@ -482,7 +487,8 @@ def plot_feature_importance(model, X_train, race, target):
     ax.set_yticklabels(feature_names)
 
     # Set the plot title
-    ax.set_title(f'Top {top_n} Feature Importances for "{race_meaning}" in Predicting {target}')
+    title = f'Top {top_n} Feature Importances for "{race_meaning}" in Predicting {target}'
+    ax.set_title(title)
 
     # Add a grid for better readability
     ax.grid(axis='x', linestyle='--', alpha=0.7)
@@ -497,6 +503,9 @@ def plot_feature_importance(model, X_train, race, target):
 
     # Adjust the layout and display the plot
     fig.tight_layout()
+    fig.savefig(
+        f'C:\\Users\\shour\\OneDrive\Desktop\\GxE_Analysis\\Phase_2\\results\\updated_data\\FI_{race}_{target}.png')
+
     plt.show()
 
 
@@ -714,7 +723,8 @@ def random_search_tuning(model, params, race_X_train, race_y_train, cv=5):
 
 def evaluate_overfitting(
         train_accuracy, val_accuracy, y_train_true, y_train_pred, y_val_true, y_val_pred, model_name="",
-        resampling=""):
+        resampling=""
+):
     """
     Evaluate the model for overfitting using training and validation metrics.
 
